@@ -2,9 +2,9 @@
   "name": "configuration-ui",
   "version": "0.0.1",
   "description": "UI for the configuration website of bidTorrent: http://www.bidtorrent.io",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
+    "grunt": "^0.4.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
