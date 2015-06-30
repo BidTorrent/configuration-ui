@@ -1,46 +1,81 @@
 <?php
-
-use Luracast\Restler\RestException;
+require_once('vendor/redmap/main/src/schema.php');
+require_once('vendor/redmap/main/src/drivers/mysqli.php');
 
 class Bidders
 {
     public $db;
+    public $schema;
 
     static $FIELDS = array('name', 'bidUrl');
 
     function __construct()
     {
-        $this->db = new DB_MySQL();
+        $this->db = new RedMap\Drivers\MySQLiDriver('UTF8');
+        $this->db->connect('bidtorrent', 'hack@thon', 'bidtorrent');
+        $this->schema = new RedMap\Schema
+        (
+            'bidders',
+            array
+            (
+                'id'    => array (RedMap\Schema::FIELD_PRIMARY),
+                'name'  => null,
+                'bidUrl' => null,
+                'rsaPubKey' => null
+            )
+        );
     }
 
-    function index()
+    function getAll()
     {
-        return $this->db->getAllBidders();
+        list ($query, $params) = $this->schema->get();
+
+        return $this->db->get_rows($query, $params);
     }
 
     function get($id)
     {
-        $result = $this->db->getBidder($id);
+        list ($query, $params) = $this->schema->get(array ('id' => $id));
 
-        if (!$result)
-            throw new RestException(404);
-
-        return $result;
+        return $this->db->get_first($query, $params);
     }
 
-    function post($request_data = NULL)
+    function post($app)
     {
-        $this->db->insertBidder($this->_validate($request_data));
+        $body = file_get_contents('php://input');
+        $bidder = json_decode($body, true);
+
+        list ($query, $params) = $this->schema->set(RedMap\Schema::SET_INSERT, $bidder);
+        $result = $this->db->execute($query, $params);
+
+        if (!isset($result) || $result == 0)
+            $app->halt(409);
     }
 
-    function put($id, $request_data = NULL)
+    function put($app, $id)
     {
-        $this->db->updateBidder($id, $request_data);
+        $body = file_get_contents('php://input');
+        $bidder = json_decode($body, true);
+        $bidder['id'] = $id;
+
+        list ($query, $params) = $this->schema->set(RedMap\Schema::SET_UPDATE, $bidder);
+        $result = $this->db->execute($query, $params);
+
+        if (!isset($result))
+            $app->halt(500);
+
+        if ($result == 0)
+            $app->halt(404);
     }
 
-    function delete($id)
+    function delete($app, $id)
     {
-        $this->db->deleteBidder($id);
+        list ($query, $params) = $this->schema->delete(array ('id' => $id));
+
+        $result = $this->db->execute($query, $params);
+
+        if (!isset($result) || $result == 0)
+            $app->halt(404);
     }
 
     private function _validate($data)
@@ -55,3 +90,4 @@ class Bidders
     }
 }
 
+?>
