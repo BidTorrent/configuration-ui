@@ -1,22 +1,47 @@
 module.exports = function(grunt) {
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-browser-sync');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
-  // Project configuration.
-  grunt.initConfig({
-    connect: {
-      server: {
-        options: {
-          port: 9000,
-          base: 'src',
-          keepalive: true
+    // Project configuration.
+    grunt.initConfig({
+        // Compile less files
+        less: {
+            release: {
+                options: {
+                    cleancss: true,
+                    compress: true
+                },
+                files: {
+                    "src/assets/css/main.css": "src/assets/css/**/*.less"
+                }
+            }
+        },
+        // Sync browser in development
+        browserSync: {
+            dev: {
+                bsFiles: {
+                    src : [
+                        'src/**/*.js',
+                        'src/**/*.css',
+                        'src/**/*.html'
+                    ]
+                },
+                options: {
+                    watchTask: true,
+                    server: './src'
+                }
+            }
+        },
+        // watch task
+        watch: {
+            files: 'src/assets/css/**/*.less',
+            tasks: ['less']
         }
-      }
-    }
-  });
+    });
 
-  // Default task(s).
-  grunt.registerTask('server', ['connect:server']);
+    //task
+    grunt.registerTask('serverwatch', ['browserSync', 'watch']);
 
 };
