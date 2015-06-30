@@ -16,6 +16,7 @@
         <div class="header clearfix" ng-controller="HeaderController">
             <nav>
                 <ul class="nav nav-pills pull-right">
+                    <li role="presentation" ng-class="{ active: isActive('/')}"><a ui-sref="home">Home</a></li>
                     <li role="presentation" ng-class="{ active: isActive('/publisher')}"><a ui-sref="publisher">Publisher</a></li>
                     <li role="presentation" ng-class="{ active: isActive('/bidder')}"><a ui-sref="bidder">Bidder</a></li>
                 </ul>
@@ -37,6 +38,5 @@
     <script src="vendors/jquery/dist/jquery.min.js"></script>
     <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/controllers/HeaderController.js"></script>
 </body>
 </html>
