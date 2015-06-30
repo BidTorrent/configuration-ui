@@ -1,5 +1,47 @@
 <div class="bidders">
-	<h1>Bidders</h1>
-	<p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-	<p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>
+    <h1>Bidders</h1>
+
+    <h2>Setup your configuration</h2>
+    <form class="bidderConfigForm">
+        <div class="form-group">
+            <label for="bidRequestUrl" class="control-label col-md-2">Bid-Request endpoint</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="bidRequestUrl" placeholder="http://rtb.criteo.com/bidtorrent/auction/request?profile=42">
+            </div>
+        </div>
+        <div class="form-group">    
+            <label for="notificationUrl" class="control-label col-md-2">Notification endpoint</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="notificationUrl" placeholder="http://rtb.criteo.com/bidtorrent/auction/notify?profile=42">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputUserCountry" class="control-label col-md-2">User country</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="inputUserCountry" placeholder="User country">
+            </div>
+            <label for="inputUserLanguage" class="control-label col-md-2">User language</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="inputUserLanguage" placeholder="User language">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputPubCountry" class="control-label col-md-2">Publisher country</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="inputPubCountry" placeholder="Publisher country">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputIABCategories" class="control-label col-md-2">IAB categories</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="inputIABCategories" placeholder="IAB categories">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4">Setup config</button>
+        </div>
+    </form>
 </div>
