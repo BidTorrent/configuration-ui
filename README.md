@@ -10,4 +10,4 @@ UI for the configuration website of bidTorrent: http://www.bidtorrent.io
 
 ## Run the website locally
 
-* run `grunt server` and connect to `localhost:9000`
+* run `grunt serverwatch` and connect to `localhost:3000`
