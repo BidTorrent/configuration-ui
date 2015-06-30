@@ -7,7 +7,7 @@ class Bidders
     public $db;
     public $schema;
 
-    static $FIELDS = array('name', 'bidUrl');
+    static $FIELDS = array('name', 'bidUrl', 'rsaPubKey');
 
     function __construct()
     {
@@ -42,8 +42,11 @@ class Bidders
 
     function post($app)
     {
-        $body = file_get_contents('php://input');
+        $request = $app->request();
+        $body = $request->getBody();
         $bidder = json_decode($body, true);
+
+        $this->_validate($app, $bidder);
 
         list ($query, $params) = $this->schema->set(RedMap\Schema::SET_INSERT, $bidder);
         $result = $this->db->execute($query, $params);
@@ -54,7 +57,8 @@ class Bidders
 
     function put($app, $id)
     {
-        $body = file_get_contents('php://input');
+        $request = $app->request();
+        $body = $request->getBody();
         $bidder = json_decode($body, true);
         $bidder['id'] = $id;
 
@@ -78,15 +82,13 @@ class Bidders
             $app->halt(404);
     }
 
-    private function _validate($data)
+    private function _validate($app, $data)
     {
         $bidder = array();
         foreach (bidders::$FIELDS as $field) {
             if (!isset($data[$field]))
-                throw new RestException(400, "$field field missing");
-            $bidder[$field] = $data[$field];
+                $app->halt(400);
         }
-        return $bidder;
     }
 }
 
