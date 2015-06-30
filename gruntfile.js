@@ -10,11 +10,11 @@ module.exports = function(grunt) {
         less: {
             release: {
                 options: {
-                    cleancss: true,
-                    compress: true
+/*                    cleancss: true,
+                    compress: true*/
                 },
                 files: {
-                    "src/assets/css/main.css": "src/assets/css/**/*.less"
+                    "src/assets/css/main.css": "src/assets/css/main.less"
                 }
             }
         },
