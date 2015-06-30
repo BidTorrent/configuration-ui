@@ -9,6 +9,11 @@ UI for the configuration website of bidTorrent: http://www.bidtorrent.io
 * install bower by running `npm install bower -g`
 * install all the bower component by running `bower install`
 
-## Run the website locally
+## Run the website locally for dev
 
-* run `grunt serverwatch` and connect to `localhost:3000`
+* run `grunt serverwatch` and connect to `localhost:3000` for dev
+
+## Package the app for release
+
+* run `grunt release` to package the app in the bin/ folder.
+* run `grunt connect` to test it locally
