@@ -21,4 +21,9 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($s
     $scope.isActive = function(viewLocation) {
         return viewLocation === $location.path();
     };
+}])
+.run([function() {
+    $(".navbar-fixed-top").autoHidingNavbar({
+        // see next for specifications
+    });
 }]);

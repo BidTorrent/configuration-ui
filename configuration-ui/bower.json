@@ -21,9 +21,10 @@
     "font-awesome": "~4.3.0",
     "angular-resource": "~1.4.1",
     "bootstrap": "~3.3.5",
-    "oauth-ng": "~0.4.2"
+    "oauth-ng": "~0.4.2",
+    "bootstrap-autohidingnavbar": "~1.0.0"
   },
   "resolutions": {
-     "angular": "~1.4.1"
+    "angular": "~1.4.1"
   }
 }

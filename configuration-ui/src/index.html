@@ -13,29 +13,27 @@
     <link rel="stylesheet" href="vendors/font-awesome/css/font-awesome.min.css">
 </head>
 <body>
-    <div class="container main-container">
-        <div class="header clearfix" ng-controller="HeaderController">
-            <nav>
-                <ul class="nav nav-pills pull-right">
-                    <li role="presentation" ng-class="{ active: isActive('/')}"><a ui-sref="home">Home</a></li>
-                    <li role="presentation" ng-class="{ active: isActive('/publisher')}"><a ui-sref="publisher">Publisher</a></li>
-                    <li role="presentation" ng-class="{ active: isActive('/bidder')}"><a ui-sref="bidder">Bidder</a></li>
-                    <li role="presentation"><a>
-                        <oauth
-                            site="https://oauth-ng-server.herokuapp.com"
-                            client-id="23c6ceaba56c00e940f890acc9f4c75a94991c62f5561338b6311f7026343d58"
-                            redirect-uri="https://oauth-ng-demo.herokuapp.com"
-                            profile-uri="https://oauth-ng-server.herokuapp.com/api/v1/me"
-                            scope="public"
-                            template="partials/authTemplate.html"
-                            text="sign In (NOT WORKING! )">
-                        </oauth>
-                    </a></li>
-                </ul>
-            </nav>
-            <h3 class="text-muted">BidTorrent.io</h3>
+    <div class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">BidTorrent.io</a>
         </div>
 
+        <ul class="nav navbar-nav pull-right">
+            <li role="presentation" ng-class="{ active: isActive('/')}"><a ui-sref="home">Home</a></li>
+            <li role="presentation" ng-class="{ active: isActive('/publisher')}"><a ui-sref="publisher">Publisher</a></li>
+            <li role="presentation" ng-class="{ active: isActive('/bidder')}"><a ui-sref="bidder">Bidder</a></li>
+            <li role="presentation"><a>
+                <oauth
+                    site="https://oauth-ng-server.herokuapp.com"
+                    client-id="23c6ceaba56c00e940f890acc9f4c75a94991c62f5561338b6311f7026343d58"
+                    redirect-uri="https://oauth-ng-demo.herokuapp.com"
+                    profile-uri="https://oauth-ng-server.herokuapp.com/api/v1/me"
+                    scope="public"
+                    template="partials/authTemplate.html"
+                    text="sign In (NOT WORKING! )">
+                </oauth>
+            </a></li>
+        </ul>
         <!--[if lt IE 7]>
                 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -55,6 +53,7 @@
     <script src="vendors/angular-resource/angular-resource.min.js"></script>
     <script src="vendors/jquery/dist/jquery.min.js"></script>
     <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="vendors/bootstrap-autohidingnavbar/dist/jquery.bootstrap-autohidingnavbar.min.js"></script>
     <script src="vendors/ngstorage/ngStorage.min.js"></script>
     <script src="vendors/oauth-ng/dist/oauth-ng.js"></script>
     <script src="js/controllers/bidder.js"></script>
