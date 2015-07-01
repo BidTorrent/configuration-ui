@@ -5,6 +5,7 @@ require 'bidders.php';
 require 'publishers.php';
 
 $app = new \Slim\Slim();
+$app->config('debug', false);
 
 $bidders = new Bidders();
 $app->get('/bidders/', function () use ($app, $bidders) { display_result($app, $bidders->getAll()); });
