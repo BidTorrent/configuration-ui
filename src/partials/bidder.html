@@ -1,21 +1,58 @@
 <div class="bidders">
     <h1>Bidders</h1>
 
-    <h2><i class="fa fa-sliders"></i> <span class="title">Setup your configuration</span></h2>
-    <form class="bidderConfigForm">
-        <div class="form-group">
+    <h2><span class="title">Register a Bidder</span> <i class="fa fa-space-shuttle"></i></h2>
+    <form class="bidtorrentForm bidderRegisterForm">
+        <div class="form-group row">
+            <label for="bidderName" class="control-label col-md-2">Name</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="bidderName" placeholder="ex: Criteo" ng-model="registerForm.name">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="pubKey" class="control-label col-md-2">Public key</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="pubKey"
+                       placeholder="ex: AAAAB3NzaC1yc2EAAAADAQABAAABAQDUZx8++2BMJJIdbHLovvbi8waakv8v1awlm04aOcHvyC..."
+                       ng-model="registerForm.pubKey">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="bidRequestUrl" class="control-label col-md-2">Bid request url</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="bidUrl"
+                       placeholder="ex: http://rtb.criteo.com/bidtorrent/auction/request?profile=42"
+                       ng-model="registerForm.bidRequestUrl">
+            </div>
+        </div>
+        <div class="form-group row">
+            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="submitRegistration()">
+                Register me
+            </button>
+        </div>
+    </form>
+
+    <h2><span class="title">Setup your configuration</span> <i class="fa fa-sliders"></i></h2>
+    <form class="bidtorrentForm bidderConfigForm">
+        <div class="form-group row">
+            <label for="bidderId" class="control-label col-md-2">Bidder Id</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="bidderId" placeholder="ex: 1234">
+            </div>
+        </div>
+        <div class="form-group row">
             <label for="bidRequestUrl" class="control-label col-md-2">Bid-Request endpoint</label>
             <div class="col-md-10">
-                <input type="text" class="form-control" id="bidRequestUrl" placeholder="http://rtb.criteo.com/bidtorrent/auction/request?profile=42">
+                <input type="text" class="form-control" id="bidRequestUrl" placeholder="ex: http://rtb.criteo.com/bidtorrent/auction/request?profile=42">
             </div>
         </div>
-        <div class="form-group">    
+        <div class="form-group row">
             <label for="notificationUrl" class="control-label col-md-2">Notification endpoint</label>
             <div class="col-md-10">
-                <input type="text" class="form-control" id="notificationUrl" placeholder="http://rtb.criteo.com/bidtorrent/auction/notify?profile=42">
+                <input type="text" class="form-control" id="notificationUrl" placeholder="ex: http://rtb.criteo.com/bidtorrent/auction/notify?profile=42">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group row">
             <label for="inputUserCountry" class="control-label col-md-2">User country</label>
             <div class="col-md-4">
                 <input type="text" class="form-control" id="inputUserCountry" placeholder="User country">
@@ -25,22 +62,19 @@
                 <input type="text" class="form-control" id="inputUserLanguage" placeholder="User language">
             </div>
         </div>
-
-        <div class="form-group">
+        <div class="form-group row">
             <label for="inputPubCountry" class="control-label col-md-2">Publisher country</label>
             <div class="col-md-10">
                 <input type="text" class="form-control" id="inputPubCountry" placeholder="Publisher country">
             </div>
         </div>
-
-        <div class="form-group">
+        <div class="form-group row">
             <label for="inputIABCategories" class="control-label col-md-2">IAB categories</label>
             <div class="col-md-10">
                 <input type="text" class="form-control" id="inputIABCategories" placeholder="IAB categories">
             </div>
         </div>
-
-        <div class="form-group">
+        <div class="form-group row">
             <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4">Setup config</button>
         </div>
     </form>
