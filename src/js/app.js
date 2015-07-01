@@ -2,8 +2,8 @@
 
 var btApp = angular.module('btApp', [
     'ui.router',
-    'ngResource',
-    'btApp.bidder'
+    'btApp.bidder',
+    'btApp.publisher'
 ]).
 config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
 
@@ -15,10 +15,6 @@ config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRou
         .state('home', {
             url: '/',
             templateUrl: 'partials/home.html'
-        })
-        .state('publisher', {
-            url: '/publisher',
-            templateUrl: 'partials/publisher.html'
         })
 }])
 .controller('HeaderController', ['$scope', '$location', function HeaderController($scope, $location) {
