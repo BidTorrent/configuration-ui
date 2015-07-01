@@ -28,14 +28,21 @@ class Publishers
     {
         list ($query, $params) = $this->schema->get();
 
-        return $this->db->get_rows($query, $params);
+        $rows = $this->db->get_rows($query, $params);
+
+        return array_map(function($row) { return new Publisher($row); }, $rows);
     }
 
-    function get($id)
+    function get($app, $id)
     {
         list ($query, $params) = $this->schema->get(array ('id' => $id));
 
-        return $this->db->get_first($query, $params);
+        $row = $this->db->get_first($query, $params);
+
+        if (!isset($row))
+            $app->halt(404);
+
+        return new Publisher($row);
     }
 
     function post($app)
@@ -87,6 +94,18 @@ class Publishers
             if (!isset($data[$field]))
                 $app->halt(400);
         }
+    }
+}
+
+class Publisher
+{
+    public $id;
+    public $name;
+
+    function __construct($row)
+    {
+        $this->id = (int) $row['id'];
+        $this->name = $row['name'];
     }
 }
 

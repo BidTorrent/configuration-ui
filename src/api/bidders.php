@@ -30,14 +30,21 @@ class Bidders
     {
         list ($query, $params) = $this->schema->get();
 
-        return $this->db->get_rows($query, $params);
+        $rows = $this->db->get_rows($query, $params);
+
+        return array_map(function($row) { return new Bidder($row); }, $rows);
     }
 
-    function get($id)
+    function get($app, $id)
     {
         list ($query, $params) = $this->schema->get(array ('id' => $id));
 
-        return $this->db->get_first($query, $params);
+        $row = $this->db->get_first($query, $params);
+
+        if (!isset($row))
+            $app->halt(404);
+
+        return new Bidder($row);
     }
 
     function post($app)
@@ -89,6 +96,22 @@ class Bidders
             if (!isset($data[$field]))
                 $app->halt(400);
         }
+    }
+}
+
+class Bidder
+{
+    public $id;
+    public $name;
+    public $bidUrl;
+    public $rsaPubKey;
+
+    function __construct($row)
+    {
+        $this->id = (int) $row['id'];
+        $this->name = $row['name'];
+        $this->bidUrl = $row['bidUrl'];
+        $this->rsaPubKey = $row['rsaPubKey'];
     }
 }
 
