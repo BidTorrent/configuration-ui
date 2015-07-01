@@ -35,7 +35,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             },
             function(response) {
                 if(response.status === 409) {
-                    alert("This bidder is " + $scope.registerForm.name + " already registered");
+                    alert("This bidder" + $scope.registerForm.name + " is already registered");
                 } else {
                     alert("Oops! something went wrong, try again later");
                 }
