@@ -10,14 +10,6 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="pubKey" class="control-label col-md-2">Public key</label>
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="pubKey"
-                       placeholder="ex: AAAAB3NzaC1yc2EAAAADAQABAAABAQDUZx8++2BMJJIdbHLovvbi8waakv8v1awlm04aOcHvyC..."
-                       ng-model="registerForm.pubKey">
-            </div>
-        </div>
-        <div class="form-group row">
             <label for="bidRequestUrl" class="control-label col-md-2">Bid request url</label>
             <div class="col-md-10">
                 <input type="text" class="form-control" id="bidUrl"
@@ -26,56 +18,55 @@
             </div>
         </div>
         <div class="form-group row">
-            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="submitRegistration()">
-                Register me
-            </button>
+            <label for="pubKey" class="control-label col-md-2">RSA public key</label>
+            <div class="col-md-10">
+                <textarea class="form-control" id="pubKey"
+                       placeholder="ex: AAAAB3NzaC1yc2EAAAADAQABAAABAQDUZx8++2BMJJIdbHLovvbi8waakv8v1awlm04aOcHvyC..."
+                       ng-model="registerForm.pubKey"></textarea>
+            </div>
         </div>
-    </form>
 
-    <h2><span class="title">Setup your configuration</span> <i class="fa fa-sliders"></i></h2>
-    <form class="bidtorrentForm bidderConfigForm">
+        <h3>Filtering</h3>
         <div class="form-group row">
-            <label for="bidderId" class="control-label col-md-2">Bidder Id</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="bidderId" placeholder="ex: 1234">
+            <label for="inputUserCountries" class="control-label col-md-2">User countries</label>
+            <div class="col-md-2">
+                <select class="form-control" ng-model="registerForm.userCountriesfilterMode">
+                    <option value="except">except</option>
+                    <option value="only">only</option>
+                </select>
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" id="inputUserCountries" placeholder="ex: FR;IT;ES" ng-model="registerForm.userCountriesfilterValue">
             </div>
         </div>
         <div class="form-group row">
-            <label for="bidRequestUrl" class="control-label col-md-2">Bid-Request endpoint</label>
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="bidRequestUrl" placeholder="ex: http://rtb.criteo.com/bidtorrent/auction/request?profile=42">
+            <label for="inputPubCountries" class="control-label col-md-2">Publisher countries</label>
+            <div class="col-md-2">
+                <select class="form-control" ng-model="registerForm.publisherCountriesfilterMode">
+                    <option value="except">except</option>
+                    <option value="only">only</option>
+                </select>
             </div>
-        </div>
-        <div class="form-group row">
-            <label for="notificationUrl" class="control-label col-md-2">Notification endpoint</label>
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="notificationUrl" placeholder="ex: http://rtb.criteo.com/bidtorrent/auction/notify?profile=42">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="inputUserCountry" class="control-label col-md-2">User country</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="inputUserCountry" placeholder="User country">
-            </div>
-            <label for="inputUserLanguage" class="control-label col-md-2">User language</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="inputUserLanguage" placeholder="User language">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="inputPubCountry" class="control-label col-md-2">Publisher country</label>
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="inputPubCountry" placeholder="Publisher country">
+            <div class="col-md-5">
+                <input type="text" class="form-control" id="inputPubCountries" placeholder="ex: FR;IT;ES" ng-model="registerForm.publisherCountriesfilterValue">
             </div>
         </div>
         <div class="form-group row">
             <label for="inputIABCategories" class="control-label col-md-2">IAB categories</label>
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="inputIABCategories" placeholder="IAB categories">
+            <div class="col-md-2">
+                <select class="form-control" ng-model="registerForm.categoriesfilterMode">
+                    <option value="except">except</option>
+                    <option value="only">only</option>
+                </select>
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" id="inputIABCategories" placeholder="ex: IAB25-3;IAB26" ng-model="registerForm.categoriesfilterValue">
             </div>
         </div>
         <div class="form-group row">
-            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4">Setup config</button>
+            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="submitRegistration()">
+                Register me
+            </button>
         </div>
     </form>
 </div>

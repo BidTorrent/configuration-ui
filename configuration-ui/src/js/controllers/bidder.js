@@ -20,7 +20,13 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     $scope.registerForm = {
         name: null,
         bidRequestUrl: null,
-        pubKey: null
+        pubKey: null,
+        userCountriesfilterMode: "except",
+        userCountriesfilterValue: undefined,
+        publisherCountriesfilterMode: "except",
+        publisherCountriesfilterValue: undefined,
+        categoriesfilterMode: "except",
+        categoriesfilterValue: undefined
     };
 
     //Functions
@@ -28,8 +34,8 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         Bidder.save({}, {
             name: $scope.registerForm.name,
             bidUrl: $scope.registerForm.bidRequestUrl,
-            rsaPubKey: $scope.registerForm.pubKey}
-        ).$promise
+            rsaPubKey: $scope.registerForm.pubKey
+        }).$promise
         .then(function() {
                 alert("Successfully registered " + $scope.registerForm.name);
             },
