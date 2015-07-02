@@ -15,7 +15,7 @@ module.exports = function(grunt) {
                         dot: true, //copy hidden files
                         expand: true,
                         cwd: 'src/',
-                        src: ['index.html', 'partials/**/*.html', 'js/**/*.js', 'assets/css/main.css', 'vendors/**', 'api/**'],
+                        src: ['index.html', 'partials/**/*.html', 'js/**/*.js', 'assets/css/main.css', 'assets/images/**', 'vendors/**', 'api/**'],
                         dest: 'bin'
                     }
                 ]
