@@ -1,6 +1,12 @@
 //Home.less
 
 .home {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+
     .main-title {
         text-align: center;
         margin: 200px 0 200px 0;
@@ -53,13 +59,20 @@
         }
     }
 
+    @mainsectionheight: 1000px;
+
     .mainsection {
         background-image: url("../images/bg.jpg");
         background-repeat: none;
         background-size: cover;
+        width: 100%;
+        height: @mainsectionheight;
+        position: fixed;
+        z-index: -1;
     }
 
     .transparency {
+        margin-top: @mainsectionheight;
         background-color: rgb(242, 242, 248);
     }
 
