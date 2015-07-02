@@ -22,32 +22,32 @@
         <div class="form-group row">
             <label class="control-label col-md-2">Type</label>
             <div class="col-md-4">
-                <input type="radio" name="publisherType" value="inapp"> In App
-                <input type="radio" name="publisherType" value="website"> Website
+                <input type="radio" name="type" value="inapp" ng-model="configurationForm.type"> In App
+                <input type="radio" name="type" value="website" ng-model="configurationForm.type"> Website
             </div>
         </div>
         <div class="form-group row">
             <label for="domain" class="control-label col-md-2">Domain</label>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="domain" placeholder="ex: www.domain.com">
+                <input type="text" class="form-control" id="domain" placeholder="ex: www.domain.com" ng-model="configurationForm.domain">
             </div>
         </div>
         <div class="form-group row">
             <label for="country" class="control-label col-md-2">Country (ISO 3166-2)</label>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="country" placeholder="ex: FR">
+                <input type="text" class="form-control" id="country" placeholder="ex: FR" ng-model="configurationForm.country">
             </div>
         </div>
         <div class="form-group row">
             <label for="currency" class="control-label col-md-2">Currency (ISO 4217)</label>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="currency" placeholder="ex: EUR">
+                <input type="text" class="form-control" id="currency" placeholder="ex: EUR" ng-model="configurationForm.currency">
             </div>
         </div>
         <div class="form-group row">
             <label for="timeout" class="control-label col-md-2">Timeout (in ms)</label>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="timeout" placeholder="ex: EUR">
+                <input type="text" class="form-control" id="timeout" placeholder="ex: 500" ng-model="configurationForm.timeout">
             </div>
         </div>
 
@@ -55,19 +55,25 @@
         <div class="form-group row">
             <label for="width" class="control-label col-md-2">Width</label>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="width" placeholder="ex: 200">
+                <input type="text" class="form-control" id="width" placeholder="ex: 200" ng-model="configurationForm.width">
             </div>
         </div>
         <div class="form-group row">
             <label for="height" class="control-label col-md-2">Height</label>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="height" placeholder="ex: 600">
+                <input type="text" class="form-control" id="height" placeholder="ex: 600" ng-model="configurationForm.height">
             </div>
         </div>
         <div class="form-group row">
             <label for="floor" class="control-label col-md-2">Floor</label>
             <div class="col-md-4">
-                <input type="text" class="form-control" id="floor" placeholder="ex: 1.2">
+                <input type="text" class="form-control" id="floor" placeholder="ex: 1.2" ng-model="configurationForm.floor">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="secured" class="control-label col-md-2">Secured</label>
+            <div class="col-md-1">
+                <input type="checkbox" class="form-control" id="secured" ng-model="configurationForm.secured">
             </div>
         </div>
 
@@ -75,17 +81,18 @@
         <div class="form-group row">
             <label for="blacklistedDomains" class="control-label col-md-2">Domains</label>
             <div class="col-md-8">
-                <input type="text" class="form-control" id="blacklistedDomains" placeholder="ex: advertiser1.com;blog.avd2.fr">
+                <input type="text" class="form-control" id="blacklistedDomains" placeholder="ex: advertiser1.com;blog.avd2.fr" ng-model="configurationForm.blacklistedDomains">
             </div>
         </div>
         <div class="form-group row">
-            <label for="blacklistedCategories" class="control-label col-md-2">IAB Categorie</label>
+            <label for="blacklistedCategories" class="control-label col-md-2">IAB Categories</label>
             <div class="col-md-8">
-                <input type="text" class="form-control" id="blacklistedCategories" placeholder="ex: IAB25-3;IAB26">
+                <input type="text" class="form-control" id="blacklistedCategories" placeholder="ex: IAB25-3;IAB26" ng-model="configurationForm.blacklistedCategories">
             </div>
         </div>
         <div class="form-group row">
-            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4">Setup config</button>
+            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="downloadConfig()">Download config</button>
+            <a id="downloadFile" style="display:none" />
         </div>
     </form>
 </div>
