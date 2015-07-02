@@ -9,7 +9,7 @@
                 <input type="text" class="form-control" id="bidderName" placeholder="ex: Criteo" ng-model="registerForm.name">
             </div>
         </div>
-        <div class="form-group row">
+        <div class="form-group row validation">
             <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="submitRegistration()">
                 Register me
             </button>
@@ -17,82 +17,67 @@
     </form>
 
     <h2><span class="title">Setup your configuration</span> <i class="fa fa-sliders"></i></h2>
-    <form class="bidtorrentForm bidderConfigForm">
+    <form>
         <h3>Global info</h3>
         <div class="form-group row">
-            <label class="control-label col-md-2">Type</label>
-            <div class="col-md-4">
-                <input type="radio" name="type" value="inapp" ng-model="configurationForm.type"> In App
-                <input type="radio" name="type" value="website" ng-model="configurationForm.type"> Website
-            </div>
+            <label class="control-label col-md-2 mandatory">Type <i class="fa fa-asterisk"></i> </label>
+            <div class="col-md-2"><input type="radio" name="type" value="inapp" ng-model="configurationForm.type"> In App</div>
+            <div class="col-md-2"><input type="radio" name="type" value="website" ng-model="configurationForm.type"> Website</div>
         </div>
-        <div class="form-group row">
-            <label for="pubDomain" class="control-label col-md-2">Domain</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="pubDomain" placeholder="ex: www.domain.com" ng-model="configurationForm.domain">
-            </div>
+        <div class="form-group">
+            <label for="pubDomain" class="control-label mandatory">Domain <i class="fa fa-asterisk"></i></label>
+            <input type="text" class="form-control" id="pubDomain" placeholder="ex: www.domain.com" ng-model="configurationForm.domain">
         </div>
-        <div class="form-group row">
-            <label for="pubCountry" class="control-label col-md-2">Country (ISO 3166-2)</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="pubCountry" placeholder="ex: FR" ng-model="configurationForm.country">
-            </div>
+        <div class="form-group">
+            <label for="pubCurrency" class="control-label mandatory">Currency (ISO 4217) <i class="fa fa-asterisk"></i></label>
+            <input type="text" class="form-control" id="pubCurrency" placeholder="ex: EUR" ng-model="configurationForm.currency">
         </div>
-        <div class="form-group row">
-            <label for="pubCurrency" class="control-label col-md-2">Currency (ISO 4217)</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="pubCurrency" placeholder="ex: EUR" ng-model="configurationForm.currency">
-            </div>
+        <div class="form-group">
+            <label for="pubCountry" class="control-label">Country (ISO 3166-2)</label>
+            <input type="text" class="form-control" id="pubCountry" placeholder="ex: FR" ng-model="configurationForm.country">
         </div>
-        <div class="form-group row">
-            <label for="pubTimeout" class="control-label col-md-2">Timeout (in ms)</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="pubTimeout" placeholder="ex: 500" ng-model="configurationForm.timeout">
-            </div>
-        </div>
-
-        <h3>Impression</h3>
-        <div class="form-group row">
-            <label for="impWidth" class="control-label col-md-2">Width</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="impWidth" placeholder="ex: 200" ng-model="configurationForm.width">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="impHeight" class="control-label col-md-2">Height</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="impHeight" placeholder="ex: 600" ng-model="configurationForm.height">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="impFloor" class="control-label col-md-2">Floor</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" id="impFloor" placeholder="ex: 1.2" ng-model="configurationForm.floor">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="impSecured" class="control-label col-md-2">Secured</label>
-            <div class="col-md-1">
-                <input type="checkbox" class="form-control" id="impSecured" ng-model="configurationForm.secured">
-            </div>
-        </div>
-
-        <h3>Blacklisting</h3>
-        <div class="form-group row">
-            <label for="pubBlacklistedDomains" class="control-label col-md-2">Domains</label>
-            <div class="col-md-8">
-                <input type="text" class="form-control" id="pubBlacklistedDomains" placeholder="ex: advertiser1.com;blog.avd2.fr" ng-model="configurationForm.blacklistedDomains">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="pubBlacklistedCategories" class="control-label col-md-2">IAB Categories</label>
-            <div class="col-md-8">
-                <input type="text" class="form-control" id="pubBlacklistedCategories" placeholder="ex: IAB25-3;IAB26" ng-model="configurationForm.blacklistedCategories">
-            </div>
-        </div>
-        <div class="form-group row">
-            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="downloadConfig()">Download config</button>
-            <a id="downloadFile" style="display:none" />
+        <div class="form-group">
+            <label for="pubTimeout" class="control-label">Timeout (in ms)</label>
+            <input type="text" class="form-control" id="pubTimeout" placeholder="ex: 500" ng-model="configurationForm.timeout">
         </div>
     </form>
+    <div class="row">
+        <form class="col-md-6">
+            <h3>Impression</h3>
+            <div class="form-group">
+                <label for="impWidth" class="control-label">Width</label>
+                <input type="text" class="form-control" id="impWidth" placeholder="ex: 200" ng-model="configurationForm.width">
+            </div>
+            <div class="form-group">
+                <label for="impHeight" class="control-label">Height</label>
+                <input type="text" class="form-control" id="impHeight" placeholder="ex: 600" ng-model="configurationForm.height">
+            </div>
+            <div class="form-group">
+                <label for="impFloor" class="control-label">Floor</label>
+                <input type="text" class="form-control" id="impFloor" placeholder="ex: 1.2" ng-model="configurationForm.floor">
+            </div>
+            <div class="form-group row">
+                <label for="impSecured" class="control-label col-md-3">Secured </label>
+                <div class="col-md-5"><input type="radio" name="type" value="true" ng-model="configurationForm.secured"> My website support https</div>
+                <div class="col-md-4"><input type="radio" name="type" value="false" ng-model="configurationForm.secured"> I only want http ads</div>
+            </div>
+        </form>
+
+        <form class="col-md-6">
+            <h3>Blacklisting</h3>
+            <div class="form-group">
+                <label for="pubBlacklistedDomains" class="control-label">Domains</label>
+                <input type="text" class="form-control" id="pubBlacklistedDomains" placeholder="ex: advertiser1.com;blog.avd2.fr" ng-model="configurationForm.blacklistedDomains">
+            </div>
+            <div class="form-group">
+                <label for="pubBlacklistedCategories" class="control-label">IAB Categories</label>
+                <input type="text" class="form-control" id="pubBlacklistedCategories" placeholder="ex: IAB25-3;IAB26" ng-model="configurationForm.blacklistedCategories">
+            </div>
+        </form>
+    </div>
+
+    <div class="row validation">
+        <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="downloadConfig()">Download config</button>
+        <a id="downloadFile" style="display:none" />
+    </div>
 </div>
