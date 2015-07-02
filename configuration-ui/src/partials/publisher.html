@@ -65,8 +65,8 @@
     <h2><span class="title">Create the bidding script configuration</span> <i class="fa fa-code"></i></h2>
 
     <div>
+        <h3>First create your configuration</h3>
         <form class="row">
-            <h3>First create your configuration</h3>
             <div class="form-group col-md-12">
                 <label for="auction" class="control-label">Path to self-hosted auction.html</label>
                 <input type="text" class="form-control" id="auction" placeholder="ex: ../src/auction.html" ng-model="dynConfigForm.auction">
@@ -90,11 +90,8 @@
             <div class="form-group col-md-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
                 <label class="control-label">Height</label>
             </div>
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-3">
                 <label class="control-label">Floor</label>
-            </div>
-            <div class="form-group col-md-1">
-                <label class="control-label">&nbsp;</label>
             </div>
         </form>
         <form class="row" ng-repeat="(key, slot) in dynConfigForm.slots">
@@ -120,7 +117,7 @@
                 ng-click="dynConfigForm.slots.push({ element: null, width: null, height: null, floor: null })"><i class="fa fa-plus"></i> Add slot</button>
             </div>
         </form>
-        <p>Simply include the BidTorrent client script and its dynamic configuration to your webpage using:</p>
+        <h3>Then simply include the BidTorrent client script and its dynamic configuration to your webpage</h3>
         <code>
 &lt;script src=&quot;http://bidtorrent.io/client.js&quot;&gt;&lt;/script&gt;<br/>
 &lt;script type=&quot;text/javascript&quot;&gt;<br/>
