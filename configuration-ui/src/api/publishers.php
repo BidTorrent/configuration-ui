@@ -7,7 +7,7 @@ class Publishers
     public $db;
     public $schema;
 
-    static $FIELDS = array('name');
+    static $FIELDS = array('name', 'currency', 'type');
 
     function __construct()
     {
@@ -19,7 +19,12 @@ class Publishers
             array
             (
                 'id'    => array (RedMap\Schema::FIELD_PRIMARY),
-                'name'  => null
+                'name'  => null,
+                'type'  => null,
+                'currency'  => null,
+                'country'  => null,
+                'timeout'  => null,
+                'secured'  => null
             )
         );
     }
@@ -101,11 +106,21 @@ class Publisher
 {
     public $id;
     public $name;
+    public $type;
+    public $currency;
+    public $country;
+    public $timeout;
+    public $secured;
 
     function __construct($row)
     {
         $this->id = (int) $row['id'];
         $this->name = $row['name'];
+        $this->type = $row['type'];
+        $this->currency = $row['currency'];
+        $this->country = $row['country'];
+        $this->timeout = isset($row['timeout']) ? (int) $row['timeout'] : 400;
+        $this->secured = isset($row['secured']) ? (bool) $row['secured'] : false;
     }
 }
 
