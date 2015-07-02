@@ -94,6 +94,14 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         element.click();
     };
 
+    // Validation methods
+    $scope.isStrictPositiveInt = function(value) {
+        return !isNaN(value) &&
+               parseInt(Number(value)) == value &&
+               !isNaN(parseInt(value, 10)) &&
+               value > 0;
+    }
+
     var hashCode = function(str){
         var hash = 0;
         if (!str || str.length == 0) return hash;

@@ -19,16 +19,16 @@
     <h2><span class="title">Setup your configuration</span> <i class="fa fa-sliders"></i></h2>
     <form>
         <h3>Global info</h3>
-        <div class="form-group row">
+        <div class="form-group row" ng-class="[{'has-error' : !configurationForm.type}]">
             <label class="control-label col-md-2 mandatory">Type <i class="fa fa-asterisk"></i> </label>
             <div class="col-md-2"><input type="radio" name="type" value="inapp" ng-model="configurationForm.type"> In App</div>
             <div class="col-md-2"><input type="radio" name="type" value="website" ng-model="configurationForm.type"> Website</div>
         </div>
-        <div class="form-group">
+        <div class="form-group" ng-class="[{'has-error' : !configurationForm.domain}]">
             <label for="pubDomain" class="control-label mandatory">Domain <i class="fa fa-asterisk"></i></label>
             <input type="text" class="form-control" id="pubDomain" placeholder="ex: www.domain.com" ng-model="configurationForm.domain">
         </div>
-        <div class="form-group">
+        <div class="form-group" ng-class="[{'has-error' : !configurationForm.currency}]">
             <label for="pubCurrency" class="control-label mandatory">Currency (ISO 4217) <i class="fa fa-asterisk"></i></label>
             <input type="text" class="form-control" id="pubCurrency" placeholder="ex: EUR" ng-model="configurationForm.currency">
         </div>
@@ -36,7 +36,7 @@
             <label for="pubCountry" class="control-label">Country (ISO 3166-2)</label>
             <input type="text" class="form-control" id="pubCountry" placeholder="ex: FR" ng-model="configurationForm.country">
         </div>
-        <div class="form-group">
+        <div class="form-group" ng-class="[{'has-error' : configurationForm.timeout && !isStrictPositiveInt(configurationForm.timeout)}]">
             <label for="pubTimeout" class="control-label">Timeout (in ms)</label>
             <input type="text" class="form-control" id="pubTimeout" placeholder="ex: 500" ng-model="configurationForm.timeout">
         </div>
@@ -44,11 +44,11 @@
     <div class="row">
         <form class="col-md-6">
             <h3>Impression</h3>
-            <div class="form-group">
+            <div class="form-group" ng-class="[{'has-error' : configurationForm.width && !isStrictPositiveInt(configurationForm.width)}]">
                 <label for="impWidth" class="control-label">Width</label>
                 <input type="text" class="form-control" id="impWidth" placeholder="ex: 200" ng-model="configurationForm.width">
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-class="[{'has-error' : configurationForm.height && !isStrictPositiveInt(configurationForm.height)}]">
                 <label for="impHeight" class="control-label">Height</label>
                 <input type="text" class="form-control" id="impHeight" placeholder="ex: 600" ng-model="configurationForm.height">
             </div>
@@ -77,7 +77,8 @@
     </div>
 
     <div class="row validation">
-        <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="downloadConfig()">Download config</button>
+        <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4"
+                ng-click="downloadConfig()" ng-disabled="!(configurationForm.type && configurationForm.domain && configurationForm.currency)">Download config</button>
         <a id="downloadFile" style="display:none" />
     </div>
 </div>
