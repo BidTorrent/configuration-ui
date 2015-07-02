@@ -214,7 +214,7 @@ class PublisherFilter
 
     function __construct($row)
     {
-        $this->type = (int) $row['type'];
+        $this->type = $row['type'];
         $this->publisher = (int) $row['publisher'];
         $this->mode = $row['mode'];
         $this->value = explode(";", $row['value']);
