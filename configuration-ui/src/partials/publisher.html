@@ -64,8 +64,8 @@
 
     <h2><span class="title">Create the bidding script configuration</span> <i class="fa fa-code"></i></h2>
 
-    <div class="row">
-        <form>
+    <div>
+        <form class="row">
             <h3>First create your configuration</h3>
             <div class="form-group col-md-12">
                 <label for="auction" class="control-label">Path to self-hosted auction.html</label>
@@ -79,21 +79,45 @@
                 <label for="config" class="control-label">Path to self-hosted config.json</label>
                 <input type="text" class="form-control" id="config" placeholder="ex: ../src/config.json" ng-model="dynConfigForm.config">
             </div>
+        </form>
+        <form class="row">
             <div class="form-group col-md-3">
-                <label for="impFloor" class="control-label">Element DOM id</label>
-                <input type="text" class="form-control" id="impFloor" placeholder="ex: desktop_ad_top" ng-model="dynConfigForm.imp[0].element">
+                <label class="control-label">Element DOM id</label>
             </div>
-            <div class="form-group col-md-3" ng-class="[{'has-error' : dynConfigForm.imp[0].width && !isStrictPositiveInt(dynConfigForm.imp[0].width)}]">
-                <label for="impWidth" class="control-label">Width</label>
-                <input type="text" class="form-control" id="impWidth" placeholder="ex: 200" ng-model="dynConfigForm.imp[0].width">
+            <div class="form-group col-md-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
+                <label class="control-label">Width</label>
             </div>
-            <div class="form-group col-md-3" ng-class="[{'has-error' : dynConfigForm.imp[0].height && !isStrictPositiveInt(dynConfigForm.imp[0].height)}]">
-                <label for="impHeight" class="control-label">Height</label>
-                <input type="text" class="form-control" id="impHeight" placeholder="ex: 600" ng-model="dynConfigForm.imp[0].height">
+            <div class="form-group col-md-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
+                <label class="control-label">Height</label>
             </div>
+            <div class="form-group col-md-2">
+                <label class="control-label">Floor</label>
+            </div>
+            <div class="form-group col-md-1">
+                <label class="control-label">&nbsp;</label>
+            </div>
+        </form>
+        <form class="row" ng-repeat="(key, slot) in dynConfigForm.slots">
             <div class="form-group col-md-3">
-                <label for="impFloor" class="control-label">Floor</label>
-                <input type="text" class="form-control" id="impFloor" placeholder="ex: 1.2" ng-model="dynConfigForm.imp[0].floor">
+                <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="slot.element">
+            </div>
+            <div class="form-group col-md-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
+                <input type="text" class="form-control" placeholder="ex: 200" ng-model="slot.width">
+            </div>
+            <div class="form-group col-md-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
+                <input type="text" class="form-control" placeholder="ex: 600" ng-model="slot.height">
+            </div>
+            <div class="form-group col-md-2">
+                <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="slot.floor">
+            </div>
+            <div class="form-group col-md-1">
+                <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="dynConfigForm.slots.splice(key, 1)"><i class="fa fa-minus"></i></button>
+            </div>
+        </form>
+        <form class="row">
+            <div class="form-group col-md-12">
+               <button type="submit" class="btn btn-md btn-success col-md-2"
+                ng-click="dynConfigForm.slots.push({ element: null, width: null, height: null, floor: null })"><i class="fa fa-plus"></i> Add slot</button>
             </div>
         </form>
         <p>Simply include the BidTorrent client script and its dynamic configuration to your webpage using:</p>
@@ -104,7 +128,11 @@
 <span ng-if="dynConfigForm.auction">&nbsp;&nbsp;&nbsp;&nbsp;auction:&nbsp;&nbsp;    &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
 <span ng-if="dynConfigForm.bidders">&nbsp;&nbsp;&nbsp;&nbsp;bidders:&nbsp;&nbsp;    &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
 <span ng-if="dynConfigForm.config">&nbsp;&nbsp;&nbsp;&nbsp;config:&nbsp;&nbsp;     &#39;{{dynConfigForm.config}}&#39;, //Optionnal if you want to host your own<br/></span>
-&nbsp;&nbsp;&nbsp;&nbsp;slots:&nbsp;&nbsp;      [{element: &#39;{{dynConfigForm.imp[0].element}}&#39;, width: &#39;{{dynConfigForm.imp[0].width}}&#39;, height: &#39;{{dynConfigForm.imp[0].height}}&#39;, floor: &#39;{{dynConfigForm.imp[0].floor}}&#39;}] //List of ad slots by Id<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;slots:&nbsp;&nbsp;[ //List of ad slots by Id<br/>
+<span ng-repeat="slot in dynConfigForm.slots">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ element: &#39;{{slot.element}}&#39;<span ng-if="slot.width">, width: {{slot.width}}</span><span ng-if="slot.height">, height: {{slot.height}}</span><span ng-if="slot.floor">, floor: {{slot.floor}}</span> },<br/>
+</span>
+&nbsp;&nbsp;&nbsp;&nbsp;]<br/>
 &nbsp;&nbsp;});<br/>
 &lt;/script&gt;
         </code>
