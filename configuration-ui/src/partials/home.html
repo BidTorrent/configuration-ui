@@ -1,4 +1,4 @@
-<div class="home">
+<div class="home" id="section0">
     <div class="mainsection section">
         <div class="container">
             <div class="row main-title">
@@ -6,7 +6,7 @@
                 <p class="lead">BidTorrent is a browser-hosted RTB allowing you to cut third party fees and have full control on the
                 bid process</p>
             </div>
-            <div class="row choose-user">
+            <div class="row">
                 <div class="col-sm-6">
                     <a class="col-md-offset-4 col-sm-4 btn btn-lg btn-success " ui-sref="publisher" role="button">I'm a publisher</a>
                 </div>
@@ -14,10 +14,13 @@
                     <a class="col-md-offset-4 col-sm-4 btn btn-lg btn-success" ui-sref="bidder" role="button">I'm a bidder</a>
                 </div>
             </div>
+            <div class="row scroll-arrow">
+                <i scroll-to="section2" duration="1000" stopOnUserScroll="true" class="fa fa-chevron-circle-down"></i>
+            </div>
         </div>
     </div>
 
-    <div class="transparency section">
+    <div class="transparency section" id="section2">
         <div class="container">
             <div class="row subtitle">
                 <h2>Full transparency</h2>
@@ -26,10 +29,13 @@
             <div class="row">
                 <p>The entire BidTorrent protocol is public and the auction client is open source.</p>
             </div>
+            <div class="row scroll-arrow">
+                <i scroll-to="section3" duration="1000" stopOnUserScroll="true" class="fa fa-chevron-circle-down"></i>
+            </div>
         </div>
     </div>
 
-    <div class="intermediaries section">
+    <div class="intermediaries section" id="section3">
         <div class="container">
             <div class="row subtitle">
                 <h2>Less intermediaries</h2>
@@ -38,10 +44,13 @@
             <div class="row">
                 <p>Call directly the bidders, run the ads auction client side avoiding RTB fees.</p>
             </div>
+            <div class="row scroll-arrow">
+                <i scroll-to="section4" duration="1000" stopOnUserScroll="true" class="fa fa-chevron-circle-down"></i>
+            </div>
         </div>
     </div>
 
-    <div class="control section">
+    <div class="control section" id="section4">
         <div class="container">
             <div class="row subtitle">
                 <h2>Full control</h2>
@@ -50,10 +59,13 @@
             <div class="row">
                 <p>As a bidder or publisher, easily create your own configuration on BidTorrent.io. We can even host it for you.</p>
             </div>
+            <div class="row scroll-arrow">
+                <i scroll-to="section5" duration="1000" stopOnUserScroll="true" class="fa fa-chevron-circle-down"></i>
+            </div>
         </div>
     </div>
 
-    <div class="plugAndPlay section">
+    <div class="plugAndPlay section" id="section5">
         <div class="container">
             <div class="row subtitle">
                 <h2>Plug & Play</h2>
@@ -64,6 +76,10 @@
                 <p>Easy to integrate! As publisher just plug our script directly to your page.</p>
                 <img src="assets/images/includescript.PNG" alt="includescript">
                 <p>Create your configuration on our website, and specify it to the script.</p>
+            </div>
+
+            <div class="row scroll-arrow">
+                <i scroll-to="section0" duration="1000" stopOnUserScroll="true" class="fa fa-chevron-circle-up"></i>
             </div>
         </div>
     </div>

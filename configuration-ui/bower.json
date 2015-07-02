@@ -22,7 +22,9 @@
     "angular-resource": "~1.4.1",
     "bootstrap": "~3.3.5",
     "oauth-ng": "~0.4.2",
-    "bootstrap-autohidingnavbar": "~1.0.0"
+    "bootstrap-autohidingnavbar": "~1.0.0",
+    "ng-notify": "~0.6.2",
+    "ngSmoothScroll": "~1.7.1"
   },
   "resolutions": {
     "angular": "~1.4.1"

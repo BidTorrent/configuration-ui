@@ -11,7 +11,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         })
 }])
 
-.controller('PublisherCtrl', ['$scope', '$resource', function($scope, $resource) {
+.controller('PublisherCtrl', ['$scope', '$resource', 'ngNotify', function($scope, $resource, ngNotify) {
 
     //Resources
     var Publisher = $resource('/api/publishers/:publisherId', {publisherId:'@id'});
@@ -41,13 +41,13 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     $scope.submitRegistration = function() {
         Publisher.save({}, { name: $scope.registerForm.name }).$promise
         .then(function() {
-                alert("Successfully registered " + $scope.registerForm.name);
+                ngNotify.set("Successfully registered " + $scope.registerForm.name, "success");
             },
             function(response) {
                 if(response.status === 409) {
-                    alert("This publisher " + $scope.registerForm.name + " is already registered");
+                    ngNotify.set("This publisher " + $scope.registerForm.name + " is already registered", "error");
                 } else {
-                    alert("Oops! something went wrong, try again later");
+                    ngNotify.set("Oops! something went wrong, try again later", "error");
                 }
             }
         );

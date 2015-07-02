@@ -11,7 +11,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         })
 }])
 
-.controller('BidderCtrl', ['$scope', '$resource', function($scope, $resource) {
+.controller('BidderCtrl', ['$scope', '$resource', 'ngNotify', function($scope, $resource, ngNotify) {
 
     //Resources
     var Bidder = $resource('/api/bidders/:bidderId', {bidderId:'@id'});
@@ -37,13 +37,13 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             rsaPubKey: $scope.registerForm.pubKey
         }).$promise
         .then(function() {
-                alert("Successfully registered " + $scope.registerForm.name);
+                ngNotify.set("Successfully registered " + $scope.registerForm.name, "success");
             },
             function(response) {
                 if(response.status === 409) {
-                    alert("This bidder" + $scope.registerForm.name + " is already registered");
+                    ngNotify.set("This bidder" + $scope.registerForm.name + " is already registered", "error");
                 } else {
-                    alert("Oops! something went wrong, try again later");
+                    ngNotify.set("Oops! something went wrong, try again later", "error");
                 }
             }
         );
