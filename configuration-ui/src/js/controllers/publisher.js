@@ -23,19 +23,26 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         pubKey: null
     };
 
-    $scope.configurationForm = {
+    $scope.staticConfigForm = {
         type: undefined,
         domain: undefined,
         country: undefined,
         currency: undefined,
         timeout: undefined,
-        width: undefined,
-        height: undefined,
-        floor: undefined,
+        //width: undefined,
+        //height: undefined,
+        //floor: undefined,
         secured: undefined,
         blacklistedDomains: undefined,
         blacklistedCategories: undefined
     };
+
+    $scope.dynConfigForm = {
+        auction: null,
+        bidders: null,
+        config: null,
+        slots: [{ element: null, width: null, height: null, floor: null }]
+    }
 
     //Functions
     $scope.submitRegistration = function() {
@@ -58,15 +65,15 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         var website;
 
         var globalConfig = {
-            domain: $scope.configurationForm.domain,
+            domain: $scope.staticConfigForm.domain,
             publisher: {
-                id: hashCode($scope.configurationForm.domain),
-                name: $scope.configurationForm.domain,
-                country: $scope.configurationForm.country
+                id: hashCode($scope.staticConfigForm.domain),
+                name: $scope.staticConfigForm.domain,
+                country: $scope.staticConfigForm.country
             }
         };
 
-        if ($scope.configurationForm.type == "inapp")
+        if ($scope.staticConfigForm.type == "inapp")
             app = globalConfig;
         else
             website = globalConfig;
@@ -74,17 +81,17 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         var config = {
             app: app,
             site: website,
-            badv: $scope.configurationForm.blacklistedDomains ? $scope.configurationForm.blacklistedDomains.split(";") : [],
-            bcat: $scope.configurationForm.blacklistedCategories ? $scope.configurationForm.blacklistedCategories.split(";") : [],
-            cur: $scope.configurationForm.currency,
+            badv: $scope.staticConfigForm.blacklistedDomains ? $scope.staticConfigForm.blacklistedDomains.split(";") : [],
+            bcat: $scope.staticConfigForm.blacklistedCategories ? $scope.staticConfigForm.blacklistedCategories.split(";") : [],
+            cur: $scope.staticConfigForm.currency,
             imp: {
                 banner: {
 
                 },
-                bidFloor: $scope.configurationForm.floor,
-                secure: $scope.configurationForm.secured
+                //bidFloor: $scope.staticConfigForm.floor,
+                secure: $scope.staticConfigForm.secured
             },
-            timeout: $scope.configurationForm.timeout
+            timeout: $scope.staticConfigForm.timeout
         };
 
         var json = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
