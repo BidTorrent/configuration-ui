@@ -24,6 +24,6 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($s
 }])
 .run([function() {
     $(".navbar-fixed-top").autoHidingNavbar({
-        // see next for specifications
+        // see specifications here : https://github.com/istvan-ujjmeszaros/bootstrap-autohidingnavbar
     });
 }]);
