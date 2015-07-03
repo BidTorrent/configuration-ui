@@ -27,7 +27,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         type: undefined,
         domain: undefined,
         country: undefined,
-        currency: undefined,
         timeout: undefined,
         //width: undefined,
         //height: undefined,
