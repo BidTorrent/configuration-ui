@@ -206,11 +206,11 @@ class Publishers
             $publisherConfig['country'] = $publisher->country;
 
         $blacklistedCategories = $this->_getFilterValue($publisher->filters, 'iab_category');
-        if (isset($blacklistedCategories) ) 
+        if (isset($blacklistedCategories))
             $config['bcat'] = $blacklistedCategories;
 
         $blacklistedDomains = $this->_getFilterValue($publisher->filters, 'domain');
-        if (isset($blacklistedDomains) ) 
+        if (isset($blacklistedDomains))
             $config['badv'] = $blacklistedDomains;
 
         $config[$globalConfigKey] = array('publisher' => $publisherConfig);

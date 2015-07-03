@@ -39,7 +39,7 @@ class Bidders
         );
     }
 
-    function getAll()
+    function getAll($app)
     {
         // Get filters
         list ($filtersQuery, $filtersParams) = $this->filterSchema->get();
@@ -61,7 +61,9 @@ class Bidders
         list ($query, $params) = $this->bidderSchema->get();
         $rows = $this->db->get_rows($query, $params);
 
-        return array_map(function($row) use ($biddersFilters)
+        // Format the response
+        $uiFormat = $app->request()->get('format') == 'ui';
+        return array_map(function($row) use ($biddersFilters, $uiFormat)
         {
             $filters = array();
             $bidderId = (int)$row['id'];
@@ -69,7 +71,11 @@ class Bidders
             if (isset($biddersFilters[$bidderId]))
                 $filters = $biddersFilters[$bidderId];
 
-            return new Bidder($row, $filters);
+            $bidder = new Bidder($row, $filters);
+            if ($uiFormat)
+                return $bidder;
+
+            return $this->_format($bidder);
         }, $rows);
     }
 
@@ -87,7 +93,59 @@ class Bidders
         if (!isset($row))
             $app->halt(404);
 
-        return new Bidder($row, $filters);
+        $bidder = new Bidder($row, $filters);
+        if ($app->request()->get('format') == 'ui')
+            return $bidder;
+
+        return $this->_format($bidder);
+    }
+
+    // Format the bidder to match the config needed by the client script
+    private function _format($bidder)
+    {
+        $filters = array();
+
+        if ($bidder->sampling != 100)
+            $filters['sampling'] = $bidder->sampling;
+
+        $config = array();
+        $config['id'] = $bidder->id;
+        $config['bid_ep'] = $bidder->bidUrl;
+        $config['key'] = $bidder->rsaPubKey;
+
+        $filters = $this->_getFiltersConfig($bidder, array
+        (
+            'publisher_domain' => 'pub',
+            'publisher_country' => 'pub_ctry',
+            'user_country' => 'user_ctry',
+            'iab_category' => 'cat'
+        ));
+
+        if (isset($filters) && count($filters) > 0)
+            $config['filters'] = $filters;
+
+        return $config;
+    }
+
+    private function _getFiltersConfig($bidder, $filterTypesAndKeys)
+    {
+        $config = array();
+        foreach ($bidder->filters as $filter)
+        {
+            if (isset($filterTypesAndKeys[$filter->type]))
+            {
+                $key = $filterTypesAndKeys[$filter->type];
+                $config[$key] = $filter->value;
+
+                if ($filter->mode == 'inclusive')
+                    $config[$key . '_wl'] = true;
+            }
+        }
+
+        if ($bidder->sampling < 100)
+            $config['sampling'] = $bidder->sampling;
+
+        return $config;
     }
 
     function post($app)

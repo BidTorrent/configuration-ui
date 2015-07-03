@@ -8,7 +8,7 @@ $app = new \Slim\Slim();
 $app->config('debug', false);
 
 $bidders = new Bidders();
-$app->get('/bidders/', function () use ($app, $bidders) { display_result($app, $bidders->getAll()); });
+$app->get('/bidders/', function () use ($app, $bidders) { display_result($app, $bidders->getAll($app)); });
 $app->get('/bidders/:id', function ($id) use ($app, $bidders) { display_result($app, $bidders->get($app, $id)); });
 $app->delete('/bidders/:id', function ($id) use ($app, $bidders) { $bidders->delete($app, $id); });
 $app->put('/bidders/:id', function ($id) use ($app, $bidders) { $bidders->put($app, $id); });
