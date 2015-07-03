@@ -137,7 +137,13 @@ class Publishers
 
         // Update publisher
         list ($query, $params) = $this->publisherSchema->set(RedMap\Schema::SET_UPDATE, $publisher);
-        $result = $this->db->execute($query, $params);
+        $pubUpdateResult = $this->db->execute($query, $params);
+
+        if (!isset($pubUpdateResult))
+            $app->halt(500);
+
+        if ($pubUpdateResult == 0)
+            $app->halt(404);
 
         // Delete publisher's filters
         list ($query, $params) = $this->filterSchema->delete(array ('publisher' => $id));
@@ -149,12 +155,6 @@ class Publishers
             list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
             $result = $this->db->execute($query, $params);
         }
-
-        if (!isset($result))
-            $app->halt(500);
-
-        if ($result == 0)
-            $app->halt(404);
     }
 
     function delete($app, $id)

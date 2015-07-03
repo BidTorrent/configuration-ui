@@ -5,7 +5,8 @@ require_once('vendor/redmap/main/src/drivers/mysqli.php');
 class Bidders
 {
     public $db;
-    public $schema;
+    public $bidderSchema;
+    public $filterSchema;
 
     static $FIELDS = array('name', 'bidUrl', 'rsaPubKey');
 
@@ -13,7 +14,7 @@ class Bidders
     {
         $this->db = new RedMap\Drivers\MySQLiDriver('UTF8');
         $this->db->connect('bidtorrent', 'hack@thon', 'bidtorrent');
-        $this->schema = new RedMap\Schema
+        $this->bidderSchema = new RedMap\Schema
         (
             'bidders',
             array
@@ -24,65 +25,143 @@ class Bidders
                 'rsaPubKey' => null
             )
         );
+        $this->filterSchema = new RedMap\Schema
+        (
+            'bidders_filters',
+            array
+            (
+                'type'    => array (RedMap\Schema::FIELD_PRIMARY),
+                'bidder'  => array (RedMap\Schema::FIELD_PRIMARY),
+                'mode'  => null,
+                'value'  => null
+            )
+        );
     }
 
     function getAll()
     {
-        list ($query, $params) = $this->schema->get();
+        // Get filters
+        list ($filtersQuery, $filtersParams) = $this->filterSchema->get();
+        $filterRows = $this->db->get_rows($filtersQuery, $filtersParams);
 
+        $filters = array_map(function($row) { return new BidderFilter($row); }, $filterRows);
+        $biddersFilters = array();
+        foreach ($filters as $filter)
+        {
+            $bidderFilters = array();
+            if (isset($biddersFilters[$filter->bidder]))
+                $bidderFilters = $biddersFilters[$filter->bidder];
+
+            array_push($bidderFilters, $filter);
+            $biddersFilters[$filter->bidder] = $bidderFilters;
+        }
+
+        // Get bidders
+        list ($query, $params) = $this->bidderSchema->get();
         $rows = $this->db->get_rows($query, $params);
 
-        return array_map(function($row) { return new Bidder($row); }, $rows);
+        return array_map(function($row) use ($biddersFilters)
+        {
+            $filters = array();
+            $bidderId = (int)$row['id'];
+
+            if (isset($biddersFilters[$bidderId]))
+                $filters = $biddersFilters[$bidderId];
+
+            return new Bidder($row, $filters);
+        }, $rows);
     }
 
     function get($app, $id)
     {
-        list ($query, $params) = $this->schema->get(array ('id' => $id));
+        // Get filters
+        list ($filtersQuery, $filtersParams) = $this->filterSchema->get(array ('bidder' => $id));
+        $filterRows = $this->db->get_rows($filtersQuery, $filtersParams);
+        $filters = array_map(function($row) { return new BidderFilter($row); }, $filterRows);
 
+        // Get bidder
+        list ($query, $params) = $this->bidderSchema->get(array ('id' => $id));
         $row = $this->db->get_first($query, $params);
 
         if (!isset($row))
             $app->halt(404);
 
-        return new Bidder($row);
+        return new Bidder($row, $filters);
     }
 
     function post($app)
     {
         $request = $app->request();
         $body = $request->getBody();
-        $bidder = json_decode($body, true);
+        $bidderWithFilters = json_decode($body, true);
+
+        // Split bidder & its filters
+        $filters = $bidderWithFilters['filters'];
+        unset($bidderWithFilters['filters']);
+        $bidder = $bidderWithFilters;
 
         $this->_validate($app, $bidder);
 
-        list ($query, $params) = $this->schema->set(RedMap\Schema::SET_INSERT, $bidder);
-        $result = $this->db->execute($query, $params);
+        // Add bidder
+        list ($query, $params) = $this->bidderSchema->set(RedMap\Schema::SET_INSERT, $bidder);
+        $insertedBidderId = $this->db->insert($query, $params);
 
-        if (!isset($result) || $result == 0)
+        if (!isset($insertedBidderId))
             $app->halt(409);
+
+        // Add filters
+        foreach ($filters as $filter) {
+            $filter['bidder'] = $insertedBidderId;
+            list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
+            $result = $this->db->insert($query, $params);
+
+            if (!isset($result))
+                $app->halt(409);
+        }
     }
 
     function put($app, $id)
     {
         $request = $app->request();
         $body = $request->getBody();
-        $bidder = json_decode($body, true);
-        $bidder['id'] = $id;
+        $bidderWithFilters = json_decode($body, true);
+        $bidderWithFilters['id'] = $id;
 
-        list ($query, $params) = $this->schema->set(RedMap\Schema::SET_UPDATE, $bidder);
-        $result = $this->db->execute($query, $params);
+        // Split bidder & its filters
+        $filters = $bidderWithFilters['filters'];
+        unset($bidderWithFilters['filters']);
+        $bidder = $bidderWithFilters;
 
-        if (!isset($result))
+        // Update bidder
+        list ($query, $params) = $this->bidderSchema->set(RedMap\Schema::SET_UPDATE, $bidder);
+        $bidderUpdateResult = $this->db->execute($query, $params);
+
+        if (!isset($bidderUpdateResult))
             $app->halt(500);
 
-        if ($result == 0)
+        if ($bidderUpdateResult == 0)
             $app->halt(404);
+
+        // Delete bidder's filters
+        list ($query, $params) = $this->filterSchema->delete(array ('bidder' => $id));
+        $this->db->execute($query, $params);
+
+        // Add new filters
+        foreach ($filters as $filter) {
+            $filter['bidder'] = $id;
+            list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
+            $result = $this->db->execute($query, $params);
+        }
     }
 
     function delete($app, $id)
     {
-        list ($query, $params) = $this->schema->delete(array ('id' => $id));
+        // Delete bidder's filters
+        list ($query, $params) = $this->filterSchema->delete(array ('bidder' => $id));
+        $this->db->execute($query, $params);
 
+        // Delete bidder
+        list ($query, $params) = $this->bidderSchema->delete(array ('id' => $id));
         $result = $this->db->execute($query, $params);
 
         if (!isset($result) || $result == 0)
@@ -105,13 +184,31 @@ class Bidder
     public $name;
     public $bidUrl;
     public $rsaPubKey;
+    public $filters;
 
-    function __construct($row)
+    function __construct($row, $filters)
     {
         $this->id = (int) $row['id'];
         $this->name = $row['name'];
         $this->bidUrl = $row['bidUrl'];
         $this->rsaPubKey = $row['rsaPubKey'];
+        $this->filters = $filters;
+    }
+}
+
+class BidderFilter
+{
+    public $type;
+    public $bidder;
+    public $mode;
+    public $value;
+
+    function __construct($row)
+    {
+        $this->type = $row['type'];
+        $this->bidder = (int) $row['bidder'];
+        $this->mode = $row['mode'];
+        $this->value = explode(";", $row['value']);
     }
 }
 
