@@ -22,7 +22,8 @@ class Bidders
                 'id'    => array (RedMap\Schema::FIELD_PRIMARY),
                 'name'  => null,
                 'bidUrl' => null,
-                'rsaPubKey' => null
+                'rsaPubKey' => null,
+                'sampling' => null
             )
         );
         $this->filterSchema = new RedMap\Schema
@@ -192,6 +193,7 @@ class Bidder
     public $name;
     public $bidUrl;
     public $rsaPubKey;
+    public $sampling;
     public $filters;
 
     function __construct($row, $filters)
@@ -200,6 +202,7 @@ class Bidder
         $this->name = $row['name'];
         $this->bidUrl = $row['bidUrl'];
         $this->rsaPubKey = $row['rsaPubKey'];
+        $this->sampling = $row['sampling'];
         $this->filters = $filters;
     }
 }
