@@ -1,7 +1,24 @@
 <div class="bidtorrentPage container">
     <h1>Publishers</h1>
 
-    <h2><span class="title">Register as a Publisher</span> <i class="fa fa-space-shuttle"></i></h2>
+    <h2>What type of integration do you need?</h2>
+
+    <div class="row chooseType">
+        <div class="col-xs-offset-2 col-xs-8">
+            <button class="btn btn-lg btn-primary choose-type-btn col-xs-5"
+                    ng-class="{active: staticConfigForm.isTypeWebsite}"
+                    ng-click="staticConfigForm.isTypeWebsite=!staticConfigForm.isTypeWebsite">Website</button>
+            <div class="col-xs-2 iconContainer">
+                <i class="fa fa-file-code-o" ng-if="staticConfigForm.isTypeWebsite"></i>
+                <i class="fa fa-mobile" ng-if="!staticConfigForm.isTypeWebsite"></i>
+            </div>
+            <button class="btn btn-lg btn-primary choose-type-btn col-xs-5"
+                    ng-class="{active : !staticConfigForm.isTypeWebsite}"
+                    ng-click="staticConfigForm.isTypeWebsite=!staticConfigForm.isTypeWebsite">In App</button>
+        </div>
+    </div>
+
+    <h2>Register as a Publisher <i class="fa fa-space-shuttle"></i></h2>
     <form class="bidtorrentForm bidderRegisterForm">
         <div class="form-group row">
             <label for="bidderName" class="control-label col-md-2">Name</label>
@@ -16,7 +33,7 @@
         </div>
     </form>
 
-    <h2><span class="title">Setup your static configuration</span> <i class="fa fa-sliders"></i></h2>
+    <h2>Setup your static configuration <i class="fa fa-sliders"></i></h2>
     <div class="row">
         <form class="col-md-6">
             <h3>Global info</h3>
@@ -27,11 +44,6 @@
             <div class="form-group" ng-class="[{'has-error' : staticConfigForm.timeout && !isStrictPositiveInt(staticConfigForm.timeout)}]">
                 <label for="pubTimeout" class="control-label">Timeout (in ms)</label>
                 <input type="text" class="form-control" id="pubTimeout" placeholder="ex: 500" ng-model="staticConfigForm.timeout">
-            </div>
-            <div class="form-group row" ng-class="[{'has-error' : !staticConfigForm.type}]">
-                <label class="control-label col-md-2 mandatory">Type <i class="fa fa-asterisk"></i> </label>
-                <div class="col-md-2"><input type="radio" name="type" value="inapp" ng-model="staticConfigForm.type"> In App</div>
-                <div class="col-md-3"><input type="radio" name="type" value="website" ng-model="staticConfigForm.type"> Website</div>
             </div>
         </form>
         <form class="col-md-6">
@@ -54,14 +66,60 @@
 
     <div class="row validation">
         <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4"
-                ng-click="downloadConfig()" ng-disabled="!(staticConfigForm.type && staticConfigForm.currency)">Download config</button>
+                ng-click="downloadConfig()">Download config</button>
         <a id="downloadFile" style="display:none"></a>
     </div>
 
-    <h2><span class="title">Create the bidding script configuration</span> <i class="fa fa-code"></i></h2>
+    <h2>Create the bidding script configuration <i class="fa fa-code"></i></h2>
 
     <div class="row">
         <h3><b>1.</b> Create your configuration</h3>
+
+
+        <!-- MANDATORY SETTINGS -->
+
+        <div class="mandatorySettings well">
+            <h4>Mandatory Settings</h4>
+
+            <form class="row">
+                <div class="form-group col-xs-3">
+                    <label class="control-label">Element DOM id</label>
+                </div>
+                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
+                    <label class="control-label">Width</label>
+                </div>
+                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
+                    <label class="control-label">Height</label>
+                </div>
+                <div class="form-group col-xs-3">
+                    <label class="control-label">Floor</label>
+                </div>
+            </form>
+            <form class="row" ng-repeat="(key, slot) in dynConfigForm.slots">
+                <div class="form-group col-xs-3">
+                    <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="slot.element">
+                </div>
+                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
+                    <input type="text" class="form-control" placeholder="ex: 200" ng-model="slot.width">
+                </div>
+                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
+                    <input type="text" class="form-control" placeholder="ex: 600" ng-model="slot.height">
+                </div>
+                <div class="form-group col-xs-2">
+                    <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="slot.floor">
+                </div>
+                <div class="form-group col-xs-1">
+                    <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="dynConfigForm.slots.splice(key, 1)"><i class="fa fa-minus"></i></button>
+                </div>
+            </form>
+            <form class="row">
+                <div class="form-group col-md-12">
+                   <button type="submit" class="btn btn-md btn-success col-md-2"
+                    ng-click="dynConfigForm.slots.push({ element: null, width: null, height: null, floor: null })"><i class="fa fa-plus"></i> Add slot</button>
+                </div>
+            </form>
+        </div>
+        <!-- END MANDATORY SETTINGS-->
 
         <!-- ADVANCED SETTINGS -->
         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#advancedSettings" aria-expanded="false" aria-controls="advancedSettings">
@@ -145,51 +203,6 @@
             </div>
         </div>
         <!-- END ADVANCED SETTINGS -->
-
-        <!-- MANDATORY SETTINGS -->
-
-        <div class="mandatorySettings well">
-            <h4>Mandatory Settings</h4>
-
-            <form class="row">
-                <div class="form-group col-xs-3">
-                    <label class="control-label">Element DOM id</label>
-                </div>
-                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
-                    <label class="control-label">Width</label>
-                </div>
-                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
-                    <label class="control-label">Height</label>
-                </div>
-                <div class="form-group col-xs-3">
-                    <label class="control-label">Floor</label>
-                </div>
-            </form>
-            <form class="row" ng-repeat="(key, slot) in dynConfigForm.slots">
-                <div class="form-group col-xs-3">
-                    <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="slot.element">
-                </div>
-                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
-                    <input type="text" class="form-control" placeholder="ex: 200" ng-model="slot.width">
-                </div>
-                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
-                    <input type="text" class="form-control" placeholder="ex: 600" ng-model="slot.height">
-                </div>
-                <div class="form-group col-xs-2">
-                    <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="slot.floor">
-                </div>
-                <div class="form-group col-xs-1">
-                    <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="dynConfigForm.slots.splice(key, 1)"><i class="fa fa-minus"></i></button>
-                </div>
-            </form>
-            <form class="row">
-                <div class="form-group col-md-12">
-                   <button type="submit" class="btn btn-md btn-success col-md-2"
-                    ng-click="dynConfigForm.slots.push({ element: null, width: null, height: null, floor: null })"><i class="fa fa-plus"></i> Add slot</button>
-                </div>
-            </form>
-        </div>
-        <!-- END MANDATORY SETTINGS-->
 
         <h3><b>2.</b> Include the BidTorrent client script and its dynamic configuration to your webpage</h3>
         <div class="row">

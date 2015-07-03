@@ -24,7 +24,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     };
 
     $scope.staticConfigForm = {
-        type: undefined,
+        isTypeWebsite: true,
         domain: undefined,
         country: undefined,
         timeout: undefined,
@@ -72,10 +72,10 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             }
         };
 
-        if ($scope.staticConfigForm.type == "inapp")
-            app = globalConfig;
-        else
+        if ($scope.staticConfigForm.isTypeWebsite)
             website = globalConfig;
+        else
+            app = globalConfig;
 
         var config = {
             app: app,
