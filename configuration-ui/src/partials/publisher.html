@@ -65,49 +65,55 @@
     <h2><span class="title">Create the bidding script configuration</span> <i class="fa fa-code"></i></h2>
 
     <div>
-        <h3>First create your configuration</h3>
+        <h3><b>1.</b> Create your configuration</h3>
         <form class="row">
             <div class="form-group col-md-12">
-                <label for="auction" class="control-label">Path to self-hosted auction.html</label>
+                <label for="auction" class="control-label">
+                    <span class="optionnal">(Opt)</span> - Path to your auction.html file <i>(will fallback to the BidTorrent.io auction.html)</i>
+                </label>
                 <input type="text" class="form-control" id="auction" placeholder="ex: ../src/auction.html" ng-model="dynConfigForm.auction">
             </div>
             <div class="form-group col-md-12">
-                <label for="bidders" class="control-label">Path to self-hosted bidders.json</label>
+                <label for="bidders" class="control-label">
+                    <span class="optionnal">(Opt)</span> - Path to your bidders.json file <i>(will fallback to the BidTorrent.io bidders.json)</i>
+                </label>
                 <input type="text" class="form-control" id="bidders" placeholder="ex: ../src/bidders.json" ng-model="dynConfigForm.bidders">
             </div>
             <div class="form-group col-md-12">
-                <label for="config" class="control-label">Path to self-hosted config.json</label>
+                <label for="config" class="control-label">
+                    <span class="optionnal">(Opt)</span> - Path to your static configuration if you choose to host it <i>(will fallback your config hosted in BidTorrent.io <u>if you have an account</u>)</i>
+                </label>
                 <input type="text" class="form-control" id="config" placeholder="ex: ../src/config.json" ng-model="dynConfigForm.config">
             </div>
         </form>
         <form class="row">
-            <div class="form-group col-md-3">
+            <div class="form-group col-xs-3">
                 <label class="control-label">Element DOM id</label>
             </div>
-            <div class="form-group col-md-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
+            <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
                 <label class="control-label">Width</label>
             </div>
-            <div class="form-group col-md-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
+            <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
                 <label class="control-label">Height</label>
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-xs-3">
                 <label class="control-label">Floor</label>
             </div>
         </form>
         <form class="row" ng-repeat="(key, slot) in dynConfigForm.slots">
-            <div class="form-group col-md-3">
+            <div class="form-group col-xs-3">
                 <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="slot.element">
             </div>
-            <div class="form-group col-md-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
+            <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
                 <input type="text" class="form-control" placeholder="ex: 200" ng-model="slot.width">
             </div>
-            <div class="form-group col-md-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
+            <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
                 <input type="text" class="form-control" placeholder="ex: 600" ng-model="slot.height">
             </div>
-            <div class="form-group col-md-2">
+            <div class="form-group col-xs-2">
                 <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="slot.floor">
             </div>
-            <div class="form-group col-md-1">
+            <div class="form-group col-xs-1">
                 <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="dynConfigForm.slots.splice(key, 1)"><i class="fa fa-minus"></i></button>
             </div>
         </form>
@@ -117,8 +123,9 @@
                 ng-click="dynConfigForm.slots.push({ element: null, width: null, height: null, floor: null })"><i class="fa fa-plus"></i> Add slot</button>
             </div>
         </form>
-        <h3>Then simply include the BidTorrent client script and its dynamic configuration to your webpage</h3>
-        <code>
+        <h3><b>2.</b> Include the BidTorrent client script and its dynamic configuration to your webpage</h3>
+        <div class="row">
+            <code class="col-md-8 col-md-offset-2">
 &lt;script src=&quot;http://bidtorrent.io/client.js&quot;&gt;&lt;/script&gt;<br/>
 &lt;script type=&quot;text/javascript&quot;&gt;<br/>
 &nbsp;&nbsp;bidTorrent({<br/>
@@ -132,7 +139,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;]<br/>
 &nbsp;&nbsp;});<br/>
 &lt;/script&gt;
-        </code>
+            </code>
+        </div>
         <p>For more informations see our <a href="https://github.com/BidTorrent/client-js">Github repository</a></p>
     </div>
 </div>
