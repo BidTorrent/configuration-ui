@@ -96,8 +96,12 @@ class Bidders
         $bidderWithFilters = json_decode($body, true);
 
         // Split bidder & its filters
-        $filters = $bidderWithFilters['filters'];
-        unset($bidderWithFilters['filters']);
+        $filters = array();
+        if (isset($bidderWithFilters['filters']))
+        {
+            $filters = $bidderWithFilters['filters'];
+            unset($bidderWithFilters['filters']);
+        }
         $bidder = $bidderWithFilters;
 
         $this->_validate($app, $bidder);
@@ -128,8 +132,12 @@ class Bidders
         $bidderWithFilters['id'] = $id;
 
         // Split bidder & its filters
-        $filters = $bidderWithFilters['filters'];
-        unset($bidderWithFilters['filters']);
+        $filters = array();
+        if (isset($bidderWithFilters['filters']))
+        {
+            $filters = $bidderWithFilters['filters'];
+            unset($bidderWithFilters['filters']);
+        }
         $bidder = $bidderWithFilters;
 
         // Update bidder

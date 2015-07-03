@@ -98,8 +98,12 @@ class Publishers
         $publisherWithFilters = json_decode($body, true);
 
         // Split publisher & its filters
-        $filters = $publisherWithFilters['filters'];
-        unset($publisherWithFilters['filters']);
+        $filters = array();
+        if (isset($publisherWithFilters['filters']))
+        {
+            $filters = $publisherWithFilters['filters'];
+            unset($publisherWithFilters['filters']);
+        }
         $publisher = $publisherWithFilters;
 
         $this->_validate($app, $publisher);
@@ -130,8 +134,12 @@ class Publishers
         $publisherWithFilters['id'] = $id;
 
         // Split publisher & its filters
-        $filters = $publisherWithFilters['filters'];
-        unset($publisherWithFilters['filters']);
+        $filters = array();
+        if (isset($publisherWithFilters['filters']))
+        {
+            $filters = $publisherWithFilters['filters'];
+            unset($publisherWithFilters['filters']);
+        }
         $publisher = $publisherWithFilters;
 
         // Update publisher
