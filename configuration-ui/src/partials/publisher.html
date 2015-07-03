@@ -67,23 +67,69 @@
     <div>
         <h3><b>1.</b> Create your configuration</h3>
         <form class="row">
-            <div class="form-group col-md-12">
+            <!-- AUCTION.HTML -->
+            <div class="form-group col-md-9">
                 <label for="auction" class="control-label">
                     <span class="optionnal">(Opt)</span> - Path to your auction.html file <i>(will fallback to the BidTorrent.io auction.html)</i>
                 </label>
-                <input type="text" class="form-control" id="auction" placeholder="ex: ../src/auction.html" ng-model="dynConfigForm.auction">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-block" ng-click="hostAuction=!hostAuction"
+                                ng-class="hostAuction ? 'btn-success' : 'btn-warning'">
+                            <span ng-if="!hostAuction">I want to host my own auction.html</span>
+                            <span ng-if="hostAuction">Use BidTorrent.io auction.html</span>
+                        </button>
+                    </span>
+                    <input type="text" class="form-control" id="auction"
+                           placeholder="ex: ../src/auction.html"
+                           ng-model="dynConfigForm.auction" ng-disabled="!hostAuction">
+                </div>
             </div>
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-3">
+                <label for="auction" class="control-label">&nbsp;</label>
+                <button type="submit" class="form-control btn btn-md btn-success" ng-click="" ng-disabled="!hostAuction">Download auction.html</button>
+            </div>
+
+            <!-- BIDDERS.JSON -->
+            <div class="form-group col-md-9">
                 <label for="bidders" class="control-label">
                     <span class="optionnal">(Opt)</span> - Path to your bidders.json file <i>(will fallback to the BidTorrent.io bidders.json)</i>
                 </label>
-                <input type="text" class="form-control" id="bidders" placeholder="ex: ../src/bidders.json" ng-model="dynConfigForm.bidders">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary btn-block" ng-click="hostBidders=!hostBidders"
+                                ng-class="hostBidders ? 'btn-success' : 'btn-warning'">
+                            <span ng-if="!hostBidders">I want to host my own bidders.json</span>
+                            <span ng-if="hostBidders">Use BidTorrent.io bidders.json</span>
+                        </button>
+                    </span>
+                    <input type="text" class="form-control" id="bidders"
+                           placeholder="ex: ../src/bidders.json"
+                           ng-model="dynConfigForm.bidders" ng-disabled="!hostBidders">
+                </div>
             </div>
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-3">
+                <label for="bidders" class="control-label">&nbsp;</label>
+                <button type="submit" class="form-control btn btn-md btn-success" ng-click="" ng-disabled="!hostBidders">Download bidders.json</button>
+            </div>
+
+            <!-- CONFIG.JSON -->
+            <div class="form-group col-md-9">
                 <label for="config" class="control-label">
-                    <span class="optionnal">(Opt)</span> - Path to your static configuration if you choose to host it <i>(will fallback your config hosted in BidTorrent.io <u>if you have an account</u>)</i>
+                    <span class="optionnal">(Opt)</span> - Path to your static hosted config.json <i>(will fallback to your config hosted in BidTorrent.io <u class="optionnal">if you have an account</u>)</i>
                 </label>
-                <input type="text" class="form-control" id="config" placeholder="ex: ../src/config.json" ng-model="dynConfigForm.config">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary btn-block" ng-click="hostConfig=!hostConfig"
+                                ng-class="hostConfig ? 'btn-success' : 'btn-warning'">
+                            <span ng-if="!hostConfig">I want to host my own config.json</span>
+                            <span ng-if="hostConfig">Use BidTorrent.io config.json</span>
+                        </button>
+                    </span>
+                    <input type="text" class="form-control" id="config"
+                           placeholder="ex: ../src/config.json"
+                           ng-model="dynConfigForm.config" ng-disabled="!hostConfig">
+                </div>
             </div>
         </form>
         <form class="row">
@@ -129,9 +175,9 @@
 &lt;script src=&quot;http://bidtorrent.io/client.js&quot;&gt;&lt;/script&gt;<br/>
 &lt;script type=&quot;text/javascript&quot;&gt;<br/>
 &nbsp;&nbsp;bidTorrent({<br/>
-<span ng-if="dynConfigForm.auction">&nbsp;&nbsp;&nbsp;&nbsp;auction:&nbsp;&nbsp;    &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
-<span ng-if="dynConfigForm.bidders">&nbsp;&nbsp;&nbsp;&nbsp;bidders:&nbsp;&nbsp;    &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
-<span ng-if="dynConfigForm.config">&nbsp;&nbsp;&nbsp;&nbsp;config:&nbsp;&nbsp;     &#39;{{dynConfigForm.config}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="hostAuction">&nbsp;&nbsp;&nbsp;&nbsp;auction:&nbsp;&nbsp;    &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="hostBidders">&nbsp;&nbsp;&nbsp;&nbsp;bidders:&nbsp;&nbsp;    &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="hostConfig">&nbsp;&nbsp;&nbsp;&nbsp;config:&nbsp;&nbsp;     &#39;{{dynConfigForm.config}}&#39;, //Optionnal if you want to host your own<br/></span>
 &nbsp;&nbsp;&nbsp;&nbsp;slots:&nbsp;&nbsp;[ //List of ad slots by Id<br/>
 <span ng-repeat="slot in dynConfigForm.slots">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ element: &#39;{{slot.element}}&#39;<span ng-if="slot.width">, width: {{slot.width}}</span><span ng-if="slot.height">, height: {{slot.height}}</span><span ng-if="slot.floor">, floor: {{slot.floor}}</span> },<br/>
