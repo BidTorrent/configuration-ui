@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="form-group row validation">
-            <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4" ng-click="submitRegistration()">
+            <button type="submit" class="btn btn-md btn-success col-xs-offset-4 col-xs-4" ng-click="submitRegistration()">
                 Register me
             </button>
         </div>
@@ -65,9 +65,12 @@
     </div>
 
     <div class="row validation">
-        <button type="submit" class="btn btn-md btn-success col-md-offset-4 col-md-4"
+        <button class="btn btn-md btn-primary col-md-offset-2 col-md-3 col-xs-5"
                 ng-click="downloadConfig()">Download config</button>
         <a id="downloadFile" style="display:none"></a>
+        <span class="col-md-2 col-xs-2 or">or</span>
+        <button class="btn btn-md btn-success col-md-3 col-xs-5"
+                ng-click="saveConfig()">Save config on BidTorrent.io</button>
     </div>
 
     <h2>Create the bidding script configuration <i class="fa fa-code"></i></h2>
@@ -206,7 +209,7 @@
 
         <h3><b>2.</b> Include the BidTorrent client script and its dynamic configuration to your webpage</h3>
         <div class="row">
-            <code class="col-md-8 col-md-offset-2">
+            <code class="col-xs-12 col-md-8 col-md-offset-2">
 &lt;script src=&quot;http://bidtorrent.io/client.js&quot;&gt;&lt;/script&gt;<br/>
 &lt;script type=&quot;text/javascript&quot;&gt;<br/>
 &nbsp;&nbsp;bidTorrent({<br/>

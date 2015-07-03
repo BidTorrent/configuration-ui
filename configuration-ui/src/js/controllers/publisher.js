@@ -100,6 +100,10 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         element.click();
     };
 
+    $scope.saveConfig = function(element) {
+        alert("lol");
+    }
+
     // Validation methods
     $scope.isStrictPositiveInt = function(value) {
         return !isNaN(value) &&
