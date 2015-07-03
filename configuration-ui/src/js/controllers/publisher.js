@@ -101,7 +101,12 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     };
 
     $scope.saveConfig = function(element) {
-        alert("lol");
+        // hide modal
+        $('#loginModal').modal('hide');
+        // save the configuration
+        // ...
+        //notify the user
+        ngNotify.set("Config has been saved... (JK backend connexion to back is not up yet)", "success");
     }
 
     // Validation methods
