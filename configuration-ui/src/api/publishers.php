@@ -40,7 +40,7 @@ class Publishers
         );
     }
 
-    function getAll()
+    function getAll($app)
     {
         // Get filters
         list ($filtersQuery, $filtersParams) = $this->filterSchema->get();
@@ -62,7 +62,9 @@ class Publishers
         list ($query, $params) = $this->publisherSchema->get();
         $rows = $this->db->get_rows($query, $params);
 
-        return array_map(function($row) use ($publishersFilters)
+        // Format the response
+        $uiFormat = $app->request()->get('format') == 'ui';
+        return array_map(function($row) use ($publishersFilters, $uiFormat)
         {
             $filters = array();
             $pubId = (int)$row['id'];
@@ -70,7 +72,11 @@ class Publishers
             if (isset($publishersFilters[$pubId]))
                 $filters = $publishersFilters[$pubId];
 
-            return new Publisher($row, $filters);
+            $publisher = new Publisher($row, $filters);
+            if ($uiFormat)
+                return $publisher;
+
+            return $this->_format($publisher);
         }, $rows);
     }
 
@@ -88,7 +94,11 @@ class Publishers
         if (!isset($row))
             $app->halt(404);
 
-        return new Publisher($row, $filters);
+        $publisher = new Publisher($row, $filters);
+        if ($app->request()->get('format') == 'ui')
+            return $publisher;
+
+        return $this->_format($publisher);
     }
 
     function post($app)
@@ -176,6 +186,54 @@ class Publishers
 
         if (!isset($result) || $result == 0)
             $app->halt(404);
+    }
+
+    // Format the publisher to match the config needed by the client script
+    private function _format($publisher)
+    {
+        $config = array();
+
+        if ($publisher->type == 'inapp')
+            $globalConfigKey = 'app';
+        else
+            $globalConfigKey = 'site';
+
+        $publisherConfig = array(
+            'id' => $publisher->id,
+            'name' => $publisher->name
+        );
+        if (isset($publisher->country))
+            $publisherConfig['country'] = $publisher->country;
+
+        $blacklistedCategories = $this->_getFilterValue($publisher->filters, 'iab_category');
+        if (isset($blacklistedCategories) ) 
+            $config['bcat'] = $blacklistedCategories;
+
+        $blacklistedDomains = $this->_getFilterValue($publisher->filters, 'domain');
+        if (isset($blacklistedDomains) ) 
+            $config['badv'] = $blacklistedDomains;
+
+        $config[$globalConfigKey] = array('publisher' => $publisherConfig);
+        $config['tmax'] = $publisher->timeout;
+
+        if ($publisher->secured)
+            $config['imp'] = array('secure' => $publisher->secured);
+
+        return $config;
+    }
+
+    private function _getFilterValue($filters, $filterType)
+    {
+        foreach ($filters as $filter)
+        {
+            if ($filter->type == $filterType &&
+                $filter->mode == 'exclusive') // Manage only blacklisting right now
+            {
+                return $filter->value;
+            }
+        }
+
+        return NULL;
     }
 
     private function _validate($app, $data)
