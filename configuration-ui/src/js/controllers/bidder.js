@@ -31,7 +31,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 
     //Functions
     $scope.submitRegistration = function() {
-        Bidder.save({}, {
+        Bidder.save({ format: "ui" }, {
             name: $scope.registerForm.name,
             bidUrl: $scope.registerForm.bidRequestUrl,
             rsaPubKey: $scope.registerForm.pubKey

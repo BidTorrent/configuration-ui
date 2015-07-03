@@ -46,7 +46,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
     //Functions
     $scope.submitRegistration = function() {
-        Publisher.save({}, { name: $scope.registerForm.name }).$promise
+        Publisher.save({ format: "ui" }, { name: $scope.registerForm.name }).$promise
         .then(function() {
                 ngNotify.set("Successfully registered " + $scope.registerForm.name, "success");
             },
