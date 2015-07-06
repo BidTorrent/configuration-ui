@@ -28,8 +28,8 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         country: undefined,
         timeout: undefined,
         secured: undefined,
-        domainFilter: { type: "domain", mode: false, value: [""] },
-        categoryFilter: { type: "iab_category", mode: false, value: [""] },
+        domainFilter: { type: "domain", modeBool: false, value: [""] },
+        categoryFilter: { type: "iab_category", modeBool: false, value: [""] },
     };
 
     $scope.dynConfigForm = {
@@ -99,6 +99,9 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     $scope.saveConfig = function(element) {
         // hide modal
         $('#loginModal').modal('hide');
+
+        $scope.staticConfigForm.domainFilter.mode = $scope.staticConfigForm.domainFilter.modeBool ? "inclusive" : "exclusive";
+        $scope.staticConfigForm.categoryFilter.mode = $scope.staticConfigForm.categoryFilter.modeBool ? "inclusive" : "exclusive";
 
         // save the configuration
         Publisher.save({ format: "ui" }, {
