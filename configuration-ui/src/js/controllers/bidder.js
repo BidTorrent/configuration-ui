@@ -31,7 +31,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     //Functions
     $scope.submitRegistration = function() {
         // Keep only needed fields in filters
-        var filters = $scope.registerForm.filters;
+        var filters = $scope.registerForm.filters.slice();
         for (var i = filters.length - 1; i >= 0; i--) {
             var value = filters[i].value.cleanArray(["", null, undefined]);
 
