@@ -244,7 +244,7 @@ class Publishers
                 $slotConfig['secure'] = $publisher->secured;
 
             return $slotConfig;
-        }, $publisher->slots);
+        }, $publisher->imp);
 
         return $config;
     }
@@ -309,10 +309,10 @@ class Publishers
             unset($json['filters']);
         }
         $slots = array();
-        if (isset($json['slots']))
+        if (isset($json['imp']))
         {
-            $slots = $json['slots'];
-            unset($json['slots']);
+            $slots = $json['imp'];
+            unset($json['imp']);
         }
 
         return array($json, $filters, $slots);
@@ -371,7 +371,7 @@ class Publisher
     public $timeout;
     public $secured;
     public $filters;
-    public $slots;
+    public $imp;
 
     function __construct($row, $filters, $slots)
     {
@@ -382,7 +382,7 @@ class Publisher
         $this->timeout = isset($row['timeout']) ? (int) $row['timeout'] : 400;
         $this->secured = isset($row['secured']) ? (bool) $row['secured'] : false;
         $this->filters = $filters;
-        $this->slots = $slots;
+        $this->imp = $slots;
     }
 }
 
