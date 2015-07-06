@@ -8,7 +8,8 @@ class Publishers
     public $publisherSchema;
     public $filterSchema;
 
-    static $FIELDS = array('name', 'type');
+    static $PUBLISHER_FIELDS = array('name', 'type');
+    static $FILTER_FIELDS = array('publisher', 'type');
 
     function __construct()
     {
@@ -116,24 +117,41 @@ class Publishers
         }
         $publisher = $publisherWithFilters;
 
-        $this->_validate($app, $publisher);
+        if (!$this->_validate($publisher, publishers::$PUBLISHER_FIELDS))
+            $app->halt(400);
 
         // Add publisher
+        $this->db->execute('START TRANSACTION');
         list ($query, $params) = $this->publisherSchema->set(RedMap\Schema::SET_INSERT, $publisher);
         $insertedPubId = $this->db->insert($query, $params);
 
         if (!isset($insertedPubId))
+        {
+            $this->db->execute('ROLLBACK');
             $app->halt(409);
+        }
 
         // Add filters
         foreach ($filters as $filter) {
             $filter['publisher'] = $insertedPubId;
+
+            if (!$this->_validate($filter, publishers::$FILTER_FIELDS))
+            {
+                $this->db->execute('ROLLBACK');
+                $app->halt(400);
+            }
+
             list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
             $result = $this->db->insert($query, $params);
 
             if (!isset($result))
+            {
+                $this->db->execute('ROLLBACK');
                 $app->halt(409);
+            }
         }
+
+        $this->db->execute('COMMIT');
     }
 
     function put($app, $id)
@@ -153,6 +171,7 @@ class Publishers
         $publisher = $publisherWithFilters;
 
         // Update publisher
+        $this->db->execute('START TRANSACTION');
         list ($query, $params) = $this->publisherSchema->set(RedMap\Schema::SET_UPDATE, $publisher);
         $pubUpdateResult = $this->db->execute($query, $params);
 
@@ -169,9 +188,18 @@ class Publishers
         // Add new filters
         foreach ($filters as $filter) {
             $filter['publisher'] = $id;
+
+            if (!$this->_validate($filter, publishers::$FILTER_FIELDS))
+            {
+                $this->db->execute('ROLLBACK');
+                $app->halt(400);
+            }
+
             list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
             $result = $this->db->execute($query, $params);
         }
+
+        $this->db->execute('COMMIT');
     }
 
     function delete($app, $id)
@@ -236,13 +264,15 @@ class Publishers
         return NULL;
     }
 
-    private function _validate($app, $data)
+    private function _validate($data, $fields)
     {
         $publisher = array();
-        foreach (publishers::$FIELDS as $field) {
+        foreach ($fields as $field) {
             if (!isset($data[$field]))
-                $app->halt(400);
+                return false;
         }
+
+        return true;
     }
 }
 
