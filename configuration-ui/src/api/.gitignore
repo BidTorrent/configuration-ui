@@ -9,3 +9,4 @@ tag.sh
 bin/*
 build/*
 build
+config/config.php

@@ -10,10 +10,9 @@ class Bidders
 
     static $FIELDS = array('name', 'bidUrl', 'rsaPubKey');
 
-    function __construct()
+    function __construct($db)
     {
-        $this->db = new RedMap\Drivers\MySQLiDriver('UTF8');
-        $this->db->connect('bidtorrent', 'hack@thon', 'bidtorrent');
+        $this->db = $db;
         $this->bidderSchema = new RedMap\Schema
         (
             'bidders',

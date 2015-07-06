@@ -11,10 +11,9 @@ class Publishers
     static $PUBLISHER_FIELDS = array('name', 'type');
     static $FILTER_FIELDS = array('publisher', 'type');
 
-    function __construct()
+    function __construct($db)
     {
-        $this->db = new RedMap\Drivers\MySQLiDriver('UTF8');
-        $this->db->connect('bidtorrent', 'hack@thon', 'bidtorrent');
+        $this->db = $db;
         $this->publisherSchema = new RedMap\Schema
         (
             'publishers',
