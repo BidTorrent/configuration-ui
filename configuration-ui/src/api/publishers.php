@@ -8,7 +8,7 @@ class Publishers
     public $publisherSchema;
     public $filterSchema;
 
-    static $FIELDS = array('name', 'currency', 'type');
+    static $FIELDS = array('name', 'type');
 
     function __construct()
     {
