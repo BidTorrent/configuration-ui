@@ -150,18 +150,7 @@ class Bidders
 
     function post($app)
     {
-        $request = $app->request();
-        $body = $request->getBody();
-        $bidderWithFilters = json_decode($body, true);
-
-        // Split bidder & its filters
-        $filters = array();
-        if (isset($bidderWithFilters['filters']))
-        {
-            $filters = $bidderWithFilters['filters'];
-            unset($bidderWithFilters['filters']);
-        }
-        $bidder = $bidderWithFilters;
+        list($bidder, $filters) = $this->getRequestParameters($app);
 
         if (!$this->_validate($bidder, bidders::$BIDDER_FIELDS))
             $app->halt(400);
@@ -178,46 +167,15 @@ class Bidders
         }
 
         // Add filters
-        foreach ($filters as $filter) {
-            $filter['bidder'] = $insertedBidderId;
-
-            if (isset($filter['value']))
-                $filter['value'] = implode(';', $filter['value']);
-
-            if (!$this->_validate($filter, bidders::$FILTER_FIELDS))
-            {
-                $this->db->execute('ROLLBACK');
-                $app->halt(400);
-            }
-
-            list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
-            $result = $this->db->insert($query, $params);
-
-            if (!isset($result))
-            {
-                $this->db->execute('ROLLBACK');
-                $app->halt(409);
-            }
-        }
+        array_map(function($filter) use ($app, $insertedBidderId) { $this->_addFilter($app, $filter, $insertedBidderId); }, $filters);
 
         $this->db->execute('COMMIT');
     }
 
     function put($app, $id)
     {
-        $request = $app->request();
-        $body = $request->getBody();
-        $bidderWithFilters = json_decode($body, true);
-        $bidderWithFilters['id'] = $id;
-
-        // Split bidder & its filters
-        $filters = array();
-        if (isset($bidderWithFilters['filters']))
-        {
-            $filters = $bidderWithFilters['filters'];
-            unset($bidderWithFilters['filters']);
-        }
-        $bidder = $bidderWithFilters;
+        list($bidder, $filters) = $this->getRequestParameters($app);
+        $bidder['id'] = $id;
 
         // Update bidder
         $this->db->execute('START TRANSACTION');
@@ -234,22 +192,8 @@ class Bidders
         list ($query, $params) = $this->filterSchema->delete(array ('bidder' => $id));
         $this->db->execute($query, $params);
 
-        // Add new filters
-        foreach ($filters as $filter) {
-            $filter['bidder'] = $id;
-
-            if (isset($filter['value']))
-                $filter['value'] = implode(';', $filter['value']);
-
-            if (!$this->_validate($filter, bidders::$FILTER_FIELDS))
-            {
-                $this->db->execute('ROLLBACK');
-                $app->halt(400);
-            }
-
-            list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
-            $result = $this->db->execute($query, $params);
-        }
+        // Add filters
+        array_map(function($filter) use ($app, $insertedBidderId) { $this->_addFilter($app, $filter, $insertedBidderId); }, $filters);
 
         $this->db->execute('COMMIT');
     }
@@ -277,6 +221,47 @@ class Bidders
         }
 
         return true;
+    }
+
+    // Get from body, the json representing the bidder & its filters
+    // Usage list($bidder, $filters) = _getRequestParameters($app);
+    private function _getRequestParameters($app)
+    {
+        $request = $app->request();
+        $body = $request->getBody();
+        $json = json_decode($body, true);
+
+        $filters = array();
+        if (isset($json['filters']))
+        {
+            $filters = $json['filters'];
+            unset($json['filters']);
+        }
+
+        return array($json, $filters);
+    }
+
+    private function _addFilter($app, $filter, $bidderId)
+    {
+        $filter['bidder'] = $insertedBidderId;
+
+        if (isset($filter['value']))
+            $filter['value'] = implode(';', $filter['value']);
+
+        if (!$this->_validate($filter, bidders::$FILTER_FIELDS))
+        {
+            $this->db->execute('ROLLBACK');
+            $app->halt(400);
+        }
+
+        list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
+        $result = $this->db->insert($query, $params);
+
+        if (!isset($result))
+        {
+            $this->db->execute('ROLLBACK');
+            $app->halt(409);
+        }
     }
 }
 
