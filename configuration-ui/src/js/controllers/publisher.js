@@ -18,22 +18,18 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
     //Models
     $scope.registerForm = {
-        name: null,
+        name: null, //domain
         bidRequestUrl: null,
         pubKey: null
     };
 
     $scope.staticConfigForm = {
         isTypeWebsite: true,
-        domain: undefined,
         country: undefined,
         timeout: undefined,
-        //width: undefined,
-        //height: undefined,
-        //floor: undefined,
         secured: undefined,
-        blacklistedDomains: undefined,
-        blacklistedCategories: undefined
+        domainFilter: { type: "domain", mode: false, value: [""] },
+        categoryFilter: { type: "iab_category", mode: false, value: [""] },
     };
 
     $scope.dynConfigForm = {
@@ -103,10 +99,23 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     $scope.saveConfig = function(element) {
         // hide modal
         $('#loginModal').modal('hide');
+
         // save the configuration
-        // ...
-        //notify the user
-        ngNotify.set("Config has been saved... (JK backend connexion to back is not up yet)", "success");
+        Publisher.save({ format: "ui" }, {
+            name: $scope.registerForm.name,
+            type: $scope.staticConfigForm.isTypeWebsite ? "website" : "inapp",
+            country: $scope.staticConfigForm.country,
+            timeout: $scope.staticConfigForm.timeout,
+            secured: $scope.staticConfigForm.secured,
+            filters: [$scope.staticConfigForm.domainFilter, $scope.staticConfigForm.categoryFilter]
+        }).$promise
+        .then(function() {
+                ngNotify.set("Successfully saved config on BidTorrent.io", "success");
+            },
+            function(response) {
+                ngNotify.set("Oops! something went wrong, try again later", "error");
+            }
+        );
     }
 
     // Validation methods
