@@ -8,7 +8,8 @@ class Bidders
     public $bidderSchema;
     public $filterSchema;
 
-    static $FIELDS = array('name', 'bidUrl', 'rsaPubKey');
+    static $BIDDER_FIELDS = array('name', 'bidUrl', 'rsaPubKey');
+    static $FILTER_FIELDS = array('bidder', 'type');
 
     function __construct($db)
     {
@@ -162,24 +163,41 @@ class Bidders
         }
         $bidder = $bidderWithFilters;
 
-        $this->_validate($app, $bidder);
+        if (!$this->_validate($bidder, bidders::$BIDDER_FIELDS))
+            $app->halt(400);
 
         // Add bidder
+        $this->db->execute('START TRANSACTION');
         list ($query, $params) = $this->bidderSchema->set(RedMap\Schema::SET_INSERT, $bidder);
         $insertedBidderId = $this->db->insert($query, $params);
 
         if (!isset($insertedBidderId))
+        {
+            $this->db->execute('ROLLBACK');
             $app->halt(409);
+        }
 
         // Add filters
         foreach ($filters as $filter) {
             $filter['bidder'] = $insertedBidderId;
+
+            if (!$this->_validate($filter, bidders::$FILTER_FIELDS))
+            {
+                $this->db->execute('ROLLBACK');
+                $app->halt(400);
+            }
+
             list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
             $result = $this->db->insert($query, $params);
 
             if (!isset($result))
+            {
+                $this->db->execute('ROLLBACK');
                 $app->halt(409);
+            }
         }
+
+        $this->db->execute('COMMIT');
     }
 
     function put($app, $id)
@@ -199,6 +217,7 @@ class Bidders
         $bidder = $bidderWithFilters;
 
         // Update bidder
+        $this->db->execute('START TRANSACTION');
         list ($query, $params) = $this->bidderSchema->set(RedMap\Schema::SET_UPDATE, $bidder);
         $bidderUpdateResult = $this->db->execute($query, $params);
 
@@ -215,9 +234,18 @@ class Bidders
         // Add new filters
         foreach ($filters as $filter) {
             $filter['bidder'] = $id;
+
+            if (!$this->_validate($filter, bidders::$FILTER_FIELDS))
+            {
+                $this->db->execute('ROLLBACK');
+                $app->halt(400);
+            }
+
             list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
             $result = $this->db->execute($query, $params);
         }
+
+        $this->db->execute('COMMIT');
     }
 
     function delete($app, $id)
@@ -234,13 +262,15 @@ class Bidders
             $app->halt(404);
     }
 
-    private function _validate($app, $data)
+    private function _validate($data, $fields)
     {
-        $bidder = array();
-        foreach (bidders::$FIELDS as $field) {
+        $publisher = array();
+        foreach ($fields as $field) {
             if (!isset($data[$field]))
-                $app->halt(400);
+                return false;
         }
+
+        return true;
     }
 }
 
