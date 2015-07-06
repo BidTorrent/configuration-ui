@@ -112,6 +112,7 @@ class Bidders
         $config['id'] = $bidder->id;
         $config['bid_ep'] = $bidder->bidUrl;
         $config['key'] = $bidder->rsaPubKey;
+        $config['name'] = $bidder->name;
 
         $filters = $this->_getFiltersConfig($bidder, array
         (
