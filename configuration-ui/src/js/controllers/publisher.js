@@ -28,8 +28,8 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         country: undefined,
         timeout: undefined,
         secured: undefined,
-        domainFilter: { type: "domain", modeBool: false, value: [""] },
-        categoryFilter: { type: "iab_category", modeBool: false, value: [""] },
+        domainFilter: { type: "domain", mode: false, value: [""] },
+        categoryFilter: { type: "iab_category", mode: false, value: [""] },
     };
 
     $scope.dynConfigForm = {
@@ -100,8 +100,15 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         // hide modal
         $('#loginModal').modal('hide');
 
-        $scope.staticConfigForm.domainFilter.mode = $scope.staticConfigForm.domainFilter.modeBool ? "inclusive" : "exclusive";
-        $scope.staticConfigForm.categoryFilter.mode = $scope.staticConfigForm.categoryFilter.modeBool ? "inclusive" : "exclusive";
+        var domainFilter = angular.copy($scope.staticConfigForm.domainFilter);
+        domainFilter.mode = domainFilter.mode ? "inclusive" : "exclusive";
+
+        var categoryFilter = angular.copy($scope.staticConfigForm.categoryFilter);
+        categoryFilter.mode = categoryFilter.mode ? "inclusive" : "exclusive";
+
+        // remove empty values in filter array
+        domainFilter.value = domainFilter.value.cleanArray(["", null, undefined]);
+        categoryFilter.value = categoryFilter.value.cleanArray(["", null, undefined]);
 
         // save the configuration
         Publisher.save({ format: "ui" }, {
@@ -110,7 +117,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             country: $scope.staticConfigForm.country,
             timeout: $scope.staticConfigForm.timeout,
             secured: $scope.staticConfigForm.secured,
-            filters: [$scope.staticConfigForm.domainFilter, $scope.staticConfigForm.categoryFilter]
+            filters: [domainFilter, categoryFilter]
         }).$promise
         .then(function() {
                 ngNotify.set("Successfully saved config on BidTorrent.io", "success");
@@ -138,5 +145,15 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             hash = hash & hash; // Convert to 32bit integer
         }
         return hash;
+    };
+
+    Array.prototype.cleanArray = function(deleteValues) {
+    for (var i = 0; i < this.length; i++) {
+        if (deleteValues.indexOf(this[i]) !== -1) {         
+            this.splice(i, 1);
+                i--;
+            }
+        }
+        return this;
     };
 }]);

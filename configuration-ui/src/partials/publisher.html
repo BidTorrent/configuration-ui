@@ -67,10 +67,10 @@
                 </div>
                 <div class="col-xs-7">
                     <button type="submit" class="form-control btn btn-md"
-                            ng-class="staticConfigForm.domainFilter.modeBool ? 'btn-default' : 'btn-primary'"
-                            ng-click="staticConfigForm.domainFilter.modeBool = !staticConfigForm.domainFilter.modeBool">
-                            <span ng-if="staticConfigForm.domainFilter.modeBool">Whitelist mode</span>
-                            <span ng-if="!staticConfigForm.domainFilter.modeBool">Blacklist mode</span>
+                            ng-class="staticConfigForm.domainFilter.mode ? 'btn-default' : 'btn-primary'"
+                            ng-click="staticConfigForm.domainFilter.mode = !staticConfigForm.domainFilter.mode">
+                            <span ng-if="staticConfigForm.domainFilter.mode">Whitelist mode</span>
+                            <span ng-if="!staticConfigForm.domainFilter.mode">Blacklist mode</span>
                     </button>
                 </div>
             </div>
@@ -99,10 +99,10 @@
                 </div>
                 <div class="col-xs-7">
                     <button type="submit" class="form-control btn btn-md"
-                            ng-class="staticConfigForm.categoryFilter.modeBool ? 'btn-default' : 'btn-primary'"
-                            ng-click="staticConfigForm.categoryFilter.modeBool = !staticConfigForm.categoryFilter.modeBool">
-                            <span ng-if="staticConfigForm.categoryFilter.modeBool">Whitelist mode</span>
-                            <span ng-if="!staticConfigForm.categoryFilter.modeBool">Blacklist mode</span>
+                            ng-class="staticConfigForm.categoryFilter.mode ? 'btn-default' : 'btn-primary'"
+                            ng-click="staticConfigForm.categoryFilter.mode = !staticConfigForm.categoryFilter.mode">
+                            <span ng-if="staticConfigForm.categoryFilter.mode">Whitelist mode</span>
+                            <span ng-if="!staticConfigForm.categoryFilter.mode">Blacklist mode</span>
                     </button>
                 </div>
             </div>
