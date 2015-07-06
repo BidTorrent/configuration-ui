@@ -150,7 +150,7 @@ class Bidders
 
     function post($app)
     {
-        list($bidder, $filters) = $this->getRequestParameters($app);
+        list($bidder, $filters) = $this->_getRequestParameters($app);
 
         if (!$this->_validate($bidder, bidders::$BIDDER_FIELDS))
             $app->halt(400);
@@ -243,7 +243,7 @@ class Bidders
 
     private function _addFilter($app, $filter, $bidderId)
     {
-        $filter['bidder'] = $insertedBidderId;
+        $filter['bidder'] = $bidderId;
 
         if (isset($filter['value']))
             $filter['value'] = implode(';', $filter['value']);
