@@ -7,9 +7,11 @@ class Publishers
     public $db;
     public $publisherSchema;
     public $filterSchema;
+    public $slotSchema;
 
     static $PUBLISHER_FIELDS = array('name', 'type');
     static $FILTER_FIELDS = array('publisher', 'type');
+    static $SLOT_FIELDS = array('publisher', 'html_id');
 
     function __construct($db)
     {
@@ -38,6 +40,18 @@ class Publishers
                 'value'  => null
             )
         );
+        $this->slotSchema = new RedMap\Schema
+        (
+            'publishers_slots',
+            array
+            (
+                'html_id'    => array (RedMap\Schema::FIELD_PRIMARY),
+                'publisher'  => array (RedMap\Schema::FIELD_PRIMARY),
+                'width'  => null,
+                'height'  => null,
+                'floor'  => null
+            )
+        );
     }
 
     function getAll($app)
@@ -47,16 +61,14 @@ class Publishers
         $filterRows = $this->db->get_rows($filtersQuery, $filtersParams);
 
         $filters = array_map(function($row) { return new PublisherFilter($row); }, $filterRows);
-        $publishersFilters = array();
-        foreach ($filters as $filter)
-        {
-            $publisherFilters = array();
-            if (isset($publishersFilters[$filter->publisher]))
-                $publisherFilters = $publishersFilters[$filter->publisher];
+        $publishersFilters = $this->_toDictionary($filters, function ($filter) { return $filter->publisher; });
 
-            array_push($publisherFilters, $filter);
-            $publishersFilters[$filter->publisher] = $publisherFilters;
-        }
+        // Get slots
+        list ($slotsQuery, $slotsParams) = $this->slotSchema->get();
+        $slotRows = $this->db->get_rows($slotsQuery, $slotsParams);
+
+        $slots = array_map(function($row) { return new PublisherSlot($row); }, $slotRows);
+        $publishersSlots = $this->_toDictionary($slots, function ($slot) { return $slot->publisher; });
 
         // Get publishers
         list ($query, $params) = $this->publisherSchema->get();
@@ -64,15 +76,19 @@ class Publishers
 
         // Format the response
         $uiFormat = $app->request()->get('format') == 'ui';
-        return array_map(function($row) use ($publishersFilters, $uiFormat)
+        return array_map(function($row) use ($publishersFilters, $publishersSlots, $uiFormat)
         {
             $filters = array();
+            $slots = array();
             $pubId = (int)$row['id'];
 
             if (isset($publishersFilters[$pubId]))
                 $filters = $publishersFilters[$pubId];
 
-            $publisher = new Publisher($row, $filters);
+            if (isset($publishersSlots[$pubId]))
+                $slots = $publishersSlots[$pubId];
+
+            $publisher = new Publisher($row, $filters, $slots);
             if ($uiFormat)
                 return $publisher;
 
@@ -87,6 +103,11 @@ class Publishers
         $filterRows = $this->db->get_rows($filtersQuery, $filtersParams);
         $filters = array_map(function($row) { return new PublisherFilter($row); }, $filterRows);
 
+        // Get slots
+        list ($slotsQuery, $slotsParams) = $this->slotSchema->get(array ('publisher' => $id));
+        $slotRows = $this->db->get_rows($slotsQuery, $slotsParams);
+        $slots = array_map(function($row) { return new PublisherSlot($row); }, $slotRows);
+
         // Get publisher
         list ($query, $params) = $this->publisherSchema->get(array ('id' => $id));
         $row = $this->db->get_first($query, $params);
@@ -94,7 +115,7 @@ class Publishers
         if (!isset($row))
             $app->halt(404);
 
-        $publisher = new Publisher($row, $filters);
+        $publisher = new Publisher($row, $filters, $slots);
         if ($app->request()->get('format') == 'ui')
             return $publisher;
 
@@ -103,18 +124,7 @@ class Publishers
 
     function post($app)
     {
-        $request = $app->request();
-        $body = $request->getBody();
-        $publisherWithFilters = json_decode($body, true);
-
-        // Split publisher & its filters
-        $filters = array();
-        if (isset($publisherWithFilters['filters']))
-        {
-            $filters = $publisherWithFilters['filters'];
-            unset($publisherWithFilters['filters']);
-        }
-        $publisher = $publisherWithFilters;
+        list($publisher, $filters, $slots) = $this->_getRequestParameters($app);
 
         if (!$this->_validate($publisher, publishers::$PUBLISHER_FIELDS))
             $app->halt(400);
@@ -130,47 +140,19 @@ class Publishers
             $app->halt(409);
         }
 
-        // Add filters
-        foreach ($filters as $filter) {
-            $filter['publisher'] = $insertedPubId;
+        // Add new filters
+        array_map(function($filter) use ($app, $insertedPubId) { $this->_addFilter($app, $filter, $insertedPubId); }, $filters);
 
-            if (isset($filter['value']))
-                $filter['value'] = implode(';', $filter['value']);
-
-            if (!$this->_validate($filter, publishers::$FILTER_FIELDS))
-            {
-                $this->db->execute('ROLLBACK');
-                $app->halt(400);
-            }
-
-            list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
-            $result = $this->db->insert($query, $params);
-
-            if (!isset($result))
-            {
-                $this->db->execute('ROLLBACK');
-                $app->halt(409);
-            }
-        }
+        // Add new slots
+        array_map(function($slot) use ($app, $insertedPubId) { $this->_addSlot($app, $slot, $insertedPubId); }, $slots);
 
         $this->db->execute('COMMIT');
     }
 
     function put($app, $id)
     {
-        $request = $app->request();
-        $body = $request->getBody();
-        $publisherWithFilters = json_decode($body, true);
-        $publisherWithFilters['id'] = $id;
-
-        // Split publisher & its filters
-        $filters = array();
-        if (isset($publisherWithFilters['filters']))
-        {
-            $filters = $publisherWithFilters['filters'];
-            unset($publisherWithFilters['filters']);
-        }
-        $publisher = $publisherWithFilters;
+        list($publisher, $filters, $slots) = $this->_getRequestParameters($app);
+        $publisher['id'] = $id;
 
         // Update publisher
         $this->db->execute('START TRANSACTION');
@@ -187,22 +169,15 @@ class Publishers
         list ($query, $params) = $this->filterSchema->delete(array ('publisher' => $id));
         $this->db->execute($query, $params);
 
+        // Delete publisher's slots
+        list ($query, $params) = $this->slotSchema->delete(array ('publisher' => $id));
+        $this->db->execute($query, $params);
+
         // Add new filters
-        foreach ($filters as $filter) {
-            $filter['publisher'] = $id;
+        array_map(function($filter) use ($app, $id) { $this->_addFilter($app, $filter, $id); }, $filters);
 
-            if (isset($filter['value']))
-                $filter['value'] = implode(';', $filter['value']);
-
-            if (!$this->_validate($filter, publishers::$FILTER_FIELDS))
-            {
-                $this->db->execute('ROLLBACK');
-                $app->halt(400);
-            }
-
-            list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
-            $result = $this->db->execute($query, $params);
-        }
+        // Add new slots
+        array_map(function($slot) use ($app, $id) { $this->_addSlot($app, $slot, $id); }, $slots);
 
         $this->db->execute('COMMIT');
     }
@@ -211,6 +186,10 @@ class Publishers
     {
         // Delete publisher's filters
         list ($query, $params) = $this->filterSchema->delete(array ('publisher' => $id));
+        $this->db->execute($query, $params);
+
+        // Delete publisher's slots
+        list ($query, $params) = $this->slotSchema->delete(array ('publisher' => $id));
         $this->db->execute($query, $params);
 
         // Delete publisher
@@ -249,8 +228,23 @@ class Publishers
         $config[$globalConfigKey] = array('publisher' => $publisherConfig);
         $config['tmax'] = $publisher->timeout;
 
-        if ($publisher->secured)
-            $config['imp'] = array('secure' => $publisher->secured);
+        $config['imp'] = array_map(function($slot) use ($publisher)
+        {
+            $banner = array('id' => $slot->html_id);
+
+            if (isset($slot->width))
+                $banner['w'] = $slot->width;
+
+            if (isset($slot->height))
+                $banner['h'] = $slot->height;
+
+            $slotConfig = array('bidfloor' => $slot->floor, 'banner' => $banner);
+
+            if ($publisher->secured)
+                $slotConfig['secure'] = $publisher->secured;
+
+            return $slotConfig;
+        }, $publisher->slots);
 
         return $config;
     }
@@ -279,6 +273,93 @@ class Publishers
 
         return true;
     }
+
+    private function _toDictionary($rows, $getKey)
+    {
+        $result = array();
+
+        foreach ($rows as $row)
+        {
+            $key = $getKey($row);
+            $value = array();
+
+            if (isset($result[$key]))
+                $value = $result[$key];
+
+            array_push($value, $row);
+            $result[$key] = $value;
+        }
+
+        return $result;
+    }
+
+    // Get from body, the json representing the publisher, its filters & its slots
+    // Usage list($publisher, $filters, $slots) = _getRequestParameters($app);
+    private function _getRequestParameters($app)
+    {
+        $request = $app->request();
+        $body = $request->getBody();
+        $json = json_decode($body, true);
+
+        // Split publisher, its filters & its slots
+        $filters = array();
+        if (isset($json['filters']))
+        {
+            $filters = $json['filters'];
+            unset($json['filters']);
+        }
+        $slots = array();
+        if (isset($json['slots']))
+        {
+            $slots = $json['slots'];
+            unset($json['slots']);
+        }
+
+        return array($json, $filters, $slots);
+    }
+
+    private function _addFilter($app, $filter, $publisherId)
+    {
+        $filter['publisher'] = $publisherId;
+
+        if (isset($filter['value']))
+            $filter['value'] = implode(';', $filter['value']);
+
+        if (!$this->_validate($filter, publishers::$FILTER_FIELDS))
+        {
+            $this->db->execute('ROLLBACK');
+            $app->halt(400);
+        }
+
+        list ($query, $params) = $this->filterSchema->set(RedMap\Schema::SET_INSERT, $filter);
+        $result = $this->db->execute($query, $params);
+
+        if (!isset($result))
+        {
+            $this->db->execute('ROLLBACK');
+            $app->halt(409);
+        }
+    }
+
+    private function _addSlot($app, $slot, $publisherId)
+    {
+        $slot['publisher'] = $publisherId;
+
+        if (!$this->_validate($slot, publishers::$SLOT_FIELDS))
+        {
+            $this->db->execute('ROLLBACK');
+            $app->halt(400);
+        }
+
+        list ($query, $params) = $this->slotSchema->set(RedMap\Schema::SET_INSERT, $slot);
+        $result = $this->db->execute($query, $params);
+
+        if (!isset($result))
+        {
+            $this->db->execute('ROLLBACK');
+            $app->halt(409);
+        }
+    }
 }
 
 class Publisher
@@ -290,8 +371,9 @@ class Publisher
     public $timeout;
     public $secured;
     public $filters;
+    public $slots;
 
-    function __construct($row, $filters)
+    function __construct($row, $filters, $slots)
     {
         $this->id = (int) $row['id'];
         $this->name = $row['name'];
@@ -300,6 +382,7 @@ class Publisher
         $this->timeout = isset($row['timeout']) ? (int) $row['timeout'] : 400;
         $this->secured = isset($row['secured']) ? (bool) $row['secured'] : false;
         $this->filters = $filters;
+        $this->slots = $slots;
     }
 }
 
@@ -316,6 +399,24 @@ class PublisherFilter
         $this->publisher = (int) $row['publisher'];
         $this->mode = $row['mode'];
         $this->value = explode(";", $row['value']);
+    }
+}
+
+class PublisherSlot
+{
+    public $publisher;
+    public $html_id;
+    public $width;
+    public $height;
+    public $floor;
+
+    function __construct($row)
+    {
+        $this->publisher = (int) $row['publisher'];
+        $this->html_id = $row['html_id'];
+        $this->width = isset($row['width']) ? (int) $row['width'] : null;
+        $this->height = isset($row['height']) ? (int) $row['height'] : null;
+        $this->floor = (float) $row['floor'];
     }
 }
 
