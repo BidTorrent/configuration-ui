@@ -21,20 +21,30 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         name: null,
         bidRequestUrl: null,
         pubKey: null,
-        userCountriesfilterMode: "except",
-        userCountriesfilterValue: undefined,
-        publisherCountriesfilterMode: "except",
-        publisherCountriesfilterValue: undefined,
-        categoriesfilterMode: "except",
-        categoriesfilterValue: undefined
+        filters: [
+            { type: "user_country", modeBool: false, value: [""], title: "User countries", placeholder: "FR" },
+            { type: "publisher_country", modeBool: false, value: [""], title: "Publisher countries", placeholder: "ES" },
+            { type: "iab_category", modeBool: false, value: [""], title: "IAB Categories", placeholder: "IAB25-3" }
+        ]
     };
 
     //Functions
     $scope.submitRegistration = function() {
+        // Keep only needed fields in filters
+        var filters = $scope.registerForm.filters;
+        for (var i = filters.length - 1; i >= 0; i--) {
+            filters[i] = {
+                type: filters[i].type,
+                value: filters[i].value,
+                mode: filters[i].modeBool ? "inclusive" : "esclusive"
+            };
+        };
+
         Bidder.save({ format: "ui" }, {
             name: $scope.registerForm.name,
             bidUrl: $scope.registerForm.bidRequestUrl,
-            rsaPubKey: $scope.registerForm.pubKey
+            rsaPubKey: $scope.registerForm.pubKey,
+            filters: filters
         }).$promise
         .then(function() {
                 ngNotify.set("Successfully registered " + $scope.registerForm.name, "success");
