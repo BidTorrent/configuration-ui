@@ -33,12 +33,19 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         // Keep only needed fields in filters
         var filters = $scope.registerForm.filters;
         for (var i = filters.length - 1; i >= 0; i--) {
-            filters[i] = {
-                type: filters[i].type,
-                value: filters[i].value,
-                mode: filters[i].modeBool ? "inclusive" : "esclusive"
-            };
+            var value = filters[i].value.cleanArray(["", null, undefined]);
+
+            if (!filters[i].modeBool && value.length == 0)
+                filters[i] = undefined;
+            else {
+                filters[i] = {
+                    type: filters[i].type,
+                    value: value,
+                    mode: filters[i].modeBool ? "inclusive" : "exclusive"
+                };
+            }
         };
+        filters.cleanArray([undefined]);
 
         Bidder.save({ format: "ui" }, {
             name: $scope.registerForm.name,
@@ -57,5 +64,15 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
                 }
             }
         );
+    };
+
+    Array.prototype.cleanArray = function(deleteValues) {
+    for (var i = 0; i < this.length; i++) {
+        if (deleteValues.indexOf(this[i]) !== -1) {
+            this.splice(i, 1);
+                i--;
+            }
+        }
+        return this;
     };
 }]);
