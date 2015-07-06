@@ -1,0 +1,13 @@
+{
+  "filters" : {
+    "sampling" : 100,
+    "user_ctry_wl" : false,
+    "user_ctry" : [],
+    "cat_wl" : false,
+    "cat" : [],
+    "pub_wl" : false,
+    "pub" : [],
+    "pub_ctry_wl" : false,
+    "pub_ctry" : []
+  }
+}
