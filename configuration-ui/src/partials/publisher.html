@@ -34,87 +34,139 @@
     </form>
 
     <h2>Setup your static configuration <i class="fa fa-sliders"></i></h2>
-    <form class="row">
-        <h3>Global info</h3>
-        <div class="form-group col-md-6">
-            <label for="pubCountry" class="control-label">Country (ISO 3166-2)</label>
-            <input type="text" class="form-control" id="pubCountry" placeholder="ex: FR" ng-model="staticConfigForm.country">
-        </div>
-        <div class="form-group col-md-6" ng-class="[{'has-error' : staticConfigForm.timeout && !isStrictPositiveInt(staticConfigForm.timeout)}]">
-            <label for="pubTimeout" class="control-label">Timeout (in ms)</label>
-            <input type="text" class="form-control" id="pubTimeout" placeholder="ex: 500" ng-model="staticConfigForm.timeout">
-        </div>
-    </form>
-    <form class="row">
-        <h3>Blacklisting</h3>
-        <div class="col-md-6">
-            <label for="pubBlacklistedDomains" class="control-label">Domains</label>
-            <div class="form-group row" ng-repeat="(key, value) in staticConfigForm.domainFilter.value track by key">
-                <div class="col-xs-10">
-                    <input type="text" class="form-control" id="pubBlacklistedDomains"
-                           placeholder="ex: advertiser1.com;blog.avd2.fr"
-                           ng-model="staticConfigForm.domainFilter.value[key]">
+
+    <div class="formSection well">
+        <h4>Global info</h4>
+        <form class="row">
+            <div class="form-group col-md-6">
+                <label for="pubCountry" class="control-label">Country (ISO 3166-2)</label>
+                <input type="text" class="form-control" id="pubCountry" placeholder="ex: FR" ng-model="staticConfigForm.country">
+            </div>
+            <div class="form-group col-md-6" ng-class="[{'has-error' : staticConfigForm.timeout && !isStrictPositiveInt(staticConfigForm.timeout)}]">
+                <label for="pubTimeout" class="control-label">Timeout (in ms)</label>
+                <input type="text" class="form-control" id="pubTimeout" placeholder="ex: 500" ng-model="staticConfigForm.timeout">
+            </div>
+        </form>
+    </div>
+
+    <div class="formSection well">
+        <h4>Blacklisting</h4>
+        <form class="row">
+            <div class="col-md-6">
+                <label for="pubBlacklistedDomains" class="control-label">Domains</label>
+                <div class="form-group row" ng-repeat="(key, value) in staticConfigForm.domainFilter.value track by key">
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" id="pubBlacklistedDomains"
+                               placeholder="ex: advertiser1.com;blog.avd2.fr"
+                               ng-model="staticConfigForm.domainFilter.value[key]">
+                    </div>
+                    <div class="col-xs-2">
+                        <button type="submit" class="form-control btn btn-md btn-danger"
+                                ng-click="staticConfigForm.domainFilter.value.splice(key, 1)"><i class="fa fa-minus"></i></button>
+                    </div>
                 </div>
-                <div class="col-xs-2">
-                    <button type="submit" class="form-control btn btn-md btn-danger"
-                            ng-click="staticConfigForm.domainFilter.value.splice(key, 1)"><i class="fa fa-minus"></i></button>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <button type="submit" class="form-control btn btn-md btn-success"
+                                ng-click="staticConfigForm.domainFilter.value.push('')"><i class="fa fa-plus"></i> Add filter</button>
+                    </div>
+                    <div class="col-xs-6">
+                        <button type="submit" class="form-control btn btn-md"
+                                ng-class="staticConfigForm.domainFilter.mode ? 'btn-default' : 'btn-primary'"
+                                ng-click="staticConfigForm.domainFilter.mode = !staticConfigForm.domainFilter.mode">
+                                <span ng-if="staticConfigForm.domainFilter.mode">Whitelist mode</span>
+                                <span ng-if="!staticConfigForm.domainFilter.mode">Blacklist mode</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-3">
-                    <button type="submit" class="form-control btn btn-md btn-success"
-                            ng-click="staticConfigForm.domainFilter.value.push('')"><i class="fa fa-plus"></i> Add</button>
+            <div class="col-md-6">
+                <label class="control-label">IAB Categories</label>
+                <div class="form-group row" ng-repeat="(key, value) in staticConfigForm.categoryFilter.value track by key">
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" id="pubBlacklistedCategories"
+                               placeholder="ex: IAB25-3;IAB26"
+                               ng-model="staticConfigForm.categoryFilter.value[key]">
+                    </div>
+                    <div class="col-xs-2">
+                        <button type="submit" class="form-control btn btn-md btn-danger"
+                                ng-click="staticConfigForm.categoryFilter.value.splice(key, 1)">
+                                <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="col-xs-7">
-                    <button type="submit" class="form-control btn btn-md"
-                            ng-class="staticConfigForm.domainFilter.mode ? 'btn-default' : 'btn-primary'"
-                            ng-click="staticConfigForm.domainFilter.mode = !staticConfigForm.domainFilter.mode">
-                            <span ng-if="staticConfigForm.domainFilter.mode">Whitelist mode</span>
-                            <span ng-if="!staticConfigForm.domainFilter.mode">Blacklist mode</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <label class="control-label">IAB Categories</label>
-            <div class="form-group row" ng-repeat="(key, value) in staticConfigForm.categoryFilter.value track by key">
-                <div class="col-xs-10">
-                    <input type="text" class="form-control" id="pubBlacklistedCategories"
-                           placeholder="ex: IAB25-3;IAB26"
-                           ng-model="staticConfigForm.categoryFilter.value[key]">
-                </div>
-                <div class="col-xs-2">
-                    <button type="submit" class="form-control btn btn-md btn-danger"
-                            ng-click="staticConfigForm.categoryFilter.value.splice(key, 1)">
-                            <i class="fa fa-minus"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-3">
-                    <button type="submit" class="form-control btn btn-md btn-success"
-                            ng-click="staticConfigForm.categoryFilter.value.push('')">
-                            <i class="fa fa-plus"></i> Add
-                    </button>
-                </div>
-                <div class="col-xs-7">
-                    <button type="submit" class="form-control btn btn-md"
-                            ng-class="staticConfigForm.categoryFilter.mode ? 'btn-default' : 'btn-primary'"
-                            ng-click="staticConfigForm.categoryFilter.mode = !staticConfigForm.categoryFilter.mode">
-                            <span ng-if="staticConfigForm.categoryFilter.mode">Whitelist mode</span>
-                            <span ng-if="!staticConfigForm.categoryFilter.mode">Blacklist mode</span>
-                    </button>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <button type="submit" class="form-control btn btn-md btn-success"
+                                ng-click="staticConfigForm.categoryFilter.value.push('')">
+                                <i class="fa fa-plus"></i> Add filter
+                        </button>
+                    </div>
+                    <div class="col-xs-6">
+                        <button type="submit" class="form-control btn btn-md"
+                                ng-class="staticConfigForm.categoryFilter.mode ? 'btn-default' : 'btn-primary'"
+                                ng-click="staticConfigForm.categoryFilter.mode = !staticConfigForm.categoryFilter.mode">
+                                <span ng-if="staticConfigForm.categoryFilter.mode">Whitelist mode</span>
+                                <span ng-if="!staticConfigForm.categoryFilter.mode">Blacklist mode</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-12">
-            <div class="form-group row">
-                <label for="impSecured" class="control-label col-md-3">Secured </label>
-                <div class="col-md-5"><input type="radio" name="type" value="true" ng-model="staticConfigForm.secured"> My website support https</div>
-                <div class="col-md-4"><input type="radio" name="type" value="false" ng-model="staticConfigForm.secured"> I only want http ads</div>
+            <div class="col-md-12 securedRow">
+                <label for="impSecured" class="control-label">Secured </label>
+                <div class="form-group">
+                    <div class="btn-group" data-toggle="buttons">
+                            <button type="button" class="btn btn-default" ng-class="{'active' : staticConfigForm.secured}" ng-click="staticConfigForm.secured=true"> My website support https</button>
+                            <button type="button" class="btn btn-default" ng-class="{'active' : !staticConfigForm.secured}" ng-click="staticConfigForm.secured=false"> I only want http ads</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
+
+    <!-- MANDATORY SETTINGS -->
+    <div class="formSection well">
+        <h4>Imp Settings</h4>
+
+        <form class="row">
+            <div class="form-group col-xs-3">
+                <label class="control-label">Element DOM id</label>
+            </div>
+            <div class="form-group col-xs-3" ng-class="{'has-error' : imp.width && !isStrictPositiveInt(imp.width)}">
+                <label class="control-label">Width</label>
+            </div>
+            <div class="form-group col-xs-3" ng-class="{'has-error' : imp.height && !isStrictPositiveInt(imp.height)}">
+                <label class="control-label">Height</label>
+            </div>
+            <div class="form-group col-xs-3">
+                <label class="control-label">Floor</label>
+            </div>
+        </form>
+        <form class="row" ng-repeat="(key, imp) in staticConfigForm.imp">
+            <div class="form-group col-xs-3">
+                <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="imp.html_id">
+            </div>
+            <div class="form-group col-xs-3" ng-class="[{'has-error' : imp.width && !isStrictPositiveInt(imp.width)}]">
+                <input type="text" class="form-control" placeholder="ex: 200" ng-model="imp.width">
+            </div>
+            <div class="form-group col-xs-3" ng-class="[{'has-error' : imp.height && !isStrictPositiveInt(imp.height)}]">
+                <input type="text" class="form-control" placeholder="ex: 600" ng-model="imp.height">
+            </div>
+            <div class="form-group col-xs-2">
+                <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="imp.floor">
+            </div>
+            <div class="form-group col-xs-1">
+                <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="staticConfigForm.imp.splice(key, 1)"><i class="fa fa-minus"></i></button>
+            </div>
+        </form>
+        <form class="row">
+            <div class="form-group col-md-12">
+               <button type="submit" class="btn btn-md btn-success col-md-2"
+                ng-click="staticConfigForm.imp.push({ html_id: null, width: null, height: null, floor: null })"><i class="fa fa-plus"></i> Add imp</button>
+            </div>
+        </form>
+    </div>
+    <!-- END MANDATORY SETTINGS-->
 
     <div class="row validation">
         <button class="btn btn-md btn-primary col-md-offset-2 col-md-3 col-xs-5"
@@ -154,51 +206,6 @@
 
     <div class="row">
         <h3><b>1.</b> Create your configuration</h3>
-
-
-        <!-- MANDATORY SETTINGS -->
-        <div class="mandatorySettings well">
-            <h4>Mandatory Settings</h4>
-
-            <form class="row">
-                <div class="form-group col-xs-3">
-                    <label class="control-label">Element DOM id</label>
-                </div>
-                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
-                    <label class="control-label">Width</label>
-                </div>
-                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
-                    <label class="control-label">Height</label>
-                </div>
-                <div class="form-group col-xs-3">
-                    <label class="control-label">Floor</label>
-                </div>
-            </form>
-            <form class="row" ng-repeat="(key, slot) in dynConfigForm.slots">
-                <div class="form-group col-xs-3">
-                    <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="slot.element">
-                </div>
-                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.width && !isStrictPositiveInt(slot.width)}]">
-                    <input type="text" class="form-control" placeholder="ex: 200" ng-model="slot.width">
-                </div>
-                <div class="form-group col-xs-3" ng-class="[{'has-error' : slot.height && !isStrictPositiveInt(slot.height)}]">
-                    <input type="text" class="form-control" placeholder="ex: 600" ng-model="slot.height">
-                </div>
-                <div class="form-group col-xs-2">
-                    <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="slot.floor">
-                </div>
-                <div class="form-group col-xs-1">
-                    <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="dynConfigForm.slots.splice(key, 1)"><i class="fa fa-minus"></i></button>
-                </div>
-            </form>
-            <form class="row">
-                <div class="form-group col-md-12">
-                   <button type="submit" class="btn btn-md btn-success col-md-2"
-                    ng-click="dynConfigForm.slots.push({ element: null, width: null, height: null, floor: null })"><i class="fa fa-plus"></i> Add slot</button>
-                </div>
-            </form>
-        </div>
-        <!-- END MANDATORY SETTINGS-->
 
         <!-- ADVANCED SETTINGS -->
         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#advancedSettings" aria-expanded="false" aria-controls="advancedSettings">
@@ -292,11 +299,46 @@
 <span ng-if="hostAuction">&nbsp;&nbsp;&nbsp;&nbsp;auction:&nbsp;&nbsp;    &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
 <span ng-if="hostBidders">&nbsp;&nbsp;&nbsp;&nbsp;bidders:&nbsp;&nbsp;    &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
 <span ng-if="hostConfig">&nbsp;&nbsp;&nbsp;&nbsp;config:&nbsp;&nbsp;     &#39;{{dynConfigForm.config}}&#39;, //Optionnal if you want to host your own<br/></span>
-&nbsp;&nbsp;&nbsp;&nbsp;slots:&nbsp;&nbsp;[ //List of ad slots by Id<br/>
-<span ng-repeat="slot in dynConfigForm.slots">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ element: &#39;{{slot.element}}&#39;<span ng-if="slot.width">, width: {{slot.width}}</span><span ng-if="slot.height">, height: {{slot.height}}</span><span ng-if="slot.floor">, floor: {{slot.floor}}</span> },<br/>
+<!-- site -->
+<span ng-if="staticConfigForm.country">
+&nbsp;&nbsp;&nbsp;&nbsp;site: {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;publisher: { country: {{staticConfigForm.country}} }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;},<br/>
 </span>
-&nbsp;&nbsp;&nbsp;&nbsp;]<br/>
+
+<!-- back/white listed domains -->
+<span ng-if="staticConfigForm.domainFilter.value.length > 0">
+&nbsp;&nbsp;&nbsp;&nbsp;
+<span ng-if="!staticConfigForm.domainFilter.mode">badv: [ //List of backlisted domains</span>
+<span ng-if="staticConfigForm.domainFilter.mode">wadv: [ //List of whitelisted domains</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-repeat="domain in staticConfigForm.domainFilter.value track by $index">
+<span ng-if="domain">&#39;{{domain}}&#39;, </span>
+</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+</span>
+
+<!-- back/white listed categories -->
+<span ng-if="staticConfigForm.categoryFilter.value.length > 0">
+&nbsp;&nbsp;&nbsp;&nbsp;
+<span ng-if="!staticConfigForm.categoryFilter.mode">bcat: [ //List of backlisted IAB categories</span>
+<span ng-if="staticConfigForm.categoryFilter.mode">wcat: [ //List of whitelisted IAB categories</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-repeat="cat in staticConfigForm.categoryFilter.value track by $index">
+<span ng-if="cat">&#39;{{cat}}&#39;, </span>
+</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+</span>
+
+<!-- imp -->
+&nbsp;&nbsp;&nbsp;&nbsp;imp: [ //List of ad imps by Id<br/>
+<span ng-repeat="imp in staticConfigForm.imp">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ banner: { id: &#39;{{imp.html_id}}&#39;<span ng-if="imp.width">, w: {{imp.width}}</span><span ng-if="imp.height">, h: {{imp.height}}</span> }<span ng-if="imp.floor">, bidfloor: {{imp.floor}}</span><span ng-if="staticConfigForm.secured !== null">, secure: {{staticConfigForm.secured}}</span> },<br/>
+</span>
+&nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+
+<!-- tmax -->
+<span ng-if="staticConfigForm.timeout">
+&nbsp;&nbsp;&nbsp;&nbsp;tmax: {{staticConfigForm.timeout}}<br/>
+</span>
 &nbsp;&nbsp;});<br/>
 &lt;/script&gt;
             </code>

@@ -27,16 +27,16 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         isTypeWebsite: true,
         country: undefined,
         timeout: undefined,
-        secured: undefined,
+        secured: null,
         domainFilter: { type: "domain", mode: false, value: [""] },
         categoryFilter: { type: "iab_category", mode: false, value: [""] },
+        imp: [{ html_id: null, width: null, height: null, floor: null }]
     };
 
     $scope.dynConfigForm = {
         auction: null,
         bidders: null,
         config: null,
-        slots: [{ element: null, width: null, height: null, floor: null }]
     }
 
     //Functions
@@ -106,9 +106,12 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         var categoryFilter = angular.copy($scope.staticConfigForm.categoryFilter);
         categoryFilter.mode = categoryFilter.mode ? "inclusive" : "exclusive";
 
+        var imp = angular.copy($scope.staticConfigForm.imp);
+
         // remove empty values in filter array
         domainFilter.value = domainFilter.value.cleanArray(["", null, undefined]);
         categoryFilter.value = categoryFilter.value.cleanArray(["", null, undefined]);
+        imp = imp.cleanArray(["", null, undefined]);
 
         // save the configuration
         Publisher.save({ format: "ui" }, {
@@ -117,7 +120,8 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             country: $scope.staticConfigForm.country,
             timeout: $scope.staticConfigForm.timeout,
             secured: $scope.staticConfigForm.secured,
-            filters: [domainFilter, categoryFilter]
+            filters: [domainFilter, categoryFilter],
+            slots: imp
         }).$promise
         .then(function() {
                 ngNotify.set("Successfully saved config on BidTorrent.io", "success");
