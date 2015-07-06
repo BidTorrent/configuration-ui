@@ -1,18 +1,36 @@
 <div class="bidtorrentPage container">
     <h1>Bidders</h1>
 
-    <h2><span class="title">Register as a Bidder</span> <i class="fa fa-space-shuttle"></i></h2>
+    <h2>Load my configuration <i class="fa fa-space-shuttle"></i></h2>
+    <form class="bidtorrentForm bidderRegisterForm">
+        <div class="form-group row">
+            <label for="bidderName" class="control-label col-md-2">Id</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" id="bidderId" ng-model="loadForm.id">
+            </div>
+        </div>
+        <div class="form-group row validation">
+            <button type="submit" class="btn btn-md btn-success col-xs-offset-4 col-xs-4" ng-click="loadConfig()">
+                Load
+            </button>
+        </div>
+    </form>
+
+    <h2>
+        <span class="title" ng-if="configForm.id">My configuration</span>
+        <span class="title" ng-if="!configForm.id">Register as a Bidder</span>
+        <i class="fa fa-space-shuttle"></i></h2>
     <form>
         <label for="bidderName" class="control-label col-md-2">Name</label>
         <div class="form-group col-md-10">
-            <input type="text" class="form-control" id="bidderName" placeholder="ex: Criteo" ng-model="registerForm.name">
+            <input type="text" class="form-control" id="bidderName" placeholder="ex: Criteo" ng-model="configForm.name">
         </div>
 
         <label for="bidRequestUrl" class="control-label col-md-2">Bid request url</label>
         <div class="form-group col-md-10">
             <input type="text" class="form-control" id="bidUrl"
                    placeholder="ex: http://rtb.criteo.com/bidtorrent/auction/request?profile=42"
-                   ng-model="registerForm.bidRequestUrl">
+                   ng-model="configForm.bidRequestUrl">
         </div>
 
         <label for="pubKey" class="control-label col-md-2">RSA public key</label>
@@ -23,11 +41,11 @@ MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqGKukO1De7zhZj6+H0qtjTkVxwTCpvKe4eCZ0
 FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/
 3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBkedbNf0Tp0GbMJDyR4e9T04ZZwIDAQAB
 -----END PUBLIC KEY-----"
-                   ng-model="registerForm.pubKey"></textarea>
+                   ng-model="configForm.pubKey"></textarea>
         </div>
 
         <h3>Filtering</h3>
-        <div class="col-md-4 filter" ng-repeat="filter in registerForm.filters">
+        <div class="col-md-4 filter" ng-repeat="filter in configForm.filters">
             <label class="control-label">
                 <span ng-if="filter.modeBool">Whitelisted</span>
                 <span ng-if="!filter.modeBool">Blacklisted</span>
@@ -64,8 +82,9 @@ FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/
             </div>
         </div>
         <div class="form-group row">
-            <button type="submit" class="btn btn-md btn-success col-xs-offset-4 col-xs-4" ng-click="submitRegistration()">
-                Register me
+            <button type="submit" class="btn btn-md btn-success col-xs-offset-4 col-xs-4" ng-click="submit()">
+                <span ng-if="configForm.id">Update my configuration</span>
+                <span ng-if="!configForm.id">Register me</span>
             </button>
         </div>
     </form>

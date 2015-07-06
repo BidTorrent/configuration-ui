@@ -175,8 +175,15 @@ class Bidders
 
     function put($app, $id)
     {
-        list($bidder, $filters) = $this->getRequestParameters($app);
+        list($bidder, $filters) = $this->_getRequestParameters($app);
         $bidder['id'] = $id;
+
+        // Get bidder
+        list ($query, $params) = $this->bidderSchema->get(array ('id' => $id));
+        $row = $this->db->get_first($query, $params);
+
+        if (!isset($row))
+            $app->halt(404);
 
         // Update bidder
         $this->db->execute('START TRANSACTION');
@@ -186,15 +193,12 @@ class Bidders
         if (!isset($bidderUpdateResult))
             $app->halt(500);
 
-        if ($bidderUpdateResult == 0)
-            $app->halt(404);
-
         // Delete bidder's filters
         list ($query, $params) = $this->filterSchema->delete(array ('bidder' => $id));
         $this->db->execute($query, $params);
 
         // Add filters
-        array_map(function($filter) use ($app, $insertedBidderId) { $this->_addFilter($app, $filter, $insertedBidderId); }, $filters);
+        array_map(function($filter) use ($app, $id) { $this->_addFilter($app, $filter, $id); }, $filters);
 
         $this->db->execute('COMMIT');
     }
