@@ -181,6 +181,9 @@ class Bidders
         foreach ($filters as $filter) {
             $filter['bidder'] = $insertedBidderId;
 
+            if (isset($filter['value']))
+                $filter['value'] = implode(';', $filter['value']);
+
             if (!$this->_validate($filter, bidders::$FILTER_FIELDS))
             {
                 $this->db->execute('ROLLBACK');
@@ -234,6 +237,9 @@ class Bidders
         // Add new filters
         foreach ($filters as $filter) {
             $filter['bidder'] = $id;
+
+            if (isset($filter['value']))
+                $filter['value'] = implode(';', $filter['value']);
 
             if (!$this->_validate($filter, bidders::$FILTER_FIELDS))
             {

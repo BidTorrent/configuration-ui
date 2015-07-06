@@ -134,6 +134,9 @@ class Publishers
         foreach ($filters as $filter) {
             $filter['publisher'] = $insertedPubId;
 
+            if (isset($filter['value']))
+                $filter['value'] = implode(';', $filter['value']);
+
             if (!$this->_validate($filter, publishers::$FILTER_FIELDS))
             {
                 $this->db->execute('ROLLBACK');
@@ -187,6 +190,9 @@ class Publishers
         // Add new filters
         foreach ($filters as $filter) {
             $filter['publisher'] = $id;
+
+            if (isset($filter['value']))
+                $filter['value'] = implode(';', $filter['value']);
 
             if (!$this->_validate($filter, publishers::$FILTER_FIELDS))
             {
