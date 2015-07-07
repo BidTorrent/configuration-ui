@@ -5,29 +5,35 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 .config(['$stateProvider', function($stateProvider) {
     $stateProvider
         .state('publisher', {
-            url: '/publisher',
+            url: '/publisher/:publisherId',
             templateUrl: 'partials/publisher.html',
             controller: 'PublisherCtrl'
         })
 }])
 
-.controller('PublisherCtrl', ['$scope', '$resource', 'ngNotify', 'smoothScroll', function($scope, $resource, ngNotify, smoothScroll) {
+.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, ngNotify, smoothScroll) {
 
     //Resources
     var Publisher = $resource('/api/publishers/:publisherId', {publisherId:'@id'});
 
     //Models
+    $scope.defaultDomainFilter = { type: "domain", mode: false, value: [""], title: "Advertiser domains", placeholder: "www.adv1.fr" };
+    $scope.defaultCategoryFilter = { type: "iab_category", mode: false, value: [""], title: "IAB catagories", placeholder: "IAB-23" };
+
+    $scope.publisherId = $stateParams.publisherId;
+
     $scope.registerForm = {
         name: null //domain
     };
 
     $scope.staticConfigForm = {
         isTypeWebsite: true,
+        name: undefined,
         country: undefined,
         timeout: undefined,
         secured: false,
-        domainFilter: { type: "domain", mode: false, value: [""], title: "Advertiser domains", placeholder: "www.adv1.fr" },
-        categoryFilter: { type: "iab_category", mode: false, value: [""], title: "IAB catagories", placeholder: "IAB-23" },
+        domainFilter: angular.copy($scope.defaultDomainFilter),
+        categoryFilter: angular.copy($scope.defaultCategoryFilter),
         imp: [{ html_id: null, width: null, height: null, floor: null }]
     };
 
@@ -94,6 +100,42 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         element.click();
     };
 
+    $scope.loadConfig = function() {
+        var deferred = $q.defer();
+
+        if (!$scope.publisherId) {
+            deferred.reject("Enter an id to load the configuration", "error");
+            return deferred.promise;
+        }
+
+        Publisher.get({ publisherId: $scope.publisherId , format: "ui" }).$promise.then(
+            function(response) {
+                var domainFilter = getFilter(response.filters, angular.copy($scope.defaultDomainFilter));
+                var categoryFilter = getFilter(response.filters, angular.copy($scope.defaultCategoryFilter));
+
+                $scope.staticConfigForm = {
+                    isTypeWebsite: response.type == "website",
+                    name: response.name,
+                    country: response.country,
+                    timeout: response.timeout,
+                    secured: response.secured,
+                    domainFilter: domainFilter,
+                    categoryFilter: categoryFilter,
+                    imp: response.imp
+                };
+                $scope.publisherId = response.id;
+            },
+            function(response) {
+                if(response.status === 404) {
+                    ngNotify.set("Unknown bidder " + $scope.publisherId, "error");
+                } else {
+                    ngNotify.set("Oops! something went wrong, try again later", "error");
+                }
+            }
+        );
+        return deferred.promise;
+    };
+
     $scope.scrollToScript = function() {
         var generatedScript = document.getElementById('generatedScript');
         smoothScroll(generatedScript);
@@ -103,17 +145,11 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         // hide modal
         $('#loginModal').modal('hide');
 
-        var domainFilter = angular.copy($scope.staticConfigForm.domainFilter);
-        domainFilter.mode = domainFilter.mode ? "inclusive" : "exclusive";
-
-        var categoryFilter = angular.copy($scope.staticConfigForm.categoryFilter);
-        categoryFilter.mode = categoryFilter.mode ? "inclusive" : "exclusive";
+        var filters = new Array();
+        validateAndAddFilter(filters, $scope.staticConfigForm.domainFilter);
+        validateAndAddFilter(filters, $scope.staticConfigForm.categoryFilter);
 
         var imp = angular.copy($scope.staticConfigForm.imp);
-
-        // remove empty values in filter array
-        domainFilter.value = domainFilter.value.cleanArray(["", null, undefined]);
-        categoryFilter.value = categoryFilter.value.cleanArray(["", null, undefined]);
         imp = imp.cleanArray(["", null, undefined]);
 
         // save the configuration
@@ -123,7 +159,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             country: $scope.staticConfigForm.country,
             timeout: $scope.staticConfigForm.timeout,
             secured: $scope.staticConfigForm.secured,
-            filters: [domainFilter, categoryFilter],
+            filters: filters,
             imp: imp
         }).$promise
         .then(function() {
@@ -134,6 +170,22 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                 ngNotify.set("Oops! something went wrong, try again later", "error");
             }
         );
+    }
+
+    var validateAndAddFilter = function(filters, filter) {
+        // Remove empty values
+        filter.value.cleanArray(["", null, undefined]);
+
+        if (!filter.mode && filter.value.length == 0)
+            return;
+
+        var newFilter = {
+            type: filter.type,
+            mode: filter.mode ? "inclusive" : "exclusive",
+            value: filter.value
+        };
+
+        filters.push(newFilter);
     }
 
     $scope.isVirtuallyEmpty = function(array) {
@@ -163,6 +215,27 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         return hash;
     };
 
+    var getFilter = function(responseFilters, defaultFilter) {
+        var filters = $.grep(responseFilters || [], function(filter) {
+            return filter.type == defaultFilter.type;
+        });
+
+        if (filters.length == 0)
+            return defaultFilter;
+
+        var filter = filters[0];
+        filter.placeholder = defaultFilter.placeholder;
+        filter.title = defaultFilter.title;
+        if (filter.mode == "inclusive")
+            filter.modeBool = true;
+        else
+            filter.modeBool = false;
+        if (!filter.value)
+            filter.value = defaultFilter.value;
+
+        return filter;
+    };
+
     Array.prototype.cleanArray = function(deleteValues) {
     for (var i = 0; i < this.length; i++) {
         if (deleteValues.indexOf(this[i]) !== -1) {         
@@ -172,4 +245,9 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         }
         return this;
     };
+
+    $scope.loadConfig().finally(
+    function(response) {
+        return; // TODO: end loader if there is a loader
+    });
 }]);
