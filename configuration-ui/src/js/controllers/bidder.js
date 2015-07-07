@@ -133,7 +133,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     }
 
     var getFilter = function(responseFilters, defaultFilter) {
-        var filters = $.grep(responseFilters, function(filter) {
+        var filters = $.grep(responseFilters || [], function(filter) {
             return filter.type == defaultFilter.type;
         });
 
