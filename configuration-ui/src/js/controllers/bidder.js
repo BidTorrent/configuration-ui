@@ -27,13 +27,16 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     //Models
     $scope.bidderId = $stateParams.bidderId;
 
+    $scope.defaultCategoryFilter = { type: "iab_category", mode: false, value: [""], title: "IAB catagories", placeholder: "IAB-23" };
+    $scope.defaultUserCountryFilter = { type: "user_country", mode: false, value: [""], title: "User countries", placeholder: "FR" };
+    $scope.defaultPubCountryFilter = { type: "publisher_country", mode: false, value: [""], title: "Publisher countries", placeholder: "ES" };
     $scope.configForm = {
         name: null,
         bidRequestUrl: null,
         pubKey: null,
-        userCountryFilter: { type: "user_country", mode: false, value: [""], title: "User countries", placeholder: "FR" },
-        pubCountryFilter: { type: "publisher_country", mode: false, value: [""], title: "Publisher countries", placeholder: "ES" },
-        categoryFilter: { type: "iab_category", modeBool: false, value: [""], title: "IAB Categories", placeholder: "IAB25-3" }
+        userCountryFilter: angular.copy($scope.defaultUserCountryFilter),
+        pubCountryFilter: angular.copy($scope.defaultPubCountryFilter),
+        categoryFilter: angular.copy($scope.defaultCategoryFilter)
     };
 
     //Functions
@@ -46,9 +49,9 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         }
         Bidder.get({ bidderId: $scope.bidderId , format: "ui" }).$promise.then(
             function(response) {
-                var userCountryFilter = getFilter(response.filters, $scope.configForm.userCountryFilter);
-                var pubCountryFilter = getFilter(response.filters, $scope.configForm.pubCountryFilter);
-                var categoryFilter = getFilter(response.filters, $scope.configForm.categoryFilter);
+                var userCountryFilter = getFilter(response.filters, angular.copy($scope.defaultUserCountryFilter));
+                var pubCountryFilter = getFilter(response.filters, angular.copy($scope.defaultPubCountryFilter));
+                var categoryFilter = getFilter(response.filters, angular.copy($scope.defaultCategoryFilter));
 
                 $scope.configForm = {
                     name: response.name,
