@@ -50,21 +50,7 @@ MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqGKukO1De7zhZj6+H0qtjTkVxwTCpvKe4eCZ0
 FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/
 3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBkedbNf0Tp0GbMJDyR4e9T04ZZwIDAQAB
 -----END PUBLIC KEY-----"
-                   ng-model="configForm.pubKey"></textarea>
-        </div>
-
-        <h3>Filtering</h3>
-        <div class="col-md-4 filter" ng-repeat="filter in [configForm.pubCountryFilter, configForm.userCountryFilter, configForm.categoryFilter]">
-            <label class="control-label">
-                <span ng-if="filter.modeBool">Whitelisted</span>
-                <span ng-if="!filter.modeBool">Blacklisted</span>
-                {{filter.title}}
-            </label>
-            <div class="form-group row" ng-repeat="(key, value) in filter.value track by key">
-                <div class="col-xs-10">
-                    <input type="text" class="form-control" id="bidderBlacklistedCategories"
-                           placeholder="ex: {{filter.placeholder}}"
-                           ng-model="filter.value[key]">
+                              ng-model="configForm.pubKey"></textarea>
                 </div>
             </div>
         </form>
@@ -73,7 +59,7 @@ FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/
     <div class="formSection well">
         <form>
             <h4>Filtering</h4>
-            <div class="col-md-4 filter" ng-repeat="filter in configForm.filters">
+            <div class="col-md-4 filter" ng-repeat="filter in [configForm.pubCountryFilter, configForm.userCountryFilter, configForm.categoryFilter]">
                 <label class="control-label">
                     <span ng-if="filter.modeBool">Whitelisted</span>
                     <span ng-if="!filter.modeBool">Blacklisted</span>
