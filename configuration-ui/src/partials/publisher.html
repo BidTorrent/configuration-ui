@@ -52,62 +52,34 @@
     <div class="formSection well">
         <h4>Blacklisting</h4>
         <form class="row">
-            <div class="col-md-6">
-                <label class="control-label">Domains</label>
-                <div class="form-group row" ng-repeat="value in staticConfigForm.domainFilter.value track by $index">
+            <div class="col-md-6" ng-repeat="filter in [staticConfigForm.domainFilter, staticConfigForm.categoryFilter]">
+                <label class="control-label">
+                    <span ng-if="filter.mode">Whitelisted</span>
+                    <span ng-if="!filter.mode">Blacklisted</span>
+                    {{filter.title}}
+                </label>
+                <div class="form-group row" ng-repeat="value in filter.value track by $index">
                     <div class="col-xs-10">
                         <input type="text" class="form-control"
-                               placeholder="ex: advertiser1.com;blog.avd2.fr"
-                               ng-model="staticConfigForm.domainFilter.value[$index]">
+                               placeholder="ex: {{filter.placeholder}}"
+                               ng-model="filter.value[$index]">
                     </div>
                     <div class="col-xs-2">
                         <button type="submit" class="form-control btn btn-md btn-danger"
-                                ng-click="staticConfigForm.domainFilter.value.splice($index, 1)"><i class="fa fa-minus"></i></button>
+                                ng-click="filter.value.splice($index, 1)"><i class="fa fa-minus"></i></button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-4">
                         <button type="submit" class="form-control btn btn-md btn-success"
-                                ng-click="staticConfigForm.domainFilter.value.push('')"><i class="fa fa-plus"></i> Add filter</button>
+                                ng-click="filter.value.push('')"><i class="fa fa-plus"></i> Add filter</button>
                     </div>
                     <div class="col-xs-6">
                         <button type="submit" class="form-control btn btn-md"
-                                ng-class="staticConfigForm.domainFilter.mode ? 'btn-default' : 'btn-primary'"
-                                ng-click="staticConfigForm.domainFilter.mode = !staticConfigForm.domainFilter.mode">
-                                <span ng-if="staticConfigForm.domainFilter.mode">Whitelist mode</span>
-                                <span ng-if="!staticConfigForm.domainFilter.mode">Blacklist mode</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <label class="control-label">IAB Categories</label>
-                <div class="form-group row" ng-repeat="value in staticConfigForm.categoryFilter.value track by $index">
-                    <div class="col-xs-10">
-                        <input type="text" class="form-control"
-                               placeholder="ex: IAB25-3;IAB26"
-                               ng-model="staticConfigForm.categoryFilter.value[$index]">
-                    </div>
-                    <div class="col-xs-2">
-                        <button type="submit" class="form-control btn btn-md btn-danger"
-                                ng-click="staticConfigForm.categoryFilter.value.splice($index, 1)">
-                                <i class="fa fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-4">
-                        <button type="submit" class="form-control btn btn-md btn-success"
-                                ng-click="staticConfigForm.categoryFilter.value.push('')">
-                                <i class="fa fa-plus"></i> Add filter
-                        </button>
-                    </div>
-                    <div class="col-xs-6">
-                        <button type="submit" class="form-control btn btn-md"
-                                ng-class="staticConfigForm.categoryFilter.mode ? 'btn-default' : 'btn-primary'"
-                                ng-click="staticConfigForm.categoryFilter.mode = !staticConfigForm.categoryFilter.mode">
-                                <span ng-if="staticConfigForm.categoryFilter.mode">Whitelist mode</span>
-                                <span ng-if="!staticConfigForm.categoryFilter.mode">Blacklist mode</span>
+                                ng-class="filter.mode ? 'btn-primary' : 'btn-default'"
+                                ng-click="filter.mode = !filter.mode">
+                                <span ng-if="filter.mode"><i class="fa fa-exchange"></i> Use blacklist mode</span>
+                                <span ng-if="!filter.mode"><i class="fa fa-exchange"></i> Use whitelist mode</span>
                         </button>
                     </div>
                 </div>
@@ -116,8 +88,8 @@
                 <label for="impSecured" class="control-label">Secured </label>
                 <div class="form-group">
                     <div class="btn-group" data-toggle="buttons">
-                            <button type="button" class="btn btn-default" ng-class="{'active' : staticConfigForm.secured}" ng-click="staticConfigForm.secured=true"> My website support https</button>
-                            <button type="button" class="btn btn-default" ng-class="{'active' : !staticConfigForm.secured}" ng-click="staticConfigForm.secured=false"> I only want http ads</button>
+                            <button type="button" class="btn btn-default" ng-class="{'active' : !staticConfigForm.secured}" ng-click="staticConfigForm.secured=true"> My website support both http &amp; https</button>
+                            <button type="button" class="btn btn-default" ng-class="{'active' : staticConfigForm.secured}" ng-click="staticConfigForm.secured=false"> I only want https ads</button>
                     </div>
                 </div>
             </div>

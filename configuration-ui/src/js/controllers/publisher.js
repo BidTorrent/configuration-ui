@@ -28,8 +28,8 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         country: undefined,
         timeout: undefined,
         secured: false,
-        domainFilter: { type: "domain", mode: false, value: [""] },
-        categoryFilter: { type: "iab_category", mode: false, value: [""] },
+        domainFilter: { type: "domain", mode: false, value: [""], title: "Advertiser domains", placeholder: "www.adv1.fr" },
+        categoryFilter: { type: "iab_category", mode: false, value: [""], title: "IAB catagories", placeholder: "IAB-23" },
         imp: [{ html_id: null, width: null, height: null, floor: null }]
     };
 
