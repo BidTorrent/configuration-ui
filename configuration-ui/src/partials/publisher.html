@@ -243,7 +243,15 @@
         <a id="downloadFile" style="display:none"></a>
         <span class="col-md-2 col-xs-2 or">or</span>
         <button class="btn btn-md btn-success col-md-3 col-xs-5"
-                data-toggle="modal" data-target="#loginModal"><i class="fa fa-floppy-o"></i> Save config on BidTorrent.io</button>
+                ng-click="saveConfig()" ng-if="!publisherId">
+            <i class="fa fa-floppy-o"></i>
+            Save config on BidTorrent.io
+        </button>
+        <button class="btn btn-md btn-success col-md-3 col-xs-5"
+                ng-click="saveConfig()" ng-if="publisherId">
+            <i class="fa fa-floppy-o"></i>
+            Update my config
+        </button>
     </div>
     
     <!-- Login Modal -->

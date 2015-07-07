@@ -14,7 +14,15 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 .controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, ngNotify, smoothScroll) {
 
     //Resources
-    var Publisher = $resource('/api/publishers/:publisherId', {publisherId:'@id'});
+    var Publisher = $resource(
+        '/api/publishers/:publisherId',
+        { publisherId:'@id' },
+        {
+            'get': { method:'GET' },
+            'save':   { method:'POST' },
+            'update': { method:'PUT' },
+            'delete': { method:'DELETE' }
+        });
 
     //Models
     $scope.defaultDomainFilter = { type: "domain", mode: false, value: [""], title: "Advertiser domains", placeholder: "www.adv1.fr" };
@@ -64,10 +72,9 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         var website;
 
         var globalConfig = {
-            domain: $scope.staticConfigForm.domain,
             publisher: {
-                id: hashCode($scope.staticConfigForm.domain),
-                name: $scope.staticConfigForm.domain,
+                id: hashCode($scope.staticConfigForm.name),
+                name: $scope.staticConfigForm.name,
                 country: $scope.staticConfigForm.country
             }
         };
@@ -127,7 +134,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             },
             function(response) {
                 if(response.status === 404) {
-                    ngNotify.set("Unknown bidder " + $scope.publisherId, "error");
+                    ngNotify.set("Unknown publisher " + $scope.publisherId, "error");
                 } else {
                     ngNotify.set("Oops! something went wrong, try again later", "error");
                 }
@@ -143,7 +150,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
     $scope.saveConfig = function(element) {
         // hide modal
-        $('#loginModal').modal('hide');
+        //$('#loginModal').modal('hide');
 
         var filters = new Array();
         validateAndAddFilter(filters, $scope.staticConfigForm.domainFilter);
@@ -152,24 +159,47 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         var imp = angular.copy($scope.staticConfigForm.imp);
         imp = imp.cleanArray(["", null, undefined]);
 
-        // save the configuration
-        Publisher.save({ format: "ui" }, {
-            name: $scope.registerForm.name,
+        var publisher = {
+            name: $scope.staticConfigForm.name,
             type: $scope.staticConfigForm.isTypeWebsite ? "website" : "inapp",
             country: $scope.staticConfigForm.country,
             timeout: $scope.staticConfigForm.timeout,
             secured: $scope.staticConfigForm.secured,
             filters: filters,
             imp: imp
-        }).$promise
-        .then(function() {
-                ngNotify.set("Successfully saved config on BidTorrent.io", "success");
-                $scope.scrollToScript();
-            },
-            function(response) {
-                ngNotify.set("Oops! something went wrong, try again later", "error");
-            }
-        );
+        };
+
+        // save the configuration
+        if ($scope.publisherId) {
+            Publisher.update({ publisherId: $scope.publisherId , format: "ui" }, publisher).$promise
+            .then(function() {
+                    ngNotify.set("Successfully updated config for " + $scope.staticConfigForm.name, "success");
+                    $scope.scrollToScript();
+                },
+                function(response) {
+                    if (response.status === 404) {
+                        ngNotify.set("Publisher " + $scope.staticConfigForm.name + " was not found", "error");
+                    } else {
+                        ngNotify.set("Oops! something went wrong, try again later", "error");
+                    }
+                }
+            );
+        }
+        else {
+            Publisher.save({ format: "ui" }, publisher).$promise
+            .then(function() {
+                    ngNotify.set("Successfully saved config on BidTorrent.io", "success");
+                    $scope.scrollToScript();
+                },
+                function(response) {
+                    if (response.status === 409) {
+                        ngNotify.set("This publisher " + $scope.staticConfigForm.name + " is already registered", "error");
+                    } else {
+                        ngNotify.set("Oops! something went wrong, try again later", "error");
+                    }
+                }
+            );
+        }
     }
 
     var validateAndAddFilter = function(filters, filter) {
