@@ -1,21 +1,6 @@
 <div class="bidtorrentPage container">
     <h1>Publishers</h1>
 
-    <h2>Load my configuration <i class="fa fa-space-shuttle"></i></h2>
-    <form class="bidtorrentForm bidderRegisterForm">
-        <div class="form-group row">
-            <label for="bidderName" class="control-label col-md-2">Id</label>
-            <div class="col-md-8">
-                <input type="text" class="form-control" id="pubId" ng-model="publisherId">
-            </div>
-        </div>
-        <div class="form-group row validation">
-            <button type="submit" class="btn btn-md btn-success col-xs-offset-4 col-xs-4" ng-click="loadConfig()">
-                Load
-            </button>
-        </div>
-    </form>
-
     <h2>
         <span ng-if="publisherId">My integration type</span>
         <span ng-if="!publisherId">What type of integration do you need?</span>
