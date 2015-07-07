@@ -18,9 +18,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
     //Models
     $scope.registerForm = {
-        name: null, //domain
-        bidRequestUrl: null,
-        pubKey: null
+        name: null //domain
     };
 
     $scope.staticConfigForm = {

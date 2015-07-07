@@ -29,17 +29,14 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     $scope.loadForm = {
         id: undefined
     };
-    $scope.filters = [
-        { type: "user_country", modeBool: false, value: [""], title: "User countries", placeholder: "FR" },
-        { type: "publisher_country", modeBool: false, value: [""], title: "Publisher countries", placeholder: "ES" },
-        { type: "iab_category", modeBool: false, value: [""], title: "IAB Categories", placeholder: "IAB25-3" }
-    ];
     $scope.configForm = {
         id: null,
         name: null,
         bidRequestUrl: null,
         pubKey: null,
-        filters: $scope.filters
+        userCountryFilter: { type: "user_country", mode: false, value: [""], title: "User countries", placeholder: "FR" },
+        pubCountryFilter: { type: "publisher_country", mode: false, value: [""], title: "Publisher countries", placeholder: "ES" },
+        categoryFilter: { type: "iab_category", modeBool: false, value: [""], title: "IAB Categories", placeholder: "IAB25-3" }
     };
 
     //Functions
@@ -50,17 +47,18 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         else {
             Bidder.get({ bidderId: $scope.loadForm.id , format: "ui" }).$promise.then(
                 function(response) {
-                    var filters = new Array();
-                    filters.push(getFilter(response.filters, "user_country", $scope.filters[0]));
-                    filters.push(getFilter(response.filters, "publisher_country", $scope.filters[1]));
-                    filters.push(getFilter(response.filters, "iab_category", $scope.filters[2]));
+                    var userCountryFilter = getFilter(response.filters, $scope.configForm.userCountryFilter);
+                    var pubCountryFilter = getFilter(response.filters, $scope.configForm.pubCountryFilter);
+                    var categoryFilter = getFilter(response.filters, $scope.configForm.categoryFilter);
 
                     $scope.configForm = {
                         id: response.id,
                         name: response.name,
                         bidRequestUrl: response.bidUrl,
                         pubKey: response.rsaPubKey,
-                        filters: filters
+                        userCountryFilter: userCountryFilter,
+                        pubCountryFilter: pubCountryFilter,
+                        categoryFilter : categoryFilter
                     };
                 },
                 function(response) {
@@ -76,21 +74,10 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 
     $scope.submit = function() {
         // Keep only needed fields in filters
-        var filters = angular.copy($scope.configForm.filters);
-        for (var i = filters.length - 1; i >= 0; i--) {
-            var value = filters[i].value.cleanArray(["", null, undefined]);
-
-            if (!filters[i].modeBool && value.length == 0)
-                filters[i] = undefined;
-            else {
-                filters[i] = {
-                    type: filters[i].type,
-                    value: value,
-                    mode: filters[i].modeBool ? "inclusive" : "exclusive"
-                };
-            }
-        };
-        filters.cleanArray([undefined]);
+        var filters = new Array();
+        validateAndAddFilter(filters, $scope.configForm.userCountryFilter);
+        validateAndAddFilter(filters, $scope.configForm.pubCountryFilter);
+        validateAndAddFilter(filters, $scope.configForm.categoryFilter);
 
         var bidder = {
             name: $scope.configForm.name,
@@ -129,9 +116,25 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         }
     };
 
-    var getFilter = function(responseFilters, filterType, defaultFilter) {
+    var validateAndAddFilter = function(filters, filter) {
+        // Remove empty values
+        filter.value.cleanArray(["", null, undefined]);
+
+        if (!filter.mode && filter.value.length == 0)
+            return;
+
+        var newFilter = {
+            type: filter.type,
+            mode: filter.mode ? "inclusive" : "exclusive",
+            value: filter.value
+        };
+
+        filters.push(newFilter);
+    }
+
+    var getFilter = function(responseFilters, defaultFilter) {
         var filters = $.grep(responseFilters, function(filter) {
-            return filter.type == filterType;
+            return filter.type == defaultFilter.type;
         });
 
         if (filters.length == 0)
