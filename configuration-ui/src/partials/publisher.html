@@ -193,29 +193,6 @@
                             </span>
                         </div>
                     </div>
-
-                    <!-- CONFIG.JSON -->
-                    <div class="form-group col-md-3">
-                        <label for="config" class="control-label">&nbsp;</label>
-                        <button class="btn btn-primary btn-block" ng-click="hostConfig=!hostConfig"
-                                ng-class="hostConfig ? 'btn-success' : 'btn-warning'">
-                            <span ng-if="!hostConfig">I want to host my own config.json</span>
-                            <span ng-if="hostConfig">Use BidTorrent.io config.json</span>
-                        </button>     
-                    </div>
-                    <div class="form-group col-md-9">
-                        <label for="config" class="control-label">
-                            <span class="optionnal">(Opt)</span> - Path to your static hosted config.json <i>(will fallback to your config hosted in BidTorrent.io <u class="optionnal">if you have an account</u>)</i>
-                        </label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="config"
-                                   placeholder="ex: ../src/config.json"
-                                   ng-model="dynConfigForm.config" ng-disabled="!hostConfig">
-                            <span class="input-group-btn">
-                                <button type="submit" class="form-control btn btn-md btn-success" ng-click="" ng-disabled="!hostConfig">Download config.json</button>
-                            </span>
-                        </div>
-                    </div>
                 </form>
             </div>
         </div>
@@ -223,16 +200,12 @@
     <!-- END ADVANCED SETTINGS -->
 
     <div class="row validation">
-        <button class="btn btn-md btn-primary col-md-offset-2 col-md-3 col-xs-5"
-                ng-click="scrollToScript()"><i class="fa fa-code"></i> Use a static configuration</button>
-        <a id="downloadFile" style="display:none"></a>
-        <span class="col-md-2 col-xs-2 or">or</span>
-        <button class="btn btn-md btn-success col-md-3 col-xs-5"
+        <button class="btn btn-md btn-success"
                 ng-click="saveConfig()" ng-if="!publisherId">
             <i class="fa fa-floppy-o"></i>
             Save config on BidTorrent.io
         </button>
-        <button class="btn btn-md btn-success col-md-3 col-xs-5"
+        <button class="btn btn-md btn-success"
                 ng-click="saveConfig()" ng-if="publisherId">
             <i class="fa fa-floppy-o"></i>
             Update my config
@@ -266,6 +239,18 @@
 
     <h2 id="generatedScript">Include the bidding script <i class="fa fa-code"></i></h2>
 
+    <!-- CONFIG.JSON -->
+    <div class="row config">
+        <div class="form-group">
+            <div class="btn-group" data-toggle="buttons">
+                <button type="button" class="btn btn-default" ng-class="{'active' : !hostConfig}" ng-click="hostConfig=false;scrollToScript()"> Use a static configuration</button>
+                <button type="button" class="btn btn-default" ng-class="{'active' : hostConfig}" ng-click="hostConfig=true" ng-disabled="!publisherId">
+                    Use BidTorrent.io config.json
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <h3>Include the BidTorrent client script and its dynamic configuration to your webpage</h3>
         <div class="row">
@@ -273,48 +258,58 @@
 &lt;script src=&quot;http://bidtorrent.io/client.js&quot;&gt;&lt;/script&gt;<br/>
 &lt;script type=&quot;text/javascript&quot;&gt;<br/>
 &nbsp;&nbsp;bidTorrent({<br/>
-<span ng-if="hostAuction">&nbsp;&nbsp;&nbsp;&nbsp; auction: &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
-<span ng-if="hostBidders">&nbsp;&nbsp;&nbsp;&nbsp; bidders: &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
-<span ng-if="hostConfig">&nbsp;&nbsp;&nbsp;&nbsp; config: &#39;{{dynConfigForm.config}}&#39;, //Optionnal if you want to host your own<br/></span>
-<!-- site -->
-<span ng-if="staticConfigForm.country">
-&nbsp;&nbsp;&nbsp;&nbsp; site: {<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; publisher: { country: {{staticConfigForm.country}} }<br/>
-&nbsp;&nbsp;&nbsp;&nbsp; },<br/>
-</span>
+<span ng-if="hostAuction">&nbsp;&nbsp;&nbsp;&nbsp; auctionUrl: &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="hostBidders">&nbsp;&nbsp;&nbsp;&nbsp; biddersUrl: &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="hostConfig">&nbsp;&nbsp;&nbsp;&nbsp; configUrl: &#39;http://www.bidtorrent.io/api/publishers/{{publisherId}}&#39;,<br/></span>
+<span ng-if="!hostConfig">
+    &nbsp;&nbsp;&nbsp;&nbsp; config: {<br/>
+        <!-- site -->
+        <span ng-if="staticConfigForm.country || staticConfigForm.name || publisherId">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; site: {<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; publisher: {
+        </span>
+        <span ng-if="staticConfigForm.id">id: {{staticConfigForm.id}},</span>
+        <span ng-if="staticConfigForm.name">name: {{staticConfigForm.name}},</span>
+        <span ng-if="staticConfigForm.country">country: {{staticConfigForm.country}},</span>
+        <span ng-if="staticConfigForm.country || staticConfigForm.name || publisherId">
+        }<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br/>
+        </span>
 
-<!-- back/white listed domains -->
-<span ng-if="isVirtuallyEmpty(staticConfigForm.domainFilter.value)">
-&nbsp;&nbsp;&nbsp;&nbsp;
-<span ng-if="!staticConfigForm.domainFilter.mode">badv: [ //List of backlisted domains</span>
-<span ng-if="staticConfigForm.domainFilter.mode">wadv: [ //List of whitelisted domains</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-repeat="domain in staticConfigForm.domainFilter.value track by $index">
-<span ng-if="domain">&#39;{{domain}}&#39;, </span>
-</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
-</span>
+        <!-- back/white listed domains -->
+        <span ng-if="isVirtuallyEmpty(staticConfigForm.domainFilter.value)">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span ng-if="!staticConfigForm.domainFilter.mode">badv: [ //List of backlisted domains</span>
+        <span ng-if="staticConfigForm.domainFilter.mode">wadv: [ //List of whitelisted domains</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-repeat="domain in staticConfigForm.domainFilter.value track by $index">
+        <span ng-if="domain">&#39;{{domain}}&#39;, </span>
+        </span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
+        </span>
 
-<!-- back/white listed categories -->
-<span ng-if="isVirtuallyEmpty(staticConfigForm.categoryFilter.value)">
-&nbsp;&nbsp;&nbsp;&nbsp;
-<span ng-if="!staticConfigForm.categoryFilter.mode">bcat: [ //List of backlisted IAB categories</span>
-<span ng-if="staticConfigForm.categoryFilter.mode">wcat: [ //List of whitelisted IAB categories</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-repeat="cat in staticConfigForm.categoryFilter.value track by $index">
-<span ng-if="cat">&#39;{{cat}}&#39;, </span>
-</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
-</span>
+        <!-- back/white listed categories -->
+        <span ng-if="isVirtuallyEmpty(staticConfigForm.categoryFilter.value)">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span ng-if="!staticConfigForm.categoryFilter.mode">bcat: [ //List of backlisted IAB categories</span>
+        <span ng-if="staticConfigForm.categoryFilter.mode">wcat: [ //List of whitelisted IAB categories</span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-repeat="cat in staticConfigForm.categoryFilter.value track by $index">
+        <span ng-if="cat">&#39;{{cat}}&#39;, </span>
+        </span><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
+        </span>
 
-<!-- imp -->
-&nbsp;&nbsp;&nbsp;&nbsp; imp: [ //List of ad imps by Id<br/>
-<span ng-repeat="value in staticConfigForm.imp">
-    <span ng-if="value.html_id !== null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { banner: { id: &#39;{{value.html_id}}&#39;<span ng-if="value.width">, w: {{value.width}}</span><span ng-if="value.height">, h: {{value.height}}</span> }<span ng-if="value.floor">, bidfloor: {{value.floor}}</span><span ng-if="staticConfigForm.secured !== null">, secure: {{staticConfigForm.secured}}</span> },</span><br>
-</span>
-&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
+        <!-- imp -->
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; imp: [ //List of ad imps by Id<br/>
+        <span ng-repeat="value in staticConfigForm.imp">
+            <span ng-if="value.html_id !== null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { banner: { id: &#39;{{value.html_id}}&#39;<span ng-if="value.width">, w: {{value.width}}</span><span ng-if="value.height">, h: {{value.height}}</span> }<span ng-if="value.floor">, bidfloor: {{value.floor}}</span><span ng-if="staticConfigForm.secured !== null">, secure: {{staticConfigForm.secured}}</span> },</span><br>
+        </span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
 
-<!-- tmax -->
-<span ng-if="staticConfigForm.timeout">
-&nbsp;&nbsp;&nbsp;&nbsp; tmax: {{staticConfigForm.timeout}}<br/>
+        <!-- tmax -->
+        <span ng-if="staticConfigForm.timeout">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tmax: {{staticConfigForm.timeout}}<br/>
+        </span>
+    &nbsp;&nbsp;&nbsp;&nbsp; },<br/>
 </span>
 &nbsp;&nbsp;});<br/>
 &lt;/script&gt;
