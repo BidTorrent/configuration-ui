@@ -11,7 +11,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         })
 }])
 
-.controller('PublisherCtrl', ['$scope', '$resource', 'ngNotify', function($scope, $resource, ngNotify) {
+.controller('PublisherCtrl', ['$scope', '$resource', 'ngNotify', 'smoothScroll', function($scope, $resource, ngNotify, smoothScroll) {
 
     //Resources
     var Publisher = $resource('/api/publishers/:publisherId', {publisherId:'@id'});
@@ -27,7 +27,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         isTypeWebsite: true,
         country: undefined,
         timeout: undefined,
-        secured: null,
+        secured: false,
         domainFilter: { type: "domain", mode: false, value: [""] },
         categoryFilter: { type: "iab_category", mode: false, value: [""] },
         imp: [{ html_id: null, width: null, height: null, floor: null }]
@@ -96,6 +96,11 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         element.click();
     };
 
+    $scope.scrollToScript = function() {
+        var generatedScript = document.getElementById('generatedScript');
+        smoothScroll(generatedScript);
+    }
+
     $scope.saveConfig = function(element) {
         // hide modal
         $('#loginModal').modal('hide');
@@ -121,15 +126,24 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             timeout: $scope.staticConfigForm.timeout,
             secured: $scope.staticConfigForm.secured,
             filters: [domainFilter, categoryFilter],
-            slots: imp
+            imp: imp
         }).$promise
         .then(function() {
                 ngNotify.set("Successfully saved config on BidTorrent.io", "success");
+                $scope.scrollToScript();
             },
             function(response) {
                 ngNotify.set("Oops! something went wrong, try again later", "error");
             }
         );
+    }
+
+    $scope.isVirtuallyEmpty = function(array) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] !== "" && array[i] !== null && array[i] !== undefined)
+                return true
+        }
+        return false;
     }
 
     // Validation methods
@@ -140,7 +154,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                value > 0;
     }
 
-    var hashCode = function(str){
+    var hashCode = function(str) {
         var hash = 0;
         if (!str || str.length == 0) return hash;
         for (var i = 0; i < str.length; i++) {

@@ -53,16 +53,16 @@
         <h4>Blacklisting</h4>
         <form class="row">
             <div class="col-md-6">
-                <label for="pubBlacklistedDomains" class="control-label">Domains</label>
-                <div class="form-group row" ng-repeat="(key, value) in staticConfigForm.domainFilter.value track by key">
+                <label class="control-label">Domains</label>
+                <div class="form-group row" ng-repeat="value in staticConfigForm.domainFilter.value track by $index">
                     <div class="col-xs-10">
-                        <input type="text" class="form-control" id="pubBlacklistedDomains"
+                        <input type="text" class="form-control"
                                placeholder="ex: advertiser1.com;blog.avd2.fr"
-                               ng-model="staticConfigForm.domainFilter.value[key]">
+                               ng-model="staticConfigForm.domainFilter.value[$index]">
                     </div>
                     <div class="col-xs-2">
                         <button type="submit" class="form-control btn btn-md btn-danger"
-                                ng-click="staticConfigForm.domainFilter.value.splice(key, 1)"><i class="fa fa-minus"></i></button>
+                                ng-click="staticConfigForm.domainFilter.value.splice($index, 1)"><i class="fa fa-minus"></i></button>
                     </div>
                 </div>
                 <div class="row">
@@ -82,15 +82,15 @@
             </div>
             <div class="col-md-6">
                 <label class="control-label">IAB Categories</label>
-                <div class="form-group row" ng-repeat="(key, value) in staticConfigForm.categoryFilter.value track by key">
+                <div class="form-group row" ng-repeat="value in staticConfigForm.categoryFilter.value track by $index">
                     <div class="col-xs-10">
-                        <input type="text" class="form-control" id="pubBlacklistedCategories"
+                        <input type="text" class="form-control"
                                placeholder="ex: IAB25-3;IAB26"
-                               ng-model="staticConfigForm.categoryFilter.value[key]">
+                               ng-model="staticConfigForm.categoryFilter.value[$index]">
                     </div>
                     <div class="col-xs-2">
                         <button type="submit" class="form-control btn btn-md btn-danger"
-                                ng-click="staticConfigForm.categoryFilter.value.splice(key, 1)">
+                                ng-click="staticConfigForm.categoryFilter.value.splice($index, 1)">
                                 <i class="fa fa-minus"></i>
                         </button>
                     </div>
@@ -142,7 +142,7 @@
                 <label class="control-label">Floor</label>
             </div>
         </form>
-        <form class="row" ng-repeat="(key, imp) in staticConfigForm.imp">
+        <form class="row" ng-repeat="imp in staticConfigForm.imp track by $index">
             <div class="form-group col-xs-3">
                 <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="imp.html_id">
             </div>
@@ -156,7 +156,7 @@
                 <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="imp.floor">
             </div>
             <div class="form-group col-xs-1">
-                <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="staticConfigForm.imp.splice(key, 1)"><i class="fa fa-minus"></i></button>
+                <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="staticConfigForm.imp.splice($index, 1)"><i class="fa fa-minus"></i></button>
             </div>
         </form>
         <form class="row">
@@ -168,48 +168,11 @@
     </div>
     <!-- END MANDATORY SETTINGS-->
 
-    <div class="row validation">
-        <button class="btn btn-md btn-primary col-md-offset-2 col-md-3 col-xs-5"
-                ng-click="downloadConfig()">Download config</button>
-        <a id="downloadFile" style="display:none"></a>
-        <span class="col-md-2 col-xs-2 or">or</span>
-        <button class="btn btn-md btn-success col-md-3 col-xs-5"
-                data-toggle="modal" data-target="#loginModal">Save config on BidTorrent.io</button>
-    </div>
 
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="loginModalLabel">Login</h4>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="recipient-name" class="control-label">Domain name</label>
-                            <input type="text" class="form-control" id="pubBlacklistedCategories" placeholder="ex: www.criteo.com" ng-model="registerForm.name">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" ng-click="saveConfig()">Save config</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <h2>Create the bidding script configuration <i class="fa fa-code"></i></h2>
-
-    <div class="row">
-        <h3><b>1.</b> Create your configuration</h3>
-
-        <!-- ADVANCED SETTINGS -->
+    <!-- ADVANCED SETTINGS -->
+    <div>
         <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#advancedSettings" aria-expanded="false" aria-controls="advancedSettings">
-            <i class="fa fa-star"></i> Toggle advanced settings
+            <i class="fa fa-star"></i> Advanced settings : host part of the configuration files
         </button>
 
         <div class="collapse"id="advancedSettings" >
@@ -288,56 +251,94 @@
                 </form>
             </div>
         </div>
-        <!-- END ADVANCED SETTINGS -->
+    </div>
+    <!-- END ADVANCED SETTINGS -->
 
-        <h3><b>2.</b> Include the BidTorrent client script and its dynamic configuration to your webpage</h3>
+    <div class="row validation">
+        <button class="btn btn-md btn-primary col-md-offset-2 col-md-3 col-xs-5"
+                ng-click="scrollToScript()"><i class="fa fa-code"></i> Use a static configuration</button>
+        <a id="downloadFile" style="display:none"></a>
+        <span class="col-md-2 col-xs-2 or">or</span>
+        <button class="btn btn-md btn-success col-md-3 col-xs-5"
+                data-toggle="modal" data-target="#loginModal"><i class="fa fa-floppy-o"></i> Save config on BidTorrent.io</button>
+    </div>
+    
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">Login</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Domain name</label>
+                            <input type="text" class="form-control" id="pubBlacklistedCategories" placeholder="ex: www.criteo.com" ng-model="registerForm.name">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="saveConfig()">Save config</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <h2 id="generatedScript">Include the bidding script <i class="fa fa-code"></i></h2>
+
+    <div class="row">
+        <h3>Include the BidTorrent client script and its dynamic configuration to your webpage</h3>
         <div class="row">
             <code class="col-xs-12 col-md-8 col-md-offset-2">
 &lt;script src=&quot;http://bidtorrent.io/client.js&quot;&gt;&lt;/script&gt;<br/>
 &lt;script type=&quot;text/javascript&quot;&gt;<br/>
 &nbsp;&nbsp;bidTorrent({<br/>
-<span ng-if="hostAuction">&nbsp;&nbsp;&nbsp;&nbsp;auction:&nbsp;&nbsp;    &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
-<span ng-if="hostBidders">&nbsp;&nbsp;&nbsp;&nbsp;bidders:&nbsp;&nbsp;    &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
-<span ng-if="hostConfig">&nbsp;&nbsp;&nbsp;&nbsp;config:&nbsp;&nbsp;     &#39;{{dynConfigForm.config}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="hostAuction">&nbsp;&nbsp;&nbsp;&nbsp; auction: &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="hostBidders">&nbsp;&nbsp;&nbsp;&nbsp; bidders: &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="hostConfig">&nbsp;&nbsp;&nbsp;&nbsp; config: &#39;{{dynConfigForm.config}}&#39;, //Optionnal if you want to host your own<br/></span>
 <!-- site -->
 <span ng-if="staticConfigForm.country">
-&nbsp;&nbsp;&nbsp;&nbsp;site: {<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;publisher: { country: {{staticConfigForm.country}} }<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;},<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; site: {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; publisher: { country: {{staticConfigForm.country}} }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; },<br/>
 </span>
 
 <!-- back/white listed domains -->
-<span ng-if="staticConfigForm.domainFilter.value.length > 0">
+<span ng-if="isVirtuallyEmpty(staticConfigForm.domainFilter.value)">
 &nbsp;&nbsp;&nbsp;&nbsp;
 <span ng-if="!staticConfigForm.domainFilter.mode">badv: [ //List of backlisted domains</span>
 <span ng-if="staticConfigForm.domainFilter.mode">wadv: [ //List of whitelisted domains</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-repeat="domain in staticConfigForm.domainFilter.value track by $index">
 <span ng-if="domain">&#39;{{domain}}&#39;, </span>
 </span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
 </span>
 
 <!-- back/white listed categories -->
-<span ng-if="staticConfigForm.categoryFilter.value.length > 0">
+<span ng-if="isVirtuallyEmpty(staticConfigForm.categoryFilter.value)">
 &nbsp;&nbsp;&nbsp;&nbsp;
 <span ng-if="!staticConfigForm.categoryFilter.mode">bcat: [ //List of backlisted IAB categories</span>
 <span ng-if="staticConfigForm.categoryFilter.mode">wcat: [ //List of whitelisted IAB categories</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span ng-repeat="cat in staticConfigForm.categoryFilter.value track by $index">
 <span ng-if="cat">&#39;{{cat}}&#39;, </span>
 </span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
 </span>
 
 <!-- imp -->
-&nbsp;&nbsp;&nbsp;&nbsp;imp: [ //List of ad imps by Id<br/>
-<span ng-repeat="imp in staticConfigForm.imp">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ banner: { id: &#39;{{imp.html_id}}&#39;<span ng-if="imp.width">, w: {{imp.width}}</span><span ng-if="imp.height">, h: {{imp.height}}</span> }<span ng-if="imp.floor">, bidfloor: {{imp.floor}}</span><span ng-if="staticConfigForm.secured !== null">, secure: {{staticConfigForm.secured}}</span> },<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; imp: [ //List of ad imps by Id<br/>
+<span ng-repeat="value in staticConfigForm.imp">
+    <span ng-if="value.html_id !== null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { banner: { id: &#39;{{value.html_id}}&#39;<span ng-if="value.width">, w: {{value.width}}</span><span ng-if="value.height">, h: {{value.height}}</span> }<span ng-if="value.floor">, bidfloor: {{value.floor}}</span><span ng-if="staticConfigForm.secured !== null">, secure: {{staticConfigForm.secured}}</span> },</span><br>
 </span>
-&nbsp;&nbsp;&nbsp;&nbsp;],<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
 
 <!-- tmax -->
 <span ng-if="staticConfigForm.timeout">
-&nbsp;&nbsp;&nbsp;&nbsp;tmax: {{staticConfigForm.timeout}}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; tmax: {{staticConfigForm.timeout}}<br/>
 </span>
 &nbsp;&nbsp;});<br/>
 &lt;/script&gt;
