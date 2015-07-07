@@ -15,30 +15,36 @@
 </head>
 <body>
     <div class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">BidTorrent.io</a>
-            <a class="navbar-brand github" href="https://github.com/BidTorrent/client-js" target="_blank"><i class="fa fa-github"></i></a>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">BidTorrent.io</a>
+                <a class="navbar-brand github" href="https://github.com/BidTorrent/client-js" target="_blank"><i class="fa fa-github"></i></a>
+            </div>
+            <div class="collapse navbar-collapse navbar-right" id="navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li role="presentation" ng-class="{ active: isActive('/')}"><a ui-sref="home">Home</a></li>
+                    <li role="presentation" ng-class="{ active: isActive('/publisher')}"><a ui-sref="publisher">Publisher</a></li>
+                    <li role="presentation" ng-class="{ active: isActive('/bidder')}"><a ui-sref="bidder">Bidder</a></li>
+                    <li role="presentation"><a>
+                        <oauth
+                            site="https://oauth-ng-server.herokuapp.com"
+                            client-id="23c6ceaba56c00e940f890acc9f4c75a94991c62f5561338b6311f7026343d58"
+                            redirect-uri="https://oauth-ng-demo.herokuapp.com"
+                            profile-uri="https://oauth-ng-server.herokuapp.com/api/v1/me"
+                            scope="public"
+                            template="partials/authTemplate.html"
+                            text="sign In (NOT WORKING! )">
+                        </oauth>
+                    </a></li>
+                </ul>
+            </div>
         </div>
-
-        <ul class="nav navbar-nav pull-right">
-            <li role="presentation" ng-class="{ active: isActive('/')}"><a ui-sref="home">Home</a></li>
-            <li role="presentation" ng-class="{ active: isActive('/publisher')}"><a ui-sref="publisher">Publisher</a></li>
-            <li role="presentation" ng-class="{ active: isActive('/bidder')}"><a ui-sref="bidder">Bidder</a></li>
-            <li role="presentation"><a>
-                <oauth
-                    site="https://oauth-ng-server.herokuapp.com"
-                    client-id="23c6ceaba56c00e940f890acc9f4c75a94991c62f5561338b6311f7026343d58"
-                    redirect-uri="https://oauth-ng-demo.herokuapp.com"
-                    profile-uri="https://oauth-ng-server.herokuapp.com/api/v1/me"
-                    scope="public"
-                    template="partials/authTemplate.html"
-                    text="sign In (NOT WORKING! )">
-                </oauth>
-            </a></li>
-        </ul>
-        <!--[if lt IE 7]>
-                <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
     </div>
 
     <div ui-view></div>
