@@ -63,8 +63,8 @@ class Bidders
 
         // Format the response
         $uiFormat = $app->request()->get('format') == 'ui';
-        return array_map(function($row) use ($biddersFilters, $uiFormat)
-        {
+        $result = array();
+        foreach ($rows as $row) {
             $filters = array();
             $bidderId = (int)$row['id'];
 
@@ -73,10 +73,12 @@ class Bidders
 
             $bidder = new Bidder($row, $filters);
             if ($uiFormat)
-                return $bidder;
+                array_push($result, $bidder);
+            else
+                array_push($result, $this->_format($bidder));
+        }
 
-            return $this->_format($bidder);
-        }, $rows);
+        return $result;
     }
 
     function get($app, $id)
@@ -168,7 +170,8 @@ class Bidders
         }
 
         // Add filters
-        array_map(function($filter) use ($app, $insertedBidderId) { $this->_addFilter($app, $filter, $insertedBidderId); }, $filters);
+        foreach ($filters as $filter)
+            $this->_addFilter($app, $filter, $insertedBidderId);
 
         $this->db->execute('COMMIT');
     }
@@ -198,7 +201,8 @@ class Bidders
         $this->db->execute($query, $params);
 
         // Add filters
-        array_map(function($filter) use ($app, $id) { $this->_addFilter($app, $filter, $id); }, $filters);
+        foreach ($filters as $filter)
+            $this->_addFilter($app, $filter, $id);
 
         $this->db->execute('COMMIT');
     }

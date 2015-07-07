@@ -76,8 +76,8 @@ class Publishers
 
         // Format the response
         $uiFormat = $app->request()->get('format') == 'ui';
-        return array_map(function($row) use ($publishersFilters, $publishersSlots, $uiFormat)
-        {
+        $result = array();
+        foreach ($rows as $row) {
             $filters = array();
             $slots = array();
             $pubId = (int)$row['id'];
@@ -90,10 +90,11 @@ class Publishers
 
             $publisher = new Publisher($row, $filters, $slots);
             if ($uiFormat)
-                return $publisher;
-
-            return $this->_format($publisher);
-        }, $rows);
+                array_push($result, $publisher);
+            else
+                array_push($result, $this->_format($publisher));
+        }
+        return $result;
     }
 
     function get($app, $id)
@@ -141,10 +142,12 @@ class Publishers
         }
 
         // Add new filters
-        array_map(function($filter) use ($app, $insertedPubId) { $this->_addFilter($app, $filter, $insertedPubId); }, $filters);
+        foreach ($filters as $filter)
+            $this->_addFilter($app, $filter, $insertedPubId);
 
         // Add new slots
-        array_map(function($slot) use ($app, $insertedPubId) { $this->_addSlot($app, $slot, $insertedPubId); }, $slots);
+        foreach ($slots as $slot)
+            $this->_addSlot($app, $slot, $insertedPubId);
 
         $this->db->execute('COMMIT');
     }
@@ -174,10 +177,12 @@ class Publishers
         $this->db->execute($query, $params);
 
         // Add new filters
-        array_map(function($filter) use ($app, $id) { $this->_addFilter($app, $filter, $id); }, $filters);
+        foreach ($filters as $filter)
+            $this->_addFilter($app, $filter, $id);
 
         // Add new slots
-        array_map(function($slot) use ($app, $id) { $this->_addSlot($app, $slot, $id); }, $slots);
+        foreach ($slots as $slot)
+            $this->_addSlot($app, $slot, $id);
 
         $this->db->execute('COMMIT');
     }
