@@ -203,8 +203,6 @@ class Publishers
     // Format the publisher to match the config needed by the client script
     private function _format($publisher)
     {
-        $config = array();
-
         if ($publisher->type == 'inapp')
             $globalConfigKey = 'app';
         else
@@ -217,13 +215,11 @@ class Publishers
         if (isset($publisher->country))
             $publisherConfig['country'] = $publisher->country;
 
-        $blacklistedCategories = $this->_getFilterValue($publisher->filters, 'iab_category');
-        if (isset($blacklistedCategories))
-            $config['bcat'] = $blacklistedCategories;
-
-        $blacklistedDomains = $this->_getFilterValue($publisher->filters, 'domain');
-        if (isset($blacklistedDomains))
-            $config['badv'] = $blacklistedDomains;
+        $config = $this->_getFiltersConfig($publisher->filters, array
+        (
+            'iab_category' => 'cat',
+            'domain' => 'adv'
+        ));
 
         $config[$globalConfigKey] = array('publisher' => $publisherConfig);
         $config['tmax'] = $publisher->timeout;
@@ -249,18 +245,25 @@ class Publishers
         return $config;
     }
 
-    private function _getFilterValue($filters, $filterType)
+    private function _getFiltersConfig($filters, $filterTypesAndKeys)
     {
+        $config = array();
         foreach ($filters as $filter)
         {
-            if ($filter->type == $filterType &&
-                $filter->mode == 'exclusive') // Manage only blacklisting right now
+            if (isset($filterTypesAndKeys[$filter->type]))
             {
-                return $filter->value;
+                $key = $filterTypesAndKeys[$filter->type];
+
+                if ($filter->mode == 'inclusive')
+                    $key = 'w' . $key;
+                else
+                    $key = 'b'. $key;
+
+                $config[$key] = $filter->value;
             }
         }
 
-        return NULL;
+        return $config;
     }
 
     private function _validate($data, $fields)
