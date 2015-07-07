@@ -19,73 +19,88 @@
     <h2>
         <span class="title" ng-if="configForm.id">My configuration</span>
         <span class="title" ng-if="!configForm.id">Register as a Bidder</span>
-        <i class="fa fa-space-shuttle"></i></h2>
-    <form>
-        <label for="bidderName" class="control-label col-md-2">Name</label>
-        <div class="form-group col-md-10">
-            <input type="text" class="form-control" id="bidderName" placeholder="ex: Criteo" ng-model="configForm.name">
-        </div>
+        <i class="fa fa-space-shuttle"></i>
+    </h2>
 
-        <label for="bidRequestUrl" class="control-label col-md-2">Bid request url</label>
-        <div class="form-group col-md-10">
-            <input type="text" class="form-control" id="bidUrl"
-                   placeholder="ex: http://rtb.criteo.com/bidtorrent/auction/request?profile=42"
-                   ng-model="configForm.bidRequestUrl">
-        </div>
+    <div class="formSection well">
+        <h4>Global info</h4>
+        <form>
+            <div class="form-group row">
+                <label for="bidderName" class="control-label col-md-2">Name</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="bidderName" placeholder="ex: Criteo" ng-model="configForm.name">
+                </div>
+            </div>
 
-        <label for="pubKey" class="control-label col-md-2">RSA public key</label>
-        <div class="form-group col-md-10">
-            <textarea class="form-control" id="pubKey" rows="5"
-                   placeholder="ex: -----BEGIN PUBLIC KEY-----
+            <div class="form-group row">
+                <label for="bidRequestUrl" class="control-label col-md-2">Bid request url</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="bidUrl"
+                           placeholder="ex: http://rtb.criteo.com/bidtorrent/auction/request?profile=42"
+                           ng-model="configForm.bidRequestUrl">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="pubKey" class="control-label col-md-2">RSA public key</label>
+                <div class="col-md-10">
+                    <textarea class="form-control" id="pubKey" rows="5"
+                              placeholder="ex: -----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqGKukO1De7zhZj6+H0qtjTkVxwTCpvKe4eCZ0
 FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/
 3j+skZ6UtW+5u09lHNsj6tQ51s1SPrCBkedbNf0Tp0GbMJDyR4e9T04ZZwIDAQAB
 -----END PUBLIC KEY-----"
-                   ng-model="configForm.pubKey"></textarea>
-        </div>
+                              ng-model="configForm.pubKey"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
 
-        <h3>Filtering</h3>
-        <div class="col-md-4 filter" ng-repeat="filter in configForm.filters">
-            <label class="control-label">
-                <span ng-if="filter.modeBool">Whitelisted</span>
-                <span ng-if="!filter.modeBool">Blacklisted</span>
-                {{filter.title}}
-            </label>
-            <div class="form-group row" ng-repeat="(key, value) in filter.value track by key">
-                <div class="col-xs-10">
-                    <input type="text" class="form-control" id="bidderBlacklistedCategories"
-                           placeholder="ex: {{filter.placeholder}}"
-                           ng-model="filter.value[key]">
+    <div class="formSection well">
+        <form>
+            <h4>Filtering</h4>
+            <div class="col-md-4 filter" ng-repeat="filter in configForm.filters">
+                <label class="control-label">
+                    <span ng-if="filter.modeBool">Whitelisted</span>
+                    <span ng-if="!filter.modeBool">Blacklisted</span>
+                    {{filter.title}}
+                </label>
+                <div class="form-group row" ng-repeat="(key, value) in filter.value track by key">
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" id="bidderBlacklistedCategories"
+                               placeholder="ex: {{filter.placeholder}}"
+                               ng-model="filter.value[key]">
+                    </div>
+                    <div class="col-xs-2">
+                        <button type="submit" class="form-control btn btn-md btn-danger btn-icon"
+                                ng-click="filter.value.splice(key, 1)">
+                                <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="col-xs-2">
-                    <button type="submit" class="form-control btn btn-md btn-danger"
-                            ng-click="filter.value.splice(key, 1)">
-                            <i class="fa fa-minus"></i>
-                    </button>
+                <div class="row">
+                    <div class="col-xs-3">
+                        <button type="submit" class="form-control btn btn-md btn-success btn-icon"
+                                ng-click="filter.value.push('')">
+                                <i class="fa fa-plus"></i> Add
+                        </button>
+                    </div>
+                    <div class="col-xs-7">
+                        <button type="submit" class="form-control btn btn-md"
+                                ng-class="filter.modeBool ? 'btn-primary' : 'btn-default'"
+                                ng-click="filter.modeBool = !filter.modeBool">
+                                <span ng-if="filter.modeBool"><i class="fa fa-exchange"></i> Use blacklist mode</span>
+                                <span ng-if="!filter.modeBool"><i class="fa fa-exchange"></i> Use whitelist mode</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-3">
-                    <button type="submit" class="form-control btn btn-md btn-success"
-                            ng-click="filter.value.push('')">
-                            <i class="fa fa-plus"></i> Add
-                    </button>
-                </div>
-                <div class="col-xs-7">
-                    <button type="submit" class="form-control btn btn-md"
-                            ng-class="filter.modeBool ? 'btn-primary' : 'btn-default'"
-                            ng-click="filter.modeBool = !filter.modeBool">
-                            <span ng-if="filter.modeBool"><i class="fa fa-exchange"></i> Use blacklist mode</span>
-                            <span ng-if="!filter.modeBool"><i class="fa fa-exchange"></i> Use whitelist mode</span>
-                    </button>
-                </div>
+            <div class="form-group row">
+                <button type="submit" class="btn btn-md btn-success col-xs-offset-4 col-xs-4" ng-click="submit()">
+                    <span ng-if="configForm.id">Update my configuration</span>
+                    <span ng-if="!configForm.id">Register me</span>
+                </button>
             </div>
-        </div>
-        <div class="form-group row">
-            <button type="submit" class="btn btn-md btn-success col-xs-offset-4 col-xs-4" ng-click="submit()">
-                <span ng-if="configForm.id">Update my configuration</span>
-                <span ng-if="!configForm.id">Register me</span>
-            </button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
