@@ -29,11 +29,11 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     $scope.loadForm = {
         id: undefined
     };
-    $scope.filters = {
-        user_country: { type: "user_country", modeBool: false, value: [""], title: "User countries", placeholder: "FR" },
-        publisher_country: { type: "publisher_country", modeBool: false, value: [""], title: "Publisher countries", placeholder: "ES" },
-        iab_category: { type: "iab_category", modeBool: false, value: [""], title: "IAB Categories", placeholder: "IAB25-3" }
-    };
+    $scope.filters = [
+        { type: "user_country", modeBool: false, value: [""], title: "User countries", placeholder: "FR" },
+        { type: "publisher_country", modeBool: false, value: [""], title: "Publisher countries", placeholder: "ES" },
+        { type: "iab_category", modeBool: false, value: [""], title: "IAB Categories", placeholder: "IAB25-3" }
+    ];
     $scope.configForm = {
         id: null,
         name: null,
@@ -51,9 +51,9 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             Bidder.get({ bidderId: $scope.loadForm.id , format: "ui" }).$promise.then(
                 function(response) {
                     var filters = new Array();
-                    filters.push(getFilter(response.filters, "user_country", $scope.filters.user_country));
-                    filters.push(getFilter(response.filters, "publisher_country", $scope.filters.publisher_country));
-                    filters.push(getFilter(response.filters, "iab_category", $scope.filters.iab_category));
+                    filters.push(getFilter(response.filters, "user_country", $scope.filters[0]));
+                    filters.push(getFilter(response.filters, "publisher_country", $scope.filters[1]));
+                    filters.push(getFilter(response.filters, "iab_category", $scope.filters[2]));
 
                     $scope.configForm = {
                         id: response.id,
@@ -76,7 +76,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 
     $scope.submit = function() {
         // Keep only needed fields in filters
-        var filters = $scope.configForm.filters.slice();
+        var filters = angular.copy($scope.configForm.filters);
         for (var i = filters.length - 1; i >= 0; i--) {
             var value = filters[i].value.cleanArray(["", null, undefined]);
 
