@@ -6,7 +6,7 @@
         <div class="form-group row">
             <label for="bidderName" class="control-label col-md-2">Id</label>
             <div class="col-md-10">
-                <input type="text" class="form-control" id="bidderId" ng-model="loadForm.id">
+                <input type="text" class="form-control" id="bidderId" ng-model="bidderId">
             </div>
         </div>
         <div class="form-group row validation">
@@ -17,8 +17,8 @@
     </form>
 
     <h2>
-        <span class="title" ng-if="configForm.id">My configuration</span>
-        <span class="title" ng-if="!configForm.id">Register as a Bidder</span>
+        <span class="title" ng-if="bidderId">My configuration</span>
+        <span class="title" ng-if="!bidderId">Register as a Bidder</span>
         <i class="fa fa-space-shuttle"></i>
     </h2>
 
@@ -97,8 +97,8 @@ FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/
             </div>
             <div class="form-group row">
                 <button type="submit" class="btn btn-md btn-success col-xs-offset-4 col-xs-4" ng-click="submit()">
-                    <span ng-if="configForm.id">Update my configuration</span>
-                    <span ng-if="!configForm.id">Register me</span>
+                    <span ng-if="bidderId">Update my configuration</span>
+                    <span ng-if="!bidderId">Register me</span>
                 </button>
             </div>
         </form>

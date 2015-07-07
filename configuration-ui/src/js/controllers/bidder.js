@@ -5,14 +5,13 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 .config(['$stateProvider', function($stateProvider) {
     $stateProvider
         .state('bidder', {
-            url: '/bidder',
+            url: '/bidder/:bidderId',
             templateUrl: 'partials/bidder.html',
             controller: 'BidderCtrl'
         })
 }])
 
-.controller('BidderCtrl', ['$scope', '$resource', 'ngNotify', function($scope, $resource, ngNotify) {
-
+.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', function($scope, $q, $resource, $stateParams, ngNotify) {
     //Resources
     var Bidder = $resource(
         '/api/bidders/:bidderId',
@@ -26,11 +25,9 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     );
 
     //Models
-    $scope.loadForm = {
-        id: undefined
-    };
+    $scope.bidderId = $stateParams.bidderId;
+
     $scope.configForm = {
-        id: null,
         name: null,
         bidRequestUrl: null,
         pubKey: null,
@@ -41,35 +38,39 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 
     //Functions
     $scope.loadConfig = function() {
-        if (!$scope.loadForm.id) {
-            ngNotify.set("Enter an id to load the configuration", "error");
-        }
-        else {
-            Bidder.get({ bidderId: $scope.loadForm.id , format: "ui" }).$promise.then(
-                function(response) {
-                    var userCountryFilter = getFilter(response.filters, $scope.configForm.userCountryFilter);
-                    var pubCountryFilter = getFilter(response.filters, $scope.configForm.pubCountryFilter);
-                    var categoryFilter = getFilter(response.filters, $scope.configForm.categoryFilter);
+        var deferred = $q.defer();
 
-                    $scope.configForm = {
-                        id: response.id,
-                        name: response.name,
-                        bidRequestUrl: response.bidUrl,
-                        pubKey: response.rsaPubKey,
-                        userCountryFilter: userCountryFilter,
-                        pubCountryFilter: pubCountryFilter,
-                        categoryFilter : categoryFilter
-                    };
-                },
-                function(response) {
-                    if(response.status === 404) {
-                        ngNotify.set("Unknown bidder " + $scope.loadForm.id, "error");
-                    } else {
-                        ngNotify.set("Oops! something went wrong, try again later", "error");
-                    }
-                }
-            );
+        if (!$scope.bidderId) {
+            deferred.reject("Enter an id to load the configuration", "error");
+            return deferred.promise;
         }
+        Bidder.get({ bidderId: $scope.bidderId , format: "ui" }).$promise.then(
+            function(response) {
+                var userCountryFilter = getFilter(response.filters, $scope.configForm.userCountryFilter);
+                var pubCountryFilter = getFilter(response.filters, $scope.configForm.pubCountryFilter);
+                var categoryFilter = getFilter(response.filters, $scope.configForm.categoryFilter);
+
+                $scope.configForm = {
+                    name: response.name,
+                    bidRequestUrl: response.bidUrl,
+                    pubKey: response.rsaPubKey,
+                    userCountryFilter: userCountryFilter,
+                    pubCountryFilter: pubCountryFilter,
+                    categoryFilter : categoryFilter
+                };
+                deferred.resolve(response);
+            },
+            function(response) {
+                if(response.status === 404) {
+                    deferred.reject("Unknown bidder " + $scope.bidderId);
+                    ngNotify.set("Unknown bidder " + $scope.bidderId, "error");
+                } else {
+                    deferred.reject("Oops! something went wrong, try again later");
+                    ngNotify.set("Oops! something went wrong, try again later", "error");
+                }
+            }
+        );
+        return deferred.promise;
     };
 
     $scope.submit = function() {
@@ -86,8 +87,8 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             filters: filters
         };
 
-        if ($scope.configForm.id) {
-            Bidder.update({ bidderId: $scope.loadForm.id , format: "ui" }, bidder).$promise
+        if ($scope.bidderId) {
+            Bidder.update({ bidderId: $scope.bidderId , format: "ui" }, bidder).$promise
             .then(function() {
                     ngNotify.set("Successfully updated " + $scope.configForm.name, "success");
                 },
@@ -107,7 +108,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
                 },
                 function(response) {
                     if (response.status === 409) {
-                        ngNotify.set("This bidder" + $scope.configForm.name + " is already registered", "error");
+                        ngNotify.set("This bidder " + $scope.configForm.name + " is already registered", "error");
                     } else {
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }
@@ -162,4 +163,9 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         }
         return this;
     };
+
+    $scope.loadConfig().finally(
+    function(response) {
+        return; // TODO: end loader if there is a loader
+    });
 }]);
