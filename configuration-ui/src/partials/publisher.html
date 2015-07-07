@@ -84,8 +84,8 @@
                 <label for="impSecured" class="control-label">Secured </label>
                 <div class="form-group">
                     <div class="btn-group" data-toggle="buttons">
-                            <button type="button" class="btn btn-default" ng-class="{'active' : !staticConfigForm.secured}" ng-click="staticConfigForm.secured=true"> My website support both http &amp; https</button>
-                            <button type="button" class="btn btn-default" ng-class="{'active' : staticConfigForm.secured}" ng-click="staticConfigForm.secured=false"> I only want https ads</button>
+                            <button type="button" class="btn btn-default" ng-class="{'active' : !staticConfigForm.secured}" ng-click="staticConfigForm.secured=false"> My website support both http &amp; https</button>
+                            <button type="button" class="btn btn-default" ng-class="{'active' : staticConfigForm.secured}" ng-click="staticConfigForm.secured=true"> I only want https ads</button>
                     </div>
                 </div>
             </div>
