@@ -63,14 +63,11 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         secured: false,
         domainFilter: angular.copy($scope.defaultDomainFilter),
         categoryFilter: angular.copy($scope.defaultCategoryFilter),
-        imp: [{ html_id: null, width: null, height: null, floor: null }]
+        imp: [{ html_id: null, width: null, height: null, floor: null }],
+        hostConfig: false,
+        hostAuction: true,
+        hostBidders: true
     };
-
-    $scope.dynConfigForm = {
-        auction: null,
-        bidders: null,
-        config: null,
-    }
 
     //Functions
     $scope.submitRegistration = function() {
@@ -112,9 +109,9 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                     imp: response.imp,
                     hostConfig: response.hostConfig,
                     hostBidders: response.hostBidders,
-                    biddersUrl: response.biddersUrl,
+                    biddersUrl: response.hostBidders ? null : response.biddersUrl,
                     hostAuction: response.hostAuction,
-                    auctionUrl: response.auctionUrl
+                    auctionUrl: response.hostAuction ? null : response.auctionUrl
                 };
                 $scope.publisherId = response.id;
             },
@@ -163,6 +160,12 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             $scope.scrollToImp();
             return;
         }
+
+        if ($scope.staticConfigForm.hostBidders)
+            $scope.staticConfigForm.biddersUrl = null;
+
+        if ($scope.staticConfigForm.hostAuction)
+            $scope.staticConfigForm.auctionUrl = null;
 
         var publisher = {
             name: $scope.staticConfigForm.name,

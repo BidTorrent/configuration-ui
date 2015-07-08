@@ -153,9 +153,9 @@
                     <div class="form-group col-md-3">
                         <label for="auction" class="control-label">&nbsp;</label>
                         <button class="btn btn-block" ng-click="staticConfigForm.hostAuction=!staticConfigForm.hostAuction"
-                                ng-class="staticConfigForm.hostAuction ? 'btn-success' : 'btn-warning'">
-                            <span ng-if="!staticConfigForm.hostAuction">I want to host my own auction.html</span>
-                            <span ng-if="staticConfigForm.hostAuction">Use BidTorrent.io auction.html</span>
+                                ng-class="staticConfigForm.hostAuction ? 'btn-warning' : 'btn-success'">
+                            <span ng-if="staticConfigForm.hostAuction">I want to host my own auction.html</span>
+                            <span ng-if="!staticConfigForm.hostAuction">Use BidTorrent.io auction.html</span>
                         </button>
                     </div>
                     <div class="form-group col-md-9">
@@ -165,9 +165,9 @@
                         <div class="input-group">
                             <input type="text" class="form-control" id="auction"
                                    placeholder="ex: ../src/auction.html"
-                                   ng-model="dynConfigForm.auction" ng-disabled="!staticConfigForm.hostAuction">
+                                   ng-model="staticConfigForm.auctionUrl" ng-disabled="staticConfigForm.hostAuction">
                             <span class="input-group-btn">
-                                <button type="submit" class="form-control btn btn-md btn-success" ng-click="" ng-disabled="!staticConfigForm.hostAuction">Download auction.html</button>
+                                <button type="submit" class="form-control btn btn-md btn-success" ng-click="" ng-disabled="staticConfigForm.hostAuction">Download auction.html</button>
                             </span>
                         </div>
                     </div>
@@ -176,9 +176,9 @@
                     <div class="form-group col-md-3">
                         <label for="bidders" class="control-label">&nbsp;</label>
                         <button class="btn btn-primary btn-block" ng-click="staticConfigForm.hostBidders=!staticConfigForm.hostBidders"
-                                ng-class="staticConfigForm.hostBidders ? 'btn-success' : 'btn-warning'">
-                            <span ng-if="!staticConfigForm.hostBidders">I want to host my own bidders.json</span>
-                            <span ng-if="staticConfigForm.hostBidders">Use BidTorrent.io bidders.json</span>
+                                ng-class="staticConfigForm.hostBidders ? 'btn-warning' : 'btn-success'">
+                            <span ng-if="staticConfigForm.hostBidders">I want to host my own bidders.json</span>
+                            <span ng-if="!staticConfigForm.hostBidders">Use BidTorrent.io bidders.json</span>
                         </button>
                     </div>
                     <div class="form-group col-md-9">
@@ -188,9 +188,9 @@
                         <div class="input-group">
                             <input type="text" class="form-control" id="bidders"
                                    placeholder="ex: ../src/bidders.json"
-                                   ng-model="dynConfigForm.bidders" ng-disabled="!staticConfigForm.hostBidders">
+                                   ng-model="staticConfigForm.biddersUrl" ng-disabled="staticConfigForm.hostBidders">
                             <span class="input-group-btn">
-                                <button type="submit" class="form-control btn btn-md btn-success" ng-click="" ng-disabled="!staticConfigForm.hostBidders">Download bidders.json</button>
+                                <button type="submit" class="form-control btn btn-md btn-success" ng-click="" ng-disabled="staticConfigForm.hostBidders">Download bidders.json</button>
                             </span>
                         </div>
                     </div>
@@ -234,8 +234,8 @@
 &lt;script src=&quot;http://bidtorrent.io/client.js&quot;&gt;&lt;/script&gt;<br/>
 &lt;script type=&quot;text/javascript&quot;&gt;<br/>
 &nbsp;&nbsp;bidTorrent({<br/>
-<span ng-if="staticConfigForm.hostAuction">&nbsp;&nbsp;&nbsp;&nbsp; auctionUrl: &#39;{{dynConfigForm.auction}}&#39;, //Optionnal if you want to host your own<br/></span>
-<span ng-if="staticConfigForm.hostBidders">&nbsp;&nbsp;&nbsp;&nbsp; biddersUrl: &#39;{{dynConfigForm.bidders}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="!staticConfigForm.hostAuction">&nbsp;&nbsp;&nbsp;&nbsp; auctionUrl: &#39;{{staticConfigForm.auctionUrl}}&#39;, //Optionnal if you want to host your own<br/></span>
+<span ng-if="!staticConfigForm.hostBidders">&nbsp;&nbsp;&nbsp;&nbsp; biddersUrl: &#39;{{staticConfigForm.biddersUrl}}&#39;, //Optionnal if you want to host your own<br/></span>
 <span ng-if="staticConfigForm.hostConfig">&nbsp;&nbsp;&nbsp;&nbsp; configUrl: &#39;http://www.bidtorrent.io/api/publishers/{{publisherId}}&#39;,<br/></span>
 <span ng-if="!staticConfigForm.hostConfig">
     &nbsp;&nbsp;&nbsp;&nbsp; config: {<br/>
