@@ -39,7 +39,15 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
     //Models
     $scope.defaultDomainFilter = { type: "domain", mode: false, value: [""], title: "Advertiser domains", placeholder: "www.adv1.fr" };
-    $scope.defaultCategoryFilter = { type: "iab_category", mode: false, value: [""], title: "IAB catagories", placeholder: "IAB-23" };
+    $scope.defaultCategoryFilter =
+    {
+        type: "iab_category",
+        mode: false,
+        value: [""],
+        title: "IAB categories",
+        placeholder: "IAB-23",
+        link: { title: "see OpenRTB specs", href: "http://www.iab.net/media/file/OpenRTB_API_Specification_Version2.0_FINAL.PDF" }
+    };
 
     $scope.publisherId = $stateParams.publisherId;
 
@@ -120,13 +128,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         // hide modal
         //$('#loginModal').modal('hide');
 
-        var filters = new Array();
-        validateAndAddFilter(filters, $scope.staticConfigForm.domainFilter);
-        validateAndAddFilter(filters, $scope.staticConfigForm.categoryFilter);
-
-        var imp = angular.copy($scope.staticConfigForm.imp);
-        imp = imp.cleanArray(["", null, undefined]);
-
         if (!$scope.staticConfigForm.name) {
             ngNotify.set("Enter a name", "error");
             $scope.scrollToGlobalInfo();
@@ -138,6 +139,13 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             $scope.scrollToGlobalInfo();
             return;
         }
+
+        var filters = new Array();
+        validateAndAddFilter(filters, $scope.staticConfigForm.domainFilter);
+        validateAndAddFilter(filters, $scope.staticConfigForm.categoryFilter);
+
+        var imp = angular.copy($scope.staticConfigForm.imp);
+        imp = imp.cleanArray(["", null, undefined]);
 
         if (!$scope.impIsFilled(imp)) {
             ngNotify.set("You need to set up at leat one impression", "error");

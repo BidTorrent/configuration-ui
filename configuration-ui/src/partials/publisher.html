@@ -35,7 +35,7 @@
                 <input type="text" class="form-control" id="pubName" placeholder="ex: Criteo" ng-model="staticConfigForm.name">
             </div>
             <div class="form-group col-md-4">
-                <label for="pubCountry" class="control-label">Country (<a href="https://www.iso.org/obp/ui/" target="_blank">ISO 3166-2</a>)</label>
+                <label for="pubCountry" class="control-label">Country (<a href="https://www.iso.org/obp/ui/#search" target="_blank">ISO 3166-2</a>)</label>
                 <input type="text" class="form-control" id="pubCountry" placeholder="ex: FR" ng-model="staticConfigForm.country">
             </div>
             <div class="form-group col-md-4" ng-class="[{'has-error' : staticConfigForm.timeout && !isStrictPositiveInt(staticConfigForm.timeout)}]">
@@ -53,6 +53,7 @@
                     <span ng-if="filter.mode">Whitelisted</span>
                     <span ng-if="!filter.mode">Blacklisted</span>
                     {{filter.title}}
+                    <span ng-if="filter.link">(<a href="{{filter.link.href}}" target="_blank">{{filter.link.title}}</a>)</span>
                 </label>
                 <div class="form-group row" ng-repeat="value in filter.value track by $index">
                     <div class="col-xs-10">
