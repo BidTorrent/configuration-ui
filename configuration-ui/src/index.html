@@ -31,8 +31,10 @@
                     <li role="presentation" ng-class="{ active: isActive('/')}"><a ui-sref="home">Home</a></li>
                     <li role="presentation" ng-class="{ active: isActive('/publisher')}"><a ui-sref="publisher">Publisher</a></li>
                     <li role="presentation" ng-class="{ active: isActive('/bidder')}"><a ui-sref="bidder">Bidder</a></li>
-                    <li role="presentation"><a>
-                        <oauth
+                    <li role="presentation"><a data-toggle="modal" data-target="#loginModal">
+                    <span ng-if="!userId">Sign In</span>
+                    <span ng-if="userId"><b>User {{userId}}</b></span>
+                        <!--<oauth
                             site="https://oauth-ng-server.herokuapp.com"
                             client-id="23c6ceaba56c00e940f890acc9f4c75a94991c62f5561338b6311f7026343d58"
                             redirect-uri="https://oauth-ng-demo.herokuapp.com"
@@ -40,7 +42,7 @@
                             scope="public"
                             template="partials/authTemplate.html"
                             text="sign In (NOT WORKING! )">
-                        </oauth>
+                        </oauth>-->
                     </a></li>
                 </ul>
             </div>
@@ -52,6 +54,30 @@
     <footer class="container footer">
         <span class="text-muted">bidTorrent website: v0.0.1 - <a href="https://github.com/BidTorrent/client-js">Github repository</a></p></span>
     </footer>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" ng-controller="loginController">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">Login</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">Id</label>
+                            <input type="text" class="form-control" placeholder="ex: 1" ng-model="modalUserId">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="login()">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="vendors/angular/angular.js"></script>
     <script src="vendors/angular-ui-router/release/angular-ui-router.js"></script>

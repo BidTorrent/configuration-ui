@@ -7,8 +7,8 @@ var btApp = angular.module('btApp', [
     'smoothScroll',
     'btApp.bidder',
     'btApp.publisher'
-]).
-config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
+])
+.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
     // For any unmatched url, redirect to /state1
     $urlRouterProvider.otherwise('/');
 
@@ -24,7 +24,15 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($s
         return viewLocation === $location.path();
     };
 }])
-.run(['ngNotify', function(ngNotify) {
+.controller('loginController', ['$scope', '$rootScope', '$state', '$stateParams', function HeaderController($scope, $rootScope, $state, $stateParams) {
+    $scope.login = function() {
+        $rootScope.userId = angular.copy($scope.modalUserId);
+
+        // hide modal
+        $('#loginModal').modal('hide');
+    };
+}])
+.run(['$rootScope', 'ngNotify', function($rootScope, ngNotify) {
     // Navbar configuration
     $(".navbar-fixed-top").autoHidingNavbar({
         // see specifications here : https://github.com/istvan-ujjmeszaros/bootstrap-autohidingnavbar
@@ -39,4 +47,6 @@ config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($s
         sticky: false,
         html: false
     });
+
+    $rootScope.userId = null;
 }]);
