@@ -14,12 +14,13 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 .run(['$rootScope', '$stateParams', '$state', function($rootScope, $stateParams, $state) {
     $rootScope.$on('$stateChangeStart',
     function(evt, toState, toParams, fromState, fromParams) {
-        if (($stateParams.bidderId == null || angular.isUndefined($stateParams.bidderId)) &&
-            !($rootScope.userId == null ||  angular.isUndefined($rootScope.userId))) {
-            evt.preventDefault();
-            $stateParams.bidderId = $rootScope.userId;
-            $state.transitionTo('bidder', { bidderId : $rootScope.userId });
-        }
+        if (toState.name == 'bidder')
+            if (($stateParams.bidderId == null || angular.isUndefined($stateParams.bidderId)) &&
+                !($rootScope.userId == null ||  angular.isUndefined($rootScope.userId))) {
+                evt.preventDefault();
+                $stateParams.bidderId = $rootScope.userId;
+                $state.transitionTo('bidder', { bidderId : $rootScope.userId });
+            }
     });
 }])
 

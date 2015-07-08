@@ -11,6 +11,19 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         })
 }])
 
+.run(['$rootScope', '$stateParams', '$state', function($rootScope, $stateParams, $state) {
+    $rootScope.$on('$stateChangeStart',
+    function(evt, toState, toParams, fromState, fromParams) {
+        if (toState.name == 'publisher')
+            if (($stateParams.publisherId == null || angular.isUndefined($stateParams.publisherId)) &&
+                !($rootScope.userId == null ||  angular.isUndefined($rootScope.userId))) {
+                evt.preventDefault();
+                $stateParams.publisherId = $rootScope.userId;
+                $state.transitionTo('publisher', { publisherId : $rootScope.userId });
+            }
+    });
+}])
+
 .controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, ngNotify, smoothScroll) {
 
     //Resources

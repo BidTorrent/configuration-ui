@@ -211,31 +211,6 @@
             Update my config
         </button>
     </div>
-    
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="loginModalLabel">Login</h4>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="recipient-name" class="control-label">Domain name</label>
-                            <input type="text" class="form-control" placeholder="ex: www.criteo.com" ng-model="registerForm.name">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" ng-click="saveConfig()">Save config</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <h2 id="generatedScript">Include the bidding script <i class="fa fa-code"></i></h2>
 
@@ -244,7 +219,7 @@
         <div class="form-group">
             <div class="btn-group" data-toggle="buttons">
                 <button type="button" class="btn btn-default" ng-class="{'active' : !hostConfig}" ng-click="hostConfig=false;scrollToScript()"> Use a static configuration</button>
-                <button type="button" class="btn btn-default" ng-class="{'active' : hostConfig}" ng-click="hostConfig=true" ng-disabled="!publisherId">
+                <button type="button" class="btn btn-default" ng-class="{'active' : hostConfig}" ng-click="hostConfig=true;scrollToScript()" ng-disabled="!publisherId">
                     Use BidTorrent.io config.json
                 </button>
             </div>
