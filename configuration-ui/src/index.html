@@ -32,18 +32,19 @@
                     <li role="presentation" ng-class="{ active: isActive('/publisher')}"><a ui-sref="publisher">Publisher</a></li>
                     <li role="presentation" ng-class="{ active: isActive('/bidder')}"><a ui-sref="bidder">Bidder</a></li>
                     <li role="presentation"><a data-toggle="modal" data-target="#loginModal">
-                    <span ng-if="!userId">Sign In</span>
-                    <span ng-if="userId"><b>User {{userId}}</b></span>
-                        <!--<oauth
-                            site="https://oauth-ng-server.herokuapp.com"
-                            client-id="23c6ceaba56c00e940f890acc9f4c75a94991c62f5561338b6311f7026343d58"
-                            redirect-uri="https://oauth-ng-demo.herokuapp.com"
-                            profile-uri="https://oauth-ng-server.herokuapp.com/api/v1/me"
-                            scope="public"
-                            template="partials/authTemplate.html"
-                            text="sign In (NOT WORKING! )">
-                        </oauth>-->
+                        <span ng-if="!userId">Sign in</span>
+                        <span ng-if="userId"><b>User {{userId}}</b></span>
                     </a></li>
+                    <li role="presentation"><a><oauth
+                        site="https://accounts.google.com/o"
+                        authorize-path="/oauth2/auth"
+                        client-id="780219424733-htfkn75kvdhr218e7j77bqg23osa6mdr.apps.googleusercontent.com"
+                        redirect-uri="http://www.bidtorrent.io"
+                        profile-uri="http://www.bidtorrent.io"
+                        scope="email"
+                        template="partials/authTemplate.html"
+                        text="Sign in with OpenId">
+                    </oauth></a></li>
                 </ul>
             </div>
         </div>
