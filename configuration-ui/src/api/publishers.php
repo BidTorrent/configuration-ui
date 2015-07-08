@@ -26,7 +26,12 @@ class Publishers
                 'type'  => null,
                 'country'  => null,
                 'timeout'  => null,
-                'secured'  => null
+                'secured'  => null,
+                'hostConfig'  => null,
+                'hostBidders'  => null,
+                'biddersUrl'  => null,
+                'hostAuction'  => null,
+                'auctionUrl'  => null
             )
         );
         $this->filterSchema = new RedMap\Schema
@@ -171,7 +176,6 @@ class Publishers
 
         if (!isset($pubUpdateResult))
             $app->halt(500);
-
 
         // Delete publisher's filters
         list ($query, $params) = $this->filterSchema->delete(array ('publisher' => $id));
@@ -385,6 +389,11 @@ class Publisher
     public $secured;
     public $filters;
     public $imp;
+    public $hostConfig;
+    public $hostBidders;
+    public $biddersUrl;
+    public $hostAuction;
+    public $auctionUrl;
 
     function __construct($row, $filters, $slots)
     {
@@ -394,6 +403,11 @@ class Publisher
         $this->country = $row['country'];
         $this->timeout = isset($row['timeout']) ? (int) $row['timeout'] : 400;
         $this->secured = isset($row['secured']) ? (bool) $row['secured'] : false;
+        $this->hostConfig = (bool) $row['hostConfig'];
+        $this->hostBidders = (bool) $row['hostBidders'];
+        $this->biddersUrl = $row['biddersUrl'];
+        $this->hostAuction = (bool) $row['hostAuction'];
+        $this->auctionUrl = $row['auctionUrl'];
         $this->filters = $filters;
         $this->imp = $slots;
     }

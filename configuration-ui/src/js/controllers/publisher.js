@@ -109,7 +109,12 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                     secured: response.secured,
                     domainFilter: domainFilter,
                     categoryFilter: categoryFilter,
-                    imp: response.imp
+                    imp: response.imp,
+                    hostConfig: response.hostConfig,
+                    hostBidders: response.hostBidders,
+                    biddersUrl: response.biddersUrl,
+                    hostAuction: response.hostAuction,
+                    auctionUrl: response.auctionUrl
                 };
                 $scope.publisherId = response.id;
             },
@@ -124,7 +129,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         return deferred.promise;
     };
 
-    $scope.saveConfig = function(element) {
+    $scope.saveConfig = function() {
         // hide modal
         //$('#loginModal').modal('hide');
 
@@ -166,7 +171,12 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             timeout: $scope.staticConfigForm.timeout,
             secured: $scope.staticConfigForm.secured,
             filters: filters,
-            imp: imp
+            imp: imp,
+            hostConfig: $scope.staticConfigForm.hostConfig,
+            hostBidders: $scope.staticConfigForm.hostBidders,
+            biddersUrl: $scope.staticConfigForm.biddersUrl,
+            hostAuction: $scope.staticConfigForm.hostAuction,
+            auctionUrl: $scope.staticConfigForm.auctionUrl
         };
 
         // save the configuration
@@ -200,6 +210,17 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                 }
             );
         }
+    }
+
+    $scope.saveHostConfig = function() {
+        if (!$scope.publisherId)
+            return;
+
+        var publisher = {
+            hostConfig: $scope.staticConfigForm.hostConfig
+        };
+
+        Publisher.update({ publisherId: $scope.publisherId , format: "ui" }, publisher);
     }
 
     var validateAndAddFilter = function(filters, filter) {
