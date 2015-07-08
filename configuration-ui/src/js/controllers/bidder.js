@@ -24,7 +24,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', function($scope, $q, $resource, $stateParams, ngNotify) {
+.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, ngNotify, smoothScroll) {
     //Resources
     var Bidder = $resource(
         '/api/bidders/:bidderId',
@@ -40,9 +40,33 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     //Models
     $scope.bidderId = $stateParams.bidderId;
 
-    $scope.defaultCategoryFilter = { type: "iab_category", mode: false, value: [""], title: "IAB catagories", placeholder: "IAB-23" };
-    $scope.defaultUserCountryFilter = { type: "user_country", mode: false, value: [""], title: "User countries", placeholder: "FR" };
-    $scope.defaultPubCountryFilter = { type: "publisher_country", mode: false, value: [""], title: "Publisher countries", placeholder: "ES" };
+    $scope.defaultCategoryFilter =
+    {
+        type: "iab_category",
+        modeBool: false,
+        value: [""],
+        title: "IAB categories",
+        placeholder: "IAB-23",
+        link: { title: "see OpenRTB specs", href: "http://www.iab.net/media/file/OpenRTB_API_Specification_Version2.0_FINAL.PDF" }
+    };
+    $scope.defaultUserCountryFilter =
+    {
+        type: "user_country",
+        modeBool: false,
+        value: [""],
+        title: "User countries",
+        placeholder: "FR",
+        link: { title: "ISO 3166-2", href: "https://www.iso.org/obp/ui/#search"}
+    };
+    $scope.defaultPubCountryFilter =
+    {
+        type: "publisher_country",
+        modeBool: false,
+        value: [""],
+        title: "Publisher countries",
+        placeholder: "ES",
+        link: { title: "ISO 3166-2", href: "https://www.iso.org/obp/ui/#search"}
+    };
     $scope.configForm = {
         name: null,
         bidRequestUrl: null,
@@ -90,6 +114,24 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     };
 
     $scope.submit = function() {
+        if (!$scope.configForm.name) {
+            ngNotify.set("Enter a name", "error");
+            $scope.scrollToGlobalInfo();
+            return;
+        }
+
+        if (!$scope.validUrl($scope.configForm.bidRequestUrl)) {
+            ngNotify.set("Enter a valid bid request URL", "error");
+            $scope.scrollToGlobalInfo();
+            return;
+        }
+
+        if (!$scope.configForm.pubKey) {
+            ngNotify.set("Enter a RSA public key", "error");
+            $scope.scrollToGlobalInfo();
+            return;
+        }
+
         // Keep only needed fields in filters
         var filters = new Array();
         validateAndAddFilter(filters, $scope.configForm.userCountryFilter);
@@ -184,4 +226,21 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     function(response) {
         return; // TODO: end loader if there is a loader
     });
+
+    // Validation
+    $scope.validUrl = function(url) {
+        if (!url)
+            return false;
+
+        var expression = 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}';
+        var regex = new RegExp(expression);
+        if (url.match(regex))
+           return true;
+        return false;
+    };
+
+    $scope.scrollToGlobalInfo = function() {
+        var element = document.getElementById('globalInfo');
+        smoothScroll(element);
+    }
 }]);
