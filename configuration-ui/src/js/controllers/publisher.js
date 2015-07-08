@@ -67,46 +67,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         );
     };
 
-    $scope.downloadConfig = function(element) {
-        var app;
-        var website;
-
-        var globalConfig = {
-            publisher: {
-                id: hashCode($scope.staticConfigForm.name),
-                name: $scope.staticConfigForm.name,
-                country: $scope.staticConfigForm.country
-            }
-        };
-
-        if ($scope.staticConfigForm.isTypeWebsite)
-            website = globalConfig;
-        else
-            app = globalConfig;
-
-        var config = {
-            app: app,
-            site: website,
-            badv: $scope.staticConfigForm.blacklistedDomains ? $scope.staticConfigForm.blacklistedDomains.split(";") : [],
-            bcat: $scope.staticConfigForm.blacklistedCategories ? $scope.staticConfigForm.blacklistedCategories.split(";") : [],
-            cur: $scope.staticConfigForm.currency,
-            imp: {
-                banner: {
-
-                },
-                //bidFloor: $scope.staticConfigForm.floor,
-                secure: $scope.staticConfigForm.secured
-            },
-            timeout: $scope.staticConfigForm.timeout
-        };
-
-        var json = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config));
-        var element = document.getElementById('downloadFile');
-        element.setAttribute("href", "data:" + json);
-        element.setAttribute("download", "data.json");
-        element.click();
-    };
-
     $scope.loadConfig = function() {
         var deferred = $q.defer();
 
