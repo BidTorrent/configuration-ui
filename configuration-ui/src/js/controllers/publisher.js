@@ -178,9 +178,17 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         filters.push(newFilter);
     }
 
-    $scope.isVirtuallyEmpty = function(array) {
+    $scope.isFilled = function(array) {
         for (var i = 0; i < array.length; i++) {
             if (array[i] !== "" && array[i] !== null && array[i] !== undefined)
+                return true
+        }
+        return false;
+    }
+
+    $scope.impIsFilled = function(array) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].html_id !== "" && array[i].html_id !== null && array[i].html_id !== undefined)
                 return true
         }
         return false;

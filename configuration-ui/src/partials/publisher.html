@@ -277,7 +277,7 @@
         </span>
 
         <!-- back/white listed domains -->
-        <span ng-if="isVirtuallyEmpty(staticConfigForm.domainFilter.value)">
+        <span ng-if="isFilled(staticConfigForm.domainFilter.value)">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <span ng-if="!staticConfigForm.domainFilter.mode">badv: [ //List of backlisted domains</span>
         <span ng-if="staticConfigForm.domainFilter.mode">wadv: [ //List of whitelisted domains</span><br/>
@@ -288,7 +288,7 @@
         </span>
 
         <!-- back/white listed categories -->
-        <span ng-if="isVirtuallyEmpty(staticConfigForm.categoryFilter.value)">
+        <span ng-if="isFilled(staticConfigForm.categoryFilter.value)">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <span ng-if="!staticConfigForm.categoryFilter.mode">bcat: [ //List of backlisted IAB categories</span>
         <span ng-if="staticConfigForm.categoryFilter.mode">wcat: [ //List of whitelisted IAB categories</span><br/>
@@ -299,11 +299,13 @@
         </span>
 
         <!-- imp -->
+        <span ng-if="impIsFilled(staticConfigForm.imp)">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; imp: [ //List of ad imps by Id<br/>
         <span ng-repeat="value in staticConfigForm.imp">
             <span ng-if="value.html_id !== null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { banner: { id: &#39;{{value.html_id}}&#39;<span ng-if="value.width">, w: {{value.width}}</span><span ng-if="value.height">, h: {{value.height}}</span> }<span ng-if="value.floor">, bidfloor: {{value.floor}}</span><span ng-if="staticConfigForm.secured !== null">, secure: {{staticConfigForm.secured}}</span> },</span><br>
         </span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
+        </span>
 
         <!-- tmax -->
         <span ng-if="staticConfigForm.timeout">
