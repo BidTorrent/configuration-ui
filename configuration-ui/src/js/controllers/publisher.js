@@ -103,11 +103,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         return deferred.promise;
     };
 
-    $scope.scrollToScript = function() {
-        var generatedScript = document.getElementById('generatedScript');
-        smoothScroll(generatedScript);
-    }
-
     $scope.saveConfig = function(element) {
         // hide modal
         //$('#loginModal').modal('hide');
@@ -118,6 +113,30 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
         var imp = angular.copy($scope.staticConfigForm.imp);
         imp = imp.cleanArray(["", null, undefined]);
+
+        if (!$scope.staticConfigForm.name) {
+            ngNotify.set("Enter a name", "error");
+            $scope.scrollToGlobalInfo();
+            return;
+        }
+
+        if ($scope.staticConfigForm.timeout && !$scope.isStrictPositiveInt($scope.staticConfigForm.timeout)) {
+            ngNotify.set("Timeout should be positive", "error");
+            $scope.scrollToGlobalInfo();
+            return;
+        }
+
+        if (!$scope.impIsFilled(imp)) {
+            ngNotify.set("You need to set up at leat one impression", "error");
+            $scope.scrollToImp();
+            return;
+        }
+
+        if (!$scope.impAreValid(imp)) {
+            ngNotify.set("One of your impressions is not valid", "error");
+            $scope.scrollToImp();
+            return;
+        }
 
         var publisher = {
             name: $scope.staticConfigForm.name,
@@ -181,24 +200,45 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     $scope.isFilled = function(array) {
         for (var i = 0; i < array.length; i++) {
             if (array[i] !== "" && array[i] !== null && array[i] !== undefined)
-                return true
+                return true;
         }
         return false;
     }
 
-    $scope.impIsFilled = function(array) {
-        for (var i = 0; i < array.length; i++) {
-            if (array[i].html_id !== "" && array[i].html_id !== null && array[i].html_id !== undefined)
-                return true
+    $scope.impIsFilled = function(imp) {
+        for (var i = 0; i < imp.length; i++) {
+            if (imp[i].html_id)
+                return true;
         }
         return false;
     }
 
     // Validation methods
+    $scope.impAreValid = function(imp) {
+        for (var i = 0; i < imp.length; i++) {
+            if (!imp[i].html_id)
+                return false;
+            if (imp[i].width && !$scope.isStrictPositiveInt(imp[i].width))
+                return false;
+            if (imp[i].height && !$scope.isStrictPositiveInt(imp[i].height))
+                return false;
+            if (imp[i].floor && !$scope.isStrictPositiveFloat(imp[i].floor))
+                return false;
+        }
+        return true;
+    }
+
     $scope.isStrictPositiveInt = function(value) {
         return !isNaN(value) &&
                parseInt(Number(value)) == value &&
                !isNaN(parseInt(value, 10)) &&
+               value > 0;
+    }
+
+    $scope.isStrictPositiveFloat = function(value) {
+        return !isNaN(value) &&
+               parseFloat(value) == value &&
+               !isNaN(parseFloat(value)) &&
                value > 0;
     }
 
@@ -233,6 +273,23 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
         return filter;
     };
+
+    $scope.scrollToScript = function() {
+        scrollToElement('generatedScript');
+    }
+
+    $scope.scrollToImp = function() {
+        scrollToElement('impSettings');
+    }
+
+    $scope.scrollToGlobalInfo = function() {
+        scrollToElement('globalInfo');
+    }
+
+    var scrollToElement = function(elementId) {
+        var element = document.getElementById(elementId);
+        smoothScroll(element);
+    }
 
     Array.prototype.cleanArray = function(deleteValues) {
     for (var i = 0; i < this.length; i++) {

@@ -28,14 +28,14 @@
     </h2>
 
     <div class="formSection well">
-        <h4>Global info</h4>
+        <h4 id="globalInfo">Global info</h4>
         <form class="row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-4" ng-class="{'has-error' : !staticConfigForm.name}">
                 <label for="pubCountry" class="control-label">Name</label>
                 <input type="text" class="form-control" id="pubName" placeholder="ex: Criteo" ng-model="staticConfigForm.name">
             </div>
             <div class="form-group col-md-4">
-                <label for="pubCountry" class="control-label">Country (ISO 3166-2)</label>
+                <label for="pubCountry" class="control-label">Country (<a href="https://www.iso.org/obp/ui/" target="_blank">ISO 3166-2</a>)</label>
                 <input type="text" class="form-control" id="pubCountry" placeholder="ex: FR" ng-model="staticConfigForm.country">
             </div>
             <div class="form-group col-md-4" ng-class="[{'has-error' : staticConfigForm.timeout && !isStrictPositiveInt(staticConfigForm.timeout)}]">
@@ -94,16 +94,16 @@
 
     <!-- MANDATORY SETTINGS -->
     <div class="formSection well">
-        <h4>Imp Settings</h4>
+        <h4 id="impSettings">Imp Settings</h4>
 
         <form class="row">
-            <div class="form-group col-xs-3">
+            <div class="form-group col-xs-3" ng-class="{'has-error' : !impIsFilled(staticConfigForm.imp)}">
                 <label class="control-label">Element DOM id</label>
             </div>
-            <div class="form-group col-xs-3" ng-class="{'has-error' : imp.width && !isStrictPositiveInt(imp.width)}">
+            <div class="form-group col-xs-3">
                 <label class="control-label">Width</label>
             </div>
-            <div class="form-group col-xs-3" ng-class="{'has-error' : imp.height && !isStrictPositiveInt(imp.height)}">
+            <div class="form-group col-xs-3">
                 <label class="control-label">Height</label>
             </div>
             <div class="form-group col-xs-3">
@@ -111,7 +111,7 @@
             </div>
         </form>
         <form class="row" ng-repeat="imp in staticConfigForm.imp track by $index">
-            <div class="form-group col-xs-3">
+            <div class="form-group col-xs-3" ng-class="{'has-error' : !imp.html_id}">
                 <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="imp.html_id">
             </div>
             <div class="form-group col-xs-3" ng-class="[{'has-error' : imp.width && !isStrictPositiveInt(imp.width)}]">
@@ -120,7 +120,7 @@
             <div class="form-group col-xs-3" ng-class="[{'has-error' : imp.height && !isStrictPositiveInt(imp.height)}]">
                 <input type="text" class="form-control" placeholder="ex: 600" ng-model="imp.height">
             </div>
-            <div class="form-group col-xs-2">
+            <div class="form-group col-xs-2" ng-class="{'has-error' : imp.floor && !isStrictPositiveFloat(imp.floor)}">
                 <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="imp.floor">
             </div>
             <div class="form-group col-xs-1">
