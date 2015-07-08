@@ -157,6 +157,13 @@ class Publishers
         list($publisher, $filters, $slots) = $this->_getRequestParameters($app);
         $publisher['id'] = $id;
 
+        // Get publisher
+        list ($query, $params) = $this->publisherSchema->get(array ('id' => $id));
+        $row = $this->db->get_first($query, $params);
+
+        if (!isset($row))
+            $app->halt(404);
+
         // Update publisher
         $this->db->execute('START TRANSACTION');
         list ($query, $params) = $this->publisherSchema->set(RedMap\Schema::SET_UPDATE, $publisher);
@@ -165,8 +172,6 @@ class Publishers
         if (!isset($pubUpdateResult))
             $app->halt(500);
 
-        if ($pubUpdateResult == 0)
-            $app->halt(404);
 
         // Delete publisher's filters
         list ($query, $params) = $this->filterSchema->delete(array ('publisher' => $id));
