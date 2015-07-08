@@ -10,18 +10,18 @@
         <div class="col-xs-offset-2 col-xs-8">
             <button class="btn btn-lg btn-primary choose-type-btn col-xs-5"
                     ng-class="{active: staticConfigForm.isTypeWebsite}"
-                    ng-click="staticConfigForm.isTypeWebsite=true">Website</button>
+                    ng-click="staticConfigForm.isTypeWebsite=true;scrollToConfig()">Website</button>
             <div class="col-xs-2 iconContainer">
                 <i class="fa fa-file-code-o" ng-if="staticConfigForm.isTypeWebsite"></i>
                 <i class="fa fa-mobile" ng-if="!staticConfigForm.isTypeWebsite"></i>
             </div>
             <button class="btn btn-lg btn-primary choose-type-btn col-xs-5"
                     ng-class="{active : !staticConfigForm.isTypeWebsite}"
-                    ng-click="staticConfigForm.isTypeWebsite=false">In App</button>
+                    ng-click="staticConfigForm.isTypeWebsite=false;scrollToConfig()">In App</button>
         </div>
     </div>
 
-    <h2>
+    <h2 id="config">
         <span ng-if="publisherId">My configuration</span>
         <span ng-if="!publisherId">Setup your static configuration</span>
         <i class="fa fa-sliders"></i>

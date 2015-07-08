@@ -307,6 +307,10 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         scrollToElement('globalInfo');
     }
 
+    $scope.scrollToConfig = function() {
+        scrollToElement('config');
+    }
+
     var scrollToElement = function(elementId) {
         var element = document.getElementById(elementId);
         smoothScroll(element);
