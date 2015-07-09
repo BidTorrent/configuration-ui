@@ -27,7 +27,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 .controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, ngNotify, smoothScroll) {
     //Resources
     var Bidder = $resource(
-        '/api/bidders/:bidderId',
+        'api/bidders/:bidderId',
         { bidderId:'@id' },
         {
             'get': { method:'GET' },

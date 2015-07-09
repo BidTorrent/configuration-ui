@@ -2,6 +2,7 @@
   "name": "configuration-ui",
   "version": "0.0.1",
   "description": "UI for the configuration website of bidTorrent: http://www.bidtorrent.io",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "grunt": "^0.4.5",
