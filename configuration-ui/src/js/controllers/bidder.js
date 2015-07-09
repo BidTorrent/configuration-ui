@@ -177,7 +177,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 
     var validateAndAddFilter = function(filters, filter) {
         // Remove empty values
-        filter.value.cleanArray(["", null, undefined]);
+		arrayClean(filter.value, ["", null, undefined]);
 
         if (!filter.mode && filter.value.length == 0)
             return;
@@ -212,14 +212,13 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         return filter;
     };
 
-    Array.prototype.cleanArray = function(deleteValues) {
-    for (var i = 0; i < this.length; i++) {
-        if (deleteValues.indexOf(this[i]) !== -1) {
-            this.splice(i, 1);
+    var arrayClean = function (array, deleteValues) {
+        for (var i = 0; i < array.length; i++) {
+            if (deleteValues.indexOf(array[i]) !== -1) {
+                array.splice(i, 1);
                 i--;
             }
         }
-        return this;
     };
 
     $scope.loadConfig().finally(
