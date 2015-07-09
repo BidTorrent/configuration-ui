@@ -251,7 +251,11 @@ class Publishers
             if (isset($slot->height))
                 $banner['h'] = $slot->height;
 
-            $slotConfig = array('bidfloor' => $slot->floor, 'banner' => $banner);
+            $slotConfig = array(
+                'id' => $slot->html_id,
+                'bidfloor' => $slot->floor,
+                'banner' => $banner
+            );
 
             if ($publisher->secured)
                 $slotConfig['secure'] = $publisher->secured;
