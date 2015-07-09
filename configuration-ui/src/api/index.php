@@ -16,7 +16,10 @@ $db = new RedMap\Drivers\MySQLiDriver('UTF8');
 $db->connect($config['db_user'], $config['db_password'], $config['db_name']);
 
 $bidders = new Bidders($db);
-$app->get('/bidders/', function () use ($app, $bidders) { display_result($app, $bidders->getAll($app)); });
+$app->get('/bidders/', function () use ($app, $bidders) {
+	$app->expires('+3 hour');
+	display_result($app, $bidders->getAll($app));
+});
 $app->get('/bidders/:id', function ($id) use ($app, $bidders) { 
 	$app->expires('+3 hour');
 	display_result($app, $bidders->get($app, $id)); 
@@ -26,7 +29,10 @@ $app->put('/bidders/:id', function ($id) use ($app, $bidders) { $bidders->put($a
 $app->post('/bidders/', function () use ($app, $bidders) { $bidders->post($app); });
 
 $publishers = new Publishers($db);
-$app->get('/publishers/', function () use ($app, $publishers) { display_result($app, $publishers->getAll($app)); });
+$app->get('/publishers/', function () use ($app, $publishers) {
+	$app->expires('+3 hour');
+	display_result($app, $publishers->getAll($app));
+});
 $app->get('/publishers/:id', function ($id) use ($app, $publishers) { 
 	$app->expires('+3 hour');
 	display_result($app, $publishers->get($app, $id)); 
