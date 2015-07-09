@@ -147,7 +147,8 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         validateAndAddFilter(filters, $scope.staticConfigForm.categoryFilter);
 
         var imp = angular.copy($scope.staticConfigForm.imp);
-        imp = imp.cleanArray(["", null, undefined]);
+        for (var i = 0; i < imp.length; ++i)
+            objectClean(imp[i], ["", null, undefined]);
 
         if (!$scope.impIsFilled(imp)) {
             ngNotify.set("You need to set up at leat one impression", "error");
@@ -170,8 +171,8 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         var publisher = {
             name: $scope.staticConfigForm.name,
             type: $scope.staticConfigForm.isTypeWebsite ? "website" : "inapp",
-            country: $scope.staticConfigForm.country,
-            timeout: $scope.staticConfigForm.timeout,
+            country: $scope.staticConfigForm.country ? $scope.staticConfigForm.country : undefined,
+            timeout: $scope.staticConfigForm.timeout ? $scope.staticConfigForm.timeout : undefined,
             secured: $scope.staticConfigForm.secured,
             filters: filters,
             imp: imp,
@@ -228,7 +229,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
     var validateAndAddFilter = function(filters, filter) {
         // Remove empty values
-        filter.value.cleanArray(["", null, undefined]);
+        arrayClean(filter.value, ["", null, undefined]);
 
         if (!filter.mode && filter.value.length == 0)
             return;
@@ -340,15 +341,22 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         smoothScroll(element);
     }
 
-    Array.prototype.cleanArray = function(deleteValues) {
-    for (var i = 0; i < this.length; i++) {
-        if (deleteValues.indexOf(this[i]) !== -1) {         
-            this.splice(i, 1);
+    var arrayClean = function (array, deleteValues) {
+        for (var i = 0; i < array.length; i++) {
+            if (deleteValues.indexOf(array[i]) !== -1) {
+                array.splice(i, 1);
                 i--;
             }
         }
-        return this;
     };
+
+	var objectClean = function (obj, deleteValues) {
+        for (var key in obj) {
+            if (deleteValues.indexOf(obj[key]) !== -1) {
+                delete obj[key];
+            }
+        }
+	};
 
     $scope.loadConfig().finally(
     function(response) {
