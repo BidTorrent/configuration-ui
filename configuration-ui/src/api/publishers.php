@@ -54,7 +54,8 @@ class Publishers
                 'publisher'  => array (RedMap\Schema::FIELD_PRIMARY),
                 'width'  => null,
                 'height'  => null,
-                'floor'  => null
+                'floor'  => null,
+				'passback'  => null,
             )
         );
     }
@@ -260,6 +261,9 @@ class Publishers
             if ($publisher->secured)
                 $slotConfig['secure'] = $publisher->secured;
 
+			if ($slot->passback)
+				$slotConfig['passback'] = $slot->passback;
+
             return $slotConfig;
         }, $publisher->imp);
 
@@ -443,6 +447,7 @@ class PublisherSlot
     public $width;
     public $height;
     public $floor;
+	public $passback;
 
     function __construct($row)
     {
@@ -451,6 +456,7 @@ class PublisherSlot
         $this->width = isset($row['width']) ? (int) $row['width'] : null;
         $this->height = isset($row['height']) ? (int) $row['height'] : null;
         $this->floor = (float) $row['floor'];
+		$this->passback = $row['passback'];
     }
 }
 

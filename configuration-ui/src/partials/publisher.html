@@ -97,41 +97,40 @@
     <div class="formSection well">
         <h4 id="impSettings">Imp Settings</h4>
 
-        <form class="row">
-            <div class="form-group col-xs-3" ng-class="{'has-error' : !impIsFilled(staticConfigForm.imp)}">
-                <label class="control-label">Element DOM id</label>
-            </div>
-            <div class="form-group col-xs-3">
-                <label class="control-label">Width</label>
-            </div>
-            <div class="form-group col-xs-3">
-                <label class="control-label">Height</label>
-            </div>
-            <div class="form-group col-xs-3">
-                <label class="control-label">Floor</label>
-            </div>
-        </form>
-        <form class="row" ng-repeat="imp in staticConfigForm.imp track by $index">
-            <div class="form-group col-xs-3" ng-class="{'has-error' : !imp.html_id}">
-                <input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="imp.html_id">
-            </div>
-            <div class="form-group col-xs-3" ng-class="[{'has-error' : imp.width && !isStrictPositiveInt(imp.width)}]">
-                <input type="text" class="form-control" placeholder="ex: 200" ng-model="imp.width">
-            </div>
-            <div class="form-group col-xs-3" ng-class="[{'has-error' : imp.height && !isStrictPositiveInt(imp.height)}]">
-                <input type="text" class="form-control" placeholder="ex: 600" ng-model="imp.height">
-            </div>
-            <div class="form-group col-xs-2" ng-class="{'has-error' : imp.floor && !isStrictPositiveFloat(imp.floor)}">
-                <input type="text" class="form-control" placeholder="ex: 1.2" ng-model="imp.floor">
-            </div>
-            <div class="form-group col-xs-1">
-                <button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="staticConfigForm.imp.splice($index, 1)"><i class="fa fa-minus"></i></button>
-            </div>
-        </form>
+        <div ng-repeat="imp in staticConfigForm.imp track by $index">
+			<form class="row">
+				<div class="form-group col-xs-3" ng-class="{'has-error' : !imp.html_id}">
+					<label class="control-label">Element DOM id</label>
+					<input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="imp.html_id">
+				</div>
+				<div class="form-group col-xs-3" ng-class="[{'has-error' : imp.width && !isStrictPositiveInt(imp.width)}]">
+					<label class="control-label">Width</label>
+					<input type="text" class="form-control" placeholder="ex: 200" ng-model="imp.width">
+				</div>
+				<div class="form-group col-xs-3" ng-class="[{'has-error' : imp.height && !isStrictPositiveInt(imp.height)}]">
+					<label class="control-label">Height</label>
+					<input type="text" class="form-control" placeholder="ex: 600" ng-model="imp.height">
+				</div>
+				<div class="form-group col-xs-2" ng-class="{'has-error' : imp.floor && !isStrictPositiveFloat(imp.floor)}">
+					<label class="control-label">Floor</label>
+					<input type="text" class="form-control" placeholder="ex: 1.2" ng-model="imp.floor">
+				</div>
+				<div class="form-group col-xs-1">
+					<label class="control-label">Del</label>
+					<button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="staticConfigForm.imp.splice($index, 1)"><i class="fa fa-minus"></i></button>
+				</div>
+			</form>
+			<form class="row">
+				<div class="form-group col-xs-12">
+					<label class="control-label">Passback code</label>
+					<input type="text" class="form-control" placeholder="ex: <img alt=&quot;passback&quot; src=&quot;my-passback-image.png&quot; />" ng-model="imp.passback">
+				</div>
+			</form>
+        </div>
         <form class="row">
             <div class="form-group col-md-12">
                <button type="submit" class="btn btn-md btn-success col-md-2"
-                ng-click="staticConfigForm.imp.push({ html_id: null, width: null, height: null, floor: null })"><i class="fa fa-plus"></i> Add imp</button>
+                ng-click="staticConfigForm.imp.push({ html_id: null, width: null, height: null, floor: null, passback: null })"><i class="fa fa-plus"></i> Add imp</button>
             </div>
         </form>
     </div>
