@@ -7,13 +7,15 @@ class Bidders
     public $db;
     public $bidderSchema;
     public $filterSchema;
+    public $users;
 
     static $BIDDER_FIELDS = array('name', 'bidUrl', 'rsaPubKey');
     static $FILTER_FIELDS = array('bidder', 'type');
 
-    function __construct($db)
+    function __construct($db, $users)
     {
         $this->db = $db;
+        $this->users = $users;
         $this->bidderSchema = new RedMap\Schema
         (
             'bidders',
@@ -151,8 +153,11 @@ class Bidders
         return $config;
     }
 
-    function post($app)
+    function post($app, $userId)
     {
+        if ($userId === null)
+            $app->halt(401);
+
         list($bidder, $filters) = $this->_getRequestParameters($app);
 
         if (!$this->_validate($bidder, bidders::$BIDDER_FIELDS))
@@ -172,6 +177,13 @@ class Bidders
         // Add filters
         foreach ($filters as $filter)
             $this->_addFilter($app, $filter, $insertedBidderId);
+
+        // Add bidder<->user relation
+        if (!$this->users->addUserForBidder($userId, $insertedBidderId))
+        {
+            $this->db->execute('ROLLBACK');
+            $app->halt(500);
+        }
 
         $this->db->execute('COMMIT');
     }
@@ -207,11 +219,14 @@ class Bidders
         $this->db->execute('COMMIT');
     }
 
-    function delete($app, $id)
+    function delete($app, $userId, $id)
     {
         // Delete bidder's filters
         list ($query, $params) = $this->filterSchema->delete(array ('bidder' => $id));
         $this->db->execute($query, $params);
+
+        // Delete bidder<->user relation
+        $this->users->removeUserForBidder($userId, $id);
 
         // Delete bidder
         list ($query, $params) = $this->bidderSchema->delete(array ('id' => $id));

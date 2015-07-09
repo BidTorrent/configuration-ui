@@ -8,14 +8,16 @@ class Publishers
     public $publisherSchema;
     public $filterSchema;
     public $slotSchema;
+    public $users;
 
     static $PUBLISHER_FIELDS = array('name', 'type');
     static $FILTER_FIELDS = array('publisher', 'type');
     static $SLOT_FIELDS = array('publisher', 'html_id');
 
-    function __construct($db)
+    function __construct($db, $users)
     {
         $this->db = $db;
+        $this->users = $users;
         $this->publisherSchema = new RedMap\Schema
         (
             'publishers',
@@ -129,8 +131,11 @@ class Publishers
         return $this->_format($publisher);
     }
 
-    function post($app)
+    function post($app, $userId)
     {
+        if ($userId === null)
+            $app->halt(401);
+
         list($publisher, $filters, $slots) = $this->_getRequestParameters($app);
 
         if (!$this->_validate($publisher, publishers::$PUBLISHER_FIELDS))
@@ -154,6 +159,13 @@ class Publishers
         // Add new slots
         foreach ($slots as $slot)
             $this->_addSlot($app, $slot, $insertedPubId);
+
+        // Add bidder<->user relation
+        if (!$this->users->addUserForPublisher($userId, $insertedPubId))
+        {
+            $this->db->execute('ROLLBACK');
+            $app->halt(500);
+        }
 
         $this->db->execute('COMMIT');
     }
@@ -197,11 +209,14 @@ class Publishers
         $this->db->execute('COMMIT');
     }
 
-    function delete($app, $id)
+    function delete($app, $userId, $id)
     {
         // Delete publisher's filters
         list ($query, $params) = $this->filterSchema->delete(array ('publisher' => $id));
         $this->db->execute($query, $params);
+
+        // Delete publisher<->user relation
+        $this->users->removeUserForPublisher($userId, $id);
 
         // Delete publisher's slots
         list ($query, $params) = $this->slotSchema->delete(array ('publisher' => $id));
