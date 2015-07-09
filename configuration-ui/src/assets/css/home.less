@@ -9,7 +9,7 @@
 
     .main-title {
         text-align: center;
-        margin: 140px 0 160px 0;
+        margin: 140px 0 0 0;
         h1 {
             color: white;
             font-size: 72px;
@@ -22,6 +22,14 @@
         }
     }
 
+    // Scroll arrow + "start as" buttons
+    .fixed-bottom {
+        width: 100%;
+        position: fixed;
+        bottom: 1px;
+        z-index: -1;
+    }
+
     .scroll-arrow {
         font-size: 80px;
         color: rgba(255, 255, 255, 0.65);
@@ -30,7 +38,7 @@
     }
 
     .section {
-        height: 1000px;
+        min-height: 100%;
         width: 100%;
         margin: 0 auto;
         padding-top: 80px;
@@ -64,7 +72,7 @@
         }
     }
 
-    @mainsectionheight: 1000px;
+    @mainsectionheight: 100%;
 
     .mainsection {
         //copyright nicolas turlais, http://insipi.de
