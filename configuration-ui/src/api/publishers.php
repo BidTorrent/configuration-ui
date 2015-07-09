@@ -235,7 +235,10 @@ class Publishers
             'domain' => 'adv'
         ));
 
-        $config[$globalConfigKey] = array('publisher' => $publisherConfig);
+        $config[$globalConfigKey] = array(
+            'publisher' => $publisherConfig,
+            'id' => $publisher->id
+        );
         $config['tmax'] = $publisher->timeout;
 
         $config['imp'] = array_map(function($slot) use ($publisher)
