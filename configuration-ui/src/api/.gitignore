@@ -10,3 +10,5 @@ bin/*
 build/*
 build
 config/config.php
+config/BidTorrent.json
+config/BidTorrent.p12

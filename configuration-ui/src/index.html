@@ -12,6 +12,18 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="vendors/ng-notify/dist/ng-notify.min.css">
+    <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+    <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+    <script type=text/javascript>
+      window.google.identitytoolkit.signInButton(
+        '#navbar', // accepts any CSS selector
+        {
+          widgetUrl: "/api/gitkit.php",
+          signOutUrl: "/",
+          popupMode: true
+        }
+      );
+    </script>
 </head>
 <body>
     <div class="navbar navbar-default navbar-fixed-top">
@@ -31,20 +43,7 @@
                     <li role="presentation" ui-sref-active="active" ui-sref="home"><a>Home</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="publisher"><a>Publisher</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="bidder"><a>Bidder</a></li>
-                    <li role="presentation"><a data-toggle="modal" data-target="#loginModal">
-                        <span ng-if="!userId">Sign in</span>
-                        <span ng-if="userId"><b>User {{userId}}</b></span>
-                    </a></li>
-                    <li role="presentation"><a><oauth
-                        site="https://accounts.google.com/o"
-                        authorize-path="/oauth2/auth"
-                        client-id="780219424733-htfkn75kvdhr218e7j77bqg23osa6mdr.apps.googleusercontent.com"
-                        redirect-uri="http://www.bidtorrent.io"
-                        profile-uri="http://www.bidtorrent.io"
-                        scope="email"
-                        template="partials/authTemplate.html"
-                        text="Sign in with OpenId">
-                    </oauth></a></li>
+                    <li role="presentation" id="navbar" style="margin-top:8px;"></li>
                 </ul>
             </div>
         </div>
@@ -55,30 +54,6 @@
     <footer class="container footer">
         <span class="text-muted">bidTorrent website: v0.0.1 - <a href="https://github.com/BidTorrent/client-js">Github repository</a></p></span>
     </footer>
-
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" ng-controller="loginController">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="loginModalLabel">Login</h4>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="recipient-name" class="control-label">Id</label>
-                            <input type="text" class="form-control" placeholder="ex: 1" ng-model="modalUserId">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" ng-click="login()">Login</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="vendors/angular/angular.js"></script>
     <script src="vendors/angular-ui-router/release/angular-ui-router.js"></script>

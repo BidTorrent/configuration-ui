@@ -15,6 +15,8 @@ $app->config('debug', $config['debug']);
 $db = new RedMap\Drivers\MySQLiDriver('UTF8');
 $db->connect($config['db_user'], $config['db_password'], $config['db_name']);
 
+$gitkitClient = Gitkit_Client::createFromFile('config/gitkit-server-config.json');
+
 $bidders = new Bidders($db);
 $app->get('/bidders/', function () use ($app, $bidders) {
 	$app->expires('+3 hour');
@@ -40,6 +42,16 @@ $app->get('/publishers/:id', function ($id) use ($app, $publishers) {
 $app->delete('/publishers/:id', function ($id) use ($app, $publishers) { $publishers->delete($app, $id); });
 $app->put('/publishers/:id', function ($id) use ($app, $publishers) { $publishers->put($app, $id); });
 $app->post('/publishers/', function () use ($app, $publishers) { $publishers->post($app); });
+
+$app->get('/login/', function() use ($gitkitClient) {
+	$gitkitUser = $gitkitClient->getUserInRequest();
+	if ($gitkitUser) {
+		echo $gitkitUser->getEmail();
+		echo $gitkitUser->getUserId();
+		echo $gitkitUser->getDisplayName();
+		echo $gitkitUser->getProviderId();
+	}
+});
 
 $app->run();
 

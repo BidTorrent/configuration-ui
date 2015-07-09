@@ -1,0 +1,7 @@
+{
+  "clientId" : "8118021081-ovi45u13l9rrc1mo15na39asrjpdkpkg.apps.googleusercontent.com",
+  "serviceAccountEmail" : "8118021081-4qdrn70nagogj2u3sip11qc3qcvfep10@developer.gserviceaccount.com",
+  "serviceAccountPrivateKeyFile" : "config\\BidTorrent-77e44a79f537.p12",
+  "widgetUrl" : "/api/gitkit.php",
+  "cookieName" : "gtoken"
+}
