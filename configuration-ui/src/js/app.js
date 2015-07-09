@@ -19,11 +19,6 @@ var btApp = angular.module('btApp', [
             templateUrl: 'partials/home.html'
         })
 }])
-.controller('HeaderController', ['$scope', '$location', function HeaderController($scope, $location) {
-    $scope.isActive = function(viewLocation) {
-        return viewLocation === $location.path();
-    };
-}])
 .controller('loginController', ['$scope', '$rootScope', '$state', '$stateParams', function HeaderController($scope, $rootScope, $state, $stateParams) {
     $scope.login = function() {
         $rootScope.userId = angular.copy($scope.modalUserId);
