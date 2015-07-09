@@ -9,6 +9,11 @@ var btApp = angular.module('btApp', [
     'btApp.publisher'
 ])
 .config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
+/*    $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: false
+    });
+*/
     // For any unmatched url, redirect to /state1
     $urlRouterProvider.otherwise('/');
 

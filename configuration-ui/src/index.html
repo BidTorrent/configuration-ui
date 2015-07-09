@@ -12,18 +12,7 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="vendors/ng-notify/dist/ng-notify.min.css">
-    <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
-    <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
-    <script type=text/javascript>
-      window.google.identitytoolkit.signInButton(
-        '#navbar', // accepts any CSS selector
-        {
-          widgetUrl: "api/gitkit.php",
-          signOutUrl: "/",
-          popupMode: true
-        }
-      );
-    </script>
+    <link type="text/css" rel="stylesheet" href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
 </head>
 <body class="full-height">
     <div class="navbar navbar-default navbar-fixed-top">
@@ -43,7 +32,7 @@
                     <li role="presentation" ui-sref-active="active" ui-sref="home"><a>Home</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="publisher"><a>Publisher</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="bidder"><a>Bidder</a></li>
-                    <li role="presentation" id="navbar" style="margin-top:8px;"></li>
+                    <li role="presentation" id="navbar-login"></li>
                 </ul>
             </div>
         </div>
@@ -55,6 +44,18 @@
         <span class="text-muted">bidTorrent website: v0.0.1 - <a href="https://github.com/BidTorrent/client-js">Github repository</a></p></span>
     </footer>
 
+    <script src="vendors/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+    <script type="text/javascript">
+      window.google.identitytoolkit.signInButton(
+        '#navbar', // accepts any CSS selector
+        {
+          widgetUrl: "api/gitkit.php",
+          signOutUrl: "/",
+          popupMode: true
+        }
+      );
+    </script>
     <script src="vendors/angular/angular.js"></script>
     <script src="vendors/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="vendors/angular-resource/angular-resource.min.js"></script>
@@ -62,7 +63,6 @@
     <script src="vendors/ngSmoothScroll/angular-smooth-scroll.min.js"></script>
     <script src="vendors/ngstorage/ngStorage.min.js"></script>
     <script src="vendors/oauth-ng/dist/oauth-ng.js"></script>
-    <script src="vendors/jquery/dist/jquery.min.js"></script>
     <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="vendors/bootstrap-autohidingnavbar/dist/jquery.bootstrap-autohidingnavbar.min.js"></script>
     <script src="js/controllers/bidder.js"></script>
