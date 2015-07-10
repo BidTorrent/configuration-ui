@@ -6,7 +6,8 @@ var btApp = angular.module('btApp', [
     'LocalStorageModule',
     'smoothScroll',
     'btApp.bidder',
-    'btApp.publisher'
+    'btApp.publisher',
+    'btApp.publisherStats'
 ])
 .config(['$stateProvider', '$urlRouterProvider', '$locationProvider', 'localStorageServiceProvider', function($stateProvider, $urlRouterProvider, $locationProvider, localStorageServiceProvider) {
 /*    $locationProvider.html5Mode({

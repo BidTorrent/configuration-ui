@@ -9,11 +9,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             templateUrl: 'partials/publisher.html',
             controller: 'PublisherCtrl'
         })
-        .state('publisher-stats', {
-            url: '/publisher/:publisherId/stats',
-            templateUrl: 'partials/publisher-stats.html',
-            controller: 'PublisherStatCtrl'
-        });
 }])
 
 .run(['$rootScope', '$stateParams', '$state', function($rootScope, $stateParams, $state) {
