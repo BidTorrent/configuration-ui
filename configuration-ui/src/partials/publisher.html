@@ -113,7 +113,10 @@
 				</div>
 				<div class="form-group col-xs-2" ng-class="{'has-error' : imp.floor && !isStrictPositiveFloat(imp.floor)}">
 					<label class="control-label">Floor</label>
-					<input type="text" class="form-control" placeholder="ex: 1.2" ng-model="imp.floor">
+					<div class="input-group">
+						<span class="input-group-addon">$</span>
+						<input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder="ex: 1.2" ng-model="imp.floor">
+					</div>
 				</div>
 				<div class="form-group col-xs-1">
 					<label class="control-label">Del</label>
@@ -248,7 +251,7 @@
         <h3>Include the BidTorrent client script and its dynamic configuration to your webpage</h3>
         <div class="row">
             <code class="col-xs-12 col-md-8 col-md-offset-2">
-&lt;script src=&quot;http://bidtorrent.io/client.js&quot;&gt;&lt;/script&gt;<br/>
+&lt;script src=&quot;http://bidtorrent.io/loader.js&quot;&gt;&lt;/script&gt;<br/>
 &lt;script type=&quot;text/javascript&quot;&gt;<br/>
 &nbsp;&nbsp;bidTorrent({<br/>
 <span ng-if="!staticConfigForm.hostClient">&nbsp;&nbsp;&nbsp;&nbsp; clientUrl: &#39;{{staticConfigForm.clientUrl}}&#39;, // Optional if you want to host your own<br/></span>
@@ -263,8 +266,8 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; publisher: {
         </span>
         <span ng-if="staticConfigForm.id">id: {{publisherId}},</span>
-        <span ng-if="staticConfigForm.name">name: {{staticConfigForm.name}},</span>
-        <span ng-if="staticConfigForm.country">country: {{staticConfigForm.country}},</span>
+        <span ng-if="staticConfigForm.name">name: '{{staticConfigForm.name}}',</span>
+        <span ng-if="staticConfigForm.country">country: '{{staticConfigForm.country}}',</span>
         <span ng-if="staticConfigForm.country || staticConfigForm.name || publisherId">
         }<br/>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; },<br/>
@@ -296,7 +299,13 @@
         <span ng-if="impIsFilled(staticConfigForm.imp)">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; imp: [ // List of ad imps by Id<br/>
         <span ng-repeat="value in staticConfigForm.imp">
-            <span ng-if="value.html_id !== null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { banner: { id: &#39;{{value.html_id}}&#39;<span ng-if="value.width">, w: {{value.width}}</span><span ng-if="value.height">, h: {{value.height}}</span> }<span ng-if="value.floor">, bidfloor: {{value.floor}}</span><span ng-if="staticConfigForm.secured !== null">, secure: {{staticConfigForm.secured}}</span> },</span><br>
+            <span ng-if="value.html_id !== null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { banner: { id: &#39;{{value.html_id}}&#39;
+                <span ng-if="value.width">, w: {{value.width}}</span>
+                <span ng-if="value.height">, h: {{value.height}}</span> }
+                <span ng-if="value.floor">, bidfloor: {{value.floor}}</span>
+                <span ng-if="staticConfigForm.secured !== null">, secure: {{staticConfigForm.secured}}</span>
+                <span ng-if="value.passback !== null">, passback: '{{value.passback}}'</span> },
+            </span><br>
         </span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ],<br/>
         </span>
