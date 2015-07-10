@@ -4,6 +4,7 @@ require 'vendor/autoload.php';
 require 'bidders.php';
 require 'publishers.php';
 require 'users.php';
+require 'stats.php';
 
 if (!file_exists('config/config.php'))
     die('config/config.php is not found');
@@ -24,6 +25,9 @@ if ($gitkitUser)
 $users = new Users($db);
 
 $bidders = new Bidders($db, $users);
+
+$stats = new Stats($db);
+
 $app->get('/bidders/', function () use ($app, $bidders) {
 	$uiFormat = $app->request()->get('format') === 'ui';
 
@@ -86,6 +90,17 @@ $app->get('/mypublishers/', function () use ($app, $publishers, $userId) { displ
 
 // Hack to know user id
 $app->get('/myid/', function () use ($userId) { echo $userId; });
+
+$app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $stats) { 
+    displayResult(
+        $app,
+        $stats->getByPublisher(
+            $publisher,
+            $from,
+            $to
+        )
+    ); 
+});
 
 $app->run();
 
