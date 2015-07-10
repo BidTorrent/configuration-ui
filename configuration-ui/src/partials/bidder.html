@@ -1,8 +1,8 @@
 <div class="bidtorrentPage container">
-    <h1>Bidders</h1>
+    <h1>Bidder<span ng-if="bidderId"> {{configForm.name}}</span></h1>
 
     <h2>
-        <span class="title" ng-if="bidderId">My configuration</span>
+        <span class="title" ng-if="bidderId">Configuration<span ng-if="configForm.name"> for bidder <b>{{configForm.name}}</b></span></span>
         <span class="title" ng-if="!bidderId">Register as a Bidder</span>
         <i class="fa fa-space-shuttle"></i>
     </h2>

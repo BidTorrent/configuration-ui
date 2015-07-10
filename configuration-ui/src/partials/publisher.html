@@ -1,5 +1,5 @@
 <div class="bidtorrentPage container">
-    <h1>Publishers</h1>
+    <h1>Publisher<span ng-if="publisherId">  {{staticConfigForm.name}}</h1>
 
     <h2>
         <span ng-if="publisherId">My integration type</span>
@@ -22,7 +22,7 @@
     </div>
 
     <h2 id="config">
-        <span ng-if="publisherId">My configuration</span>
+        <span ng-if="publisherId">Configuration<span ng-if="staticConfigForm.name"> for publisher <b>{{staticConfigForm.name}}</b></span></span>
         <span ng-if="!publisherId">Setup your static configuration</span>
         <i class="fa fa-sliders"></i>
     </h2>
