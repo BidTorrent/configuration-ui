@@ -24,7 +24,7 @@
     "oauth-ng": "~0.4.2",
     "bootstrap-autohidingnavbar": "~1.0.0",
     "ng-notify": "~0.6.2",
-    "ngSmoothScroll": "~1.7.1"
+    "ngSmoothScroll": "git@github.com:d-oliveros/ngSmoothScroll.git#2542dd41d920774669f2be78c0dc786376447d3f"
   },
   "resolutions": {
     "angular": "~1.4.1"
