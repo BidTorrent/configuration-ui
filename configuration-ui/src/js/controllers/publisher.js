@@ -65,8 +65,9 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         categoryFilter: angular.copy($scope.defaultCategoryFilter),
         imp: [{ html_id: null, width: null, height: null, floor: null }],
         hostConfig: false,
-        hostAuction: true,
-        hostBidders: true
+        hostClient: true,
+        hostBidders: true,
+		hostImp: true
     };
 
     //Functions
@@ -93,10 +94,12 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                     categoryFilter: categoryFilter,
                     imp: response.imp,
                     hostConfig: response.hostConfig,
-                    hostBidders: response.hostBidders,
-                    biddersUrl: response.hostBidders ? null : response.biddersUrl,
-                    hostAuction: response.hostAuction,
-                    auctionUrl: response.hostAuction ? null : response.auctionUrl
+                    hostBidders: response.biddersUrl === null,
+                    biddersUrl: response.biddersUrl || '',
+                    hostClient: response.clientUrl === null,
+                    clientUrl: response.clientUrl || '',
+					hostImp: response.impUrl === null,
+					impUrl: response.impUrl || ''
                 };
                 $scope.publisherId = response.id;
             },
@@ -147,12 +150,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             return;
         }
 
-        if ($scope.staticConfigForm.hostBidders)
-            $scope.staticConfigForm.biddersUrl = null;
-
-        if ($scope.staticConfigForm.hostAuction)
-            $scope.staticConfigForm.auctionUrl = null;
-
         var publisher = {
             name: $scope.staticConfigForm.name,
             type: $scope.staticConfigForm.isTypeWebsite ? "website" : "inapp",
@@ -162,10 +159,9 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             filters: filters,
             imp: imp,
             hostConfig: $scope.staticConfigForm.hostConfig,
-            hostBidders: $scope.staticConfigForm.hostBidders,
-            biddersUrl: $scope.staticConfigForm.biddersUrl,
-            hostAuction: $scope.staticConfigForm.hostAuction,
-            auctionUrl: $scope.staticConfigForm.auctionUrl
+            biddersUrl: $scope.staticConfigForm.hostBidders ? null : $scope.staticConfigForm.biddersUrl,
+            clientUrl: $scope.staticConfigForm.hostClient ? null : $scope.staticConfigForm.clientUrl,
+			impUrl: $scope.staticConfigForm.hostImp ? null : $scope.staticConfigForm.impUrl
         };
 
         // save the configuration

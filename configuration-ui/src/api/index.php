@@ -25,12 +25,20 @@ $users = new Users($db);
 
 $bidders = new Bidders($db, $users);
 $app->get('/bidders/', function () use ($app, $bidders) {
-    $app->expires('+3 hour');
-    displayResult($app, $bidders->getAll($app));
+	$uiFormat = $app->request()->get('format') === 'ui';
+
+	if (!$uiFormat)
+		$app->expires('+3 hour');
+
+    displayResult($app, $bidders->getAll($app, $uiFormat));
 });
-$app->get('/bidders/:id', function ($id) use ($app, $bidders) { 
-    $app->expires('+3 hour');
-    displayResult($app, $bidders->get($app, $id));
+$app->get('/bidders/:id', function ($id) use ($app, $bidders) {
+	$uiFormat = $app->request()->get('format') === 'ui';
+
+	if (!$uiFormat)
+		$app->expires('+3 hour');
+
+    displayResult($app, $bidders->get($app, $id, $uiFormat));
 });
 $app->delete('/bidders/:id', function ($id) use ($app, $bidders, $users, $userId) {
     validateUserForBidder($app, $users, $userId, $id);
@@ -46,12 +54,20 @@ $app->post('/bidders/', function () use ($app, $bidders, $userId) {
 
 $publishers = new Publishers($db, $users);
 $app->get('/publishers/', function () use ($app, $publishers) {
-    $app->expires('+3 hour');
-    displayResult($app, $publishers->getAll($app));
+	$uiFormat = $app->request()->get('format') === 'ui';
+
+	if (!$uiFormat)
+		$app->expires('+3 hour');
+
+    displayResult($app, $publishers->getAll($app, $uiFormat));
 });
 $app->get('/publishers/:id', function ($id) use ($app, $publishers) { 
-    $app->expires('+3 hour');
-    displayResult($app, $publishers->get($app, $id));
+	$uiFormat = $app->request()->get('format') === 'ui';
+
+	if (!$uiFormat)
+		$app->expires('+3 hour');
+
+    displayResult($app, $publishers->get($app, $id, $uiFormat));
 });
 $app->delete('/publishers/:id', function ($id) use ($app, $publishers, $users, $userId) {
     validateUserForPublisher($app, $users, $userId, $id);

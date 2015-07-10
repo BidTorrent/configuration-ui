@@ -30,10 +30,9 @@ class Publishers
                 'timeout'  => null,
                 'secured'  => null,
                 'hostConfig'  => null,
-                'hostBidders'  => null,
                 'biddersUrl'  => null,
-                'hostAuction'  => null,
-                'auctionUrl'  => null
+                'clientUrl'  => null,
+				'impUrl' => null
             )
         );
         $this->filterSchema = new RedMap\Schema
@@ -83,7 +82,7 @@ class Publishers
         return array_map(function($row) { return array('id' => (int)$row['id'], 'name' => $row['name']);}, $rows);
     }
 
-    function getAll($app)
+    function getAll($app, $uiFormat)
     {
         // Get filters
         list ($filtersQuery, $filtersParams) = $this->filterSchema->get();
@@ -104,7 +103,6 @@ class Publishers
         $rows = $this->db->get_rows($query, $params);
 
         // Format the response
-        $uiFormat = $app->request()->get('format') == 'ui';
         $result = array();
         foreach ($rows as $row) {
             $filters = array();
@@ -126,7 +124,7 @@ class Publishers
         return $result;
     }
 
-    function get($app, $id)
+    function get($app, $id, $uiFormat)
     {
         // Get filters
         list ($filtersQuery, $filtersParams) = $this->filterSchema->get(array ('publisher' => $id));
@@ -146,7 +144,7 @@ class Publishers
             $app->halt(404);
 
         $publisher = new Publisher($row, $filters, $slots);
-        if ($app->request()->get('format') == 'ui')
+        if ($uiFormat)
             return $publisher;
 
         return $this->_format($publisher);
@@ -437,10 +435,8 @@ class Publisher
     public $filters;
     public $imp;
     public $hostConfig;
-    public $hostBidders;
     public $biddersUrl;
-    public $hostAuction;
-    public $auctionUrl;
+    public $clientUrl;
 
     function __construct($row, $filters, $slots)
     {
@@ -451,12 +447,11 @@ class Publisher
         $this->timeout = isset($row['timeout']) ? (int) $row['timeout'] : 400;
         $this->secured = isset($row['secured']) ? (bool) $row['secured'] : false;
         $this->hostConfig = (bool) $row['hostConfig'];
-        $this->hostBidders = (bool) $row['hostBidders'];
         $this->biddersUrl = $row['biddersUrl'];
-        $this->hostAuction = (bool) $row['hostAuction'];
-        $this->auctionUrl = $row['auctionUrl'];
+        $this->clientUrl = $row['clientUrl'];
         $this->filters = $filters;
         $this->imp = $slots;
+		$this->impUrl = $row['impUrl'];
     }
 }
 
