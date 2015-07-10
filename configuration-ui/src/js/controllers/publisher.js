@@ -24,7 +24,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, ngNotify, smoothScroll) {
+.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll) {
 
     //Resources
     var Publisher = $resource(
@@ -186,9 +186,9 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         }
         else {
             Publisher.save({ format: "ui" }, publisher).$promise
-            .then(function() {
+            .then(function(response) {
+                    $state.go('publisher', { publisherId: response.id});
                     ngNotify.set("Successfully saved config on BidTorrent.io", "success");
-                    $scope.scrollToScript();
                 },
                 function(response) {
                     if (response.status === 409) {

@@ -24,7 +24,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, ngNotify, smoothScroll) {
+.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll) {
     //Resources
     var Bidder = $resource(
         'api/bidders/:bidderId',
@@ -166,6 +166,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         else {
             Bidder.save({ format: "ui" }, bidder).$promise
             .then(function() {
+                    $state.go('bidder', { bidderId: response.id});
                     ngNotify.set("Successfully registered " + $scope.configForm.name, "success");
                 },
                 function(response) {
