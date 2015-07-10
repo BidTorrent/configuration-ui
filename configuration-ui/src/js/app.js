@@ -33,7 +33,7 @@ var btApp = angular.module('btApp', [
     UserService.getListBidders.then(function(listBidders) {
         $scope.listBidders = listBidders.data;
     }, function(error) {
-        ngNotify.set("Unknown bidder " + $scope.bidderId, "error");
+        ngNotify.set("Cannot load the list of bidders linked to your account", "error");
     });
 
     $scope.publisherList = [];
@@ -41,7 +41,7 @@ var btApp = angular.module('btApp', [
     UserService.getListPublishers.then(function(listPublishers) {
         $scope.listPublishers = listPublishers.data;
     }, function(error) {
-        ngNotify.set("Unknown bidder " + $scope.bidderId, "error");
+        ngNotify.set("Cannot load the list of publishers linked to your account", "error");
     });
 
     $scope.userConnected = UserService.isConnected;
