@@ -1,0 +1,45 @@
+<div class="bidtorrentPage container">
+    <h1>Statistics</h1>
+
+    <div class="row text-center">
+        <div class="col-xs-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Impressions
+                </div>
+                <div class="panel-body">
+                    {{ models.headers.impressions | number }}
+                </div>        
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Revenue
+                </div>
+                <div class="panel-body">
+                    {{ models.headers.revenue | number:2 }}
+                </div>        
+            </div>
+        </div>
+    </div>
+
+    <h2>
+        Details
+    </h2>
+
+    <table class="table table-hover table-striped">
+        <thead>
+            <th>Date</th>
+            <th>Impressions</th>
+            <th>Revenue</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in models.rows">
+                <td class="col-xs-4">{{row.date}}</td>
+                <td class="col-xs-4">{{row.impressions | number}}</td>
+                <td class="col-xs-4">USD {{row.revenue | number:2 }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
