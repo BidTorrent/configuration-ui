@@ -41,6 +41,27 @@ class Bidders
         );
     }
 
+    function myBidders($userId) {
+        if ($userId === null)
+            return array();
+
+        list($allAccess, $bidderIds) = $this->users->myBidders($userId);
+
+        if ($allAccess) {
+            list ($query, $params) = $this->bidderSchema->get();
+            $rows = $this->db->get_rows($query, $params);
+        }
+        else {
+            list ($query, $params) = $this->bidderSchema->get(array ('id|in' => $bidderIds));
+            $rows = $this->db->get_rows($query, $params);
+        }
+
+        if ($rows === null)
+            return array();
+
+        return array_map(function($row) { return array('id' => (int)$row['id'], 'name' => $row['name']);}, $rows);
+    }
+
     function getAll($app)
     {
         // Get filters

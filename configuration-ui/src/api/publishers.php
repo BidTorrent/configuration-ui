@@ -62,6 +62,27 @@ class Publishers
         );
     }
 
+    function myPublishers($userId) {
+        if ($userId === null)
+            return array();
+
+        list($allAccess, $publisherIds) = $this->users->myPublishers($userId);
+
+        if ($allAccess) {
+            list ($query, $params) = $this->publisherSchema->get();
+            $rows = $this->db->get_rows($query, $params);
+        }
+        else {
+            list ($query, $params) = $this->publisherSchema->get(array ('id|in' => $publisherIds));
+            $rows = $this->db->get_rows($query, $params);
+        }
+
+        if ($rows === null)
+            return array();
+
+        return array_map(function($row) { return array('id' => (int)$row['id'], 'name' => $row['name']);}, $rows);
+    }
+
     function getAll($app)
     {
         // Get filters

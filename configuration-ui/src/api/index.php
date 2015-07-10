@@ -65,6 +65,9 @@ $app->post('/publishers/', function () use ($app, $publishers, $userId) {
     $publishers->post($app, $userId);
 });
 
+$app->get('/mybidders/', function () use ($app, $bidders, $userId) { displayResult($app, $bidders->myBidders($userId)); });
+$app->get('/mypublishers/', function () use ($app, $publishers, $userId) { displayResult($app, $publishers->myPublishers($userId)); });
+
 // Hack to know user id
 $app->get('/myid/', function () use ($userId) { echo $userId; });
 

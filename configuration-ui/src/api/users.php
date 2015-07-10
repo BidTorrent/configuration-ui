@@ -40,6 +40,21 @@ class Users {
         );
     }
 
+    function myPublishers($userId) {
+        if ($userId === null)
+            return array(false, array());
+
+        if ($this->_isAdminUser($userId))
+            return array(true, array());
+
+        list ($query, $params) = $this->publisherSchema->get(array ('user' => $userId));
+        $rows = $this->db->get_rows($query, $params);
+
+        $publisherIds = array_map(function($row) { return (int) $row['publisher']; }, $rows);
+
+        return array(false, $publisherIds);
+    }
+
     function hasAccessOnPublisher($userId, $publisherId) {
         if ($userId === null)
             return false;
@@ -77,6 +92,20 @@ class Users {
             return false;
 
         return true;
+    }
+
+    function myBidders($userId) {
+        if ($userId === null)
+            return array(false, array());
+
+        if ($this->_isAdminUser($userId))
+            return array(true, array());
+
+        list ($query, $params) = $this->bidderSchema->get(array ('user' => $userId));
+        $rows = $this->db->get_rows($query, $params);
+
+        $bidderIds = array_map(function($row) { return (int) $row['bidder']; }, $rows);
+        return array(false, $bidderIds);
     }
 
     function hasAccessOnBidder($userId, $bidderId) {
