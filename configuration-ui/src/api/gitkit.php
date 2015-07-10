@@ -6,7 +6,7 @@
       var config = {
           apiKey: 'AIzaSyA1deE1SBJN46W03TyX8uHwyQXWWRRhVoU',
           signInSuccessUrl: '/',
-          idps: ["google", "yahoo"],
+          idps: ["google", "yahoo", "facebook"],
           oobActionUrl: '/',
           siteName: 'this site'
       };
