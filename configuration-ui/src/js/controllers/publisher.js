@@ -70,21 +70,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     };
 
     //Functions
-    $scope.submitRegistration = function() {
-        Publisher.save({ format: "ui" }, { name: $scope.registerForm.name }).$promise
-        .then(function() {
-                ngNotify.set("Successfully registered " + $scope.registerForm.name, "success");
-            },
-            function(response) {
-                if(response.status === 409) {
-                    ngNotify.set("This publisher " + $scope.registerForm.name + " is already registered", "error");
-                } else {
-                    ngNotify.set("Oops! something went wrong, try again later", "error");
-                }
-            }
-        );
-    };
-
     $scope.loadConfig = function() {
         var deferred = $q.defer();
 
@@ -193,6 +178,10 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                 function(response) {
                     if (response.status === 404) {
                         ngNotify.set("Publisher " + $scope.staticConfigForm.name + " was not found", "error");
+                    } else if (response.status === 401) {
+                        ngNotify.set("You have to login in order to register a new publisher", "error");
+                    } else if (response.status === 403) {
+                        ngNotify.set("You are not allowed to perform this action", "error");
                     } else {
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }
@@ -208,6 +197,10 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                 function(response) {
                     if (response.status === 409) {
                         ngNotify.set("This publisher " + $scope.staticConfigForm.name + " is already registered", "error");
+                    } else if (response.status === 401) {
+                        ngNotify.set("You have to login in order to register a new publisher", "error");
+                    } else if (response.status === 403) {
+                        ngNotify.set("You are not allowed to perform this action", "error");
                     } else {
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }

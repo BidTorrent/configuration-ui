@@ -153,6 +153,10 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
                 function(response) {
                     if (response.status === 404) {
                         ngNotify.set("Bidder " + $scope.configForm.name + " was not found", "error");
+                    } else if (response.status === 401) {
+                        ngNotify.set("You have to login in order to register a new bidder", "error");
+                    } else if (response.status === 403) {
+                        ngNotify.set("You are not allowed to perform this action", "error");
                     } else {
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }
@@ -167,6 +171,10 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
                 function(response) {
                     if (response.status === 409) {
                         ngNotify.set("This bidder " + $scope.configForm.name + " is already registered", "error");
+                    } else if (response.status === 401) {
+                        ngNotify.set("You have to login in order to register a new bidder", "error");
+                    } else if (response.status === 403) {
+                        ngNotify.set("You are not allowed to perform this action", "error");
                     } else {
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }
