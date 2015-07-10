@@ -175,7 +175,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                     if (response.status === 404) {
                         ngNotify.set("Publisher " + $scope.staticConfigForm.name + " was not found", "error");
                     } else if (response.status === 401) {
-                        ngNotify.set("You have to login in order to register a new publisher", "error");
+                        ngNotify.set("You have to login in order to perform this action", "error");
                     } else if (response.status === 403) {
                         ngNotify.set("You are not allowed to perform this action", "error");
                     } else {
@@ -194,7 +194,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                     if (response.status === 409) {
                         ngNotify.set("This publisher " + $scope.staticConfigForm.name + " is already registered", "error");
                     } else if (response.status === 401) {
-                        ngNotify.set("You have to login in order to register a new publisher", "error");
+                        ngNotify.set("You have to login in order to perform this action", "error");
                     } else if (response.status === 403) {
                         ngNotify.set("You are not allowed to perform this action", "error");
                     } else {
