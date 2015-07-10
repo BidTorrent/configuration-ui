@@ -1,0 +1,49 @@
+@navbar-height: 50px;
+
+.gitkit-user-card {
+	.gitkit-account-chip {
+		padding: 0;
+		height: @navbar-height;
+		border: none;
+	}
+
+	.gitkit-account-chip-photo {
+		border: none;
+		left: 0;
+		top: 0;
+		width: @navbar-height;
+		height: @navbar-height;
+	}
+
+	.gitkit-account-chip-name {
+		margin-left: @navbar-height + 8px;
+		margin-top: 8px;
+	}
+
+	.gitkit-account-chip-email {
+		margin-left: @navbar-height + 8px;
+	}
+
+	.gitkit-user-card-arrow {
+		top: @navbar-height/2;
+	}
+}
+
+.gitkit-sign-in-button {
+	.gitkit-button {
+		height: 50px;
+		border: none;
+		margin: auto;
+		cursor: pointer;
+		background-image: none;
+		background-color: rgb(231, 231, 231);
+		color: #777;
+
+		&:hover {
+			border: none;
+			background-image: none;
+			background-color: rgb(231, 231, 231);
+			color: #333;
+		}
+	}
+}
