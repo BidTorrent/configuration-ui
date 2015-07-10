@@ -15,7 +15,7 @@
     <link type="text/css" rel="stylesheet" href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
 </head>
 <body>
-    <div class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top" ng-controller="NavbarCtrl">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
@@ -32,6 +32,16 @@
                     <li role="presentation" ui-sref-active="active" ui-sref="home"><a>Home</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="publisher"><a>Publisher</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="bidder"><a>Bidder</a></li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My bidders <span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li class="dropdown-header">My bidders</li>
+                        <li ng-repeat="bidder in bidderList"><a href="#">{{bidder.name}} ({{bidder.id}})</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li class="dropdown-header">My publishers</li>
+                        <li ng-repeat="publisher in publisherList"><a href="#">{{publisher.name}} ({{publisher.id}})</a></li>
+                      </ul>
+                    </li>
                     <li role="presentation" id="navbar-login"></li>
                 </ul>
             </div>
@@ -59,10 +69,9 @@
     <script src="vendors/angular/angular.js"></script>
     <script src="vendors/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="vendors/angular-resource/angular-resource.min.js"></script>
+    <script src="vendors/angular-local-storage/dist/angular-local-storage.min.js"></script>
     <script src="vendors/ng-notify/dist/ng-notify.min.js"></script>
     <script src="vendors/ngSmoothScroll/lib/angular-smooth-scroll.js"></script>
-    <script src="vendors/ngstorage/ngStorage.min.js"></script>
-    <script src="vendors/oauth-ng/dist/oauth-ng.js"></script>
     <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="vendors/bootstrap-autohidingnavbar/dist/jquery.bootstrap-autohidingnavbar.min.js"></script>
     <script src="js/controllers/bidder.js"></script>

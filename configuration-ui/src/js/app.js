@@ -2,13 +2,13 @@
 
 var btApp = angular.module('btApp', [
     'ui.router',
-    'oauth',
     'ngNotify',
+    'LocalStorageModule',
     'smoothScroll',
     'btApp.bidder',
     'btApp.publisher'
 ])
-.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
+.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', 'localStorageServiceProvider', function($stateProvider, $urlRouterProvider, $locationProvider, localStorageServiceProvider) {
 /*    $locationProvider.html5Mode({
         enabled: true,
         requireBase: false
@@ -23,14 +23,28 @@ var btApp = angular.module('btApp', [
             url: '/',
             templateUrl: 'partials/home.html'
         })
-}])
-.controller('loginController', ['$scope', '$rootScope', '$state', '$stateParams', function HeaderController($scope, $rootScope, $state, $stateParams) {
-    $scope.login = function() {
-        $rootScope.userId = angular.copy($scope.modalUserId);
 
-        // hide modal
-        $('#loginModal').modal('hide');
-    };
+    // remove prefix of localStorageService
+    localStorageServiceProvider.setPrefix("");
+}])
+.controller('NavbarCtrl', ['$scope', 'UserService', function HeaderController($scope, UserService) {
+    $scope.bidderList = UserService.bidderList;
+    $scope.publisherList = UserService.publisherList;
+}])
+.factory('UserService', ['$rootScope', 'localStorageService', function($rootScope, localStorageService) {
+    var currentAccount = localStorageService.get('gitkit::currentAccount');
+
+    var User = {};
+    User.isConnected = !!currentAccount;
+    User.getName = function() {
+        if(currentAccount)
+            return currentAccount.displayName;
+        return null;
+    }
+    User.bidderList = [{id: 4563, name: "loulou"}, {id: 3454, name: "lili"}]; //TODO
+    User.publisherList = [{id: 4962, name: "momo"}]; //TODO
+
+    return User;
 }])
 .run(['$rootScope', 'ngNotify', function($rootScope, ngNotify) {
     // Navbar configuration
