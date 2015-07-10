@@ -53,7 +53,7 @@ $app->put('/bidders/:id', function ($id) use ($app, $bidders, $users, $userId) {
     $bidders->put($app, $id);
 });
 $app->post('/bidders/', function () use ($app, $bidders, $userId) {
-    $bidders->post($app, $userId);
+    displayResult($app, $bidders->post($app, $userId));
 });
 
 $publishers = new Publishers($db, $users);
@@ -82,7 +82,7 @@ $app->put('/publishers/:id', function ($id) use ($app, $publishers, $users, $use
     $publishers->put($app, $id);
 });
 $app->post('/publishers/', function () use ($app, $publishers, $userId) {
-    $publishers->post($app, $userId);
+    displayResult($app, $publishers->post($app, $userId));
 });
 
 $app->get('/mybidders/', function () use ($app, $bidders, $userId) { displayResult($app, $bidders->myBidders($userId)); });

@@ -206,6 +206,8 @@ class Bidders
         }
 
         $this->db->execute('COMMIT');
+
+        return array('id' => $insertedBidderId);
     }
 
     function put($app, $id)

@@ -187,6 +187,8 @@ class Publishers
         }
 
         $this->db->execute('COMMIT');
+
+        return array('id' => $insertedPubId);
     }
 
     function put($app, $id)
