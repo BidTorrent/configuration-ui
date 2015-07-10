@@ -32,14 +32,14 @@
                     <li role="presentation" ui-sref-active="active" ui-sref="home"><a>Home</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="publisher"><a>Publisher</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="bidder"><a>Bidder</a></li>
-                    <li class="dropdown">
+                    <li class="dropdown" ng-if="userConnected">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My bidders <span class="caret"></span></a>
                       <ul class="dropdown-menu">
                         <li class="dropdown-header">My bidders</li>
-                        <li ng-repeat="bidder in bidderList"><a href="#">{{bidder.name}} ({{bidder.id}})</a></li>
+                        <li ng-repeat="bidder in listBidders"><a ui-sref="bidder({ bidderId: bidder.id })">{{bidder.name}} ({{bidder.id}})</a></li>
                         <li role="separator" class="divider"></li>
                         <li class="dropdown-header">My publishers</li>
-                        <li ng-repeat="publisher in publisherList"><a href="#">{{publisher.name}} ({{publisher.id}})</a></li>
+                        <li ng-repeat="publisher in listPublishers"><a ui-sref="publisher({ publisherId: publisher.id })">{{publisher.name}} ({{publisher.id}})</a></li>
                       </ul>
                     </li>
                     <li role="presentation" id="navbar-login"></li>

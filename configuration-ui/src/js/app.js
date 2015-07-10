@@ -28,10 +28,25 @@ var btApp = angular.module('btApp', [
     localStorageServiceProvider.setPrefix("");
 }])
 .controller('NavbarCtrl', ['$scope', 'UserService', function HeaderController($scope, UserService) {
-    $scope.bidderList = UserService.bidderList;
-    $scope.publisherList = UserService.publisherList;
+    $scope.listBidders = [];
+    // Get the list of bidders
+    UserService.getListBidders.then(function(listBidders) {
+        $scope.listBidders = listBidders.data;
+    }, function(error) {
+        ngNotify.set("Unknown bidder " + $scope.bidderId, "error");
+    });
+
+    $scope.publisherList = [];
+    //Get the list of publishers
+    UserService.getListPublishers.then(function(listPublishers) {
+        $scope.listPublishers = listPublishers.data;
+    }, function(error) {
+        ngNotify.set("Unknown bidder " + $scope.bidderId, "error");
+    });
+
+    $scope.userConnected = UserService.isConnected;
 }])
-.factory('UserService', ['$rootScope', 'localStorageService', function($rootScope, localStorageService) {
+.factory('UserService', ['$rootScope', '$http', 'localStorageService', 'ngNotify', function($rootScope, $http, localStorageService, ngNotify) {
     var currentAccount = localStorageService.get('gitkit::currentAccount');
 
     var User = {};
@@ -41,8 +56,10 @@ var btApp = angular.module('btApp', [
             return currentAccount.displayName;
         return null;
     }
-    User.bidderList = [{id: 4563, name: "loulou"}, {id: 3454, name: "lili"}]; //TODO
-    User.publisherList = [{id: 4962, name: "momo"}]; //TODO
+
+    User.getListBidders = $http.get('http://bin.bidtorrent.io/api/mybidders');
+
+    User.getListPublishers = $http.get('http://bin.bidtorrent.io/api/mypublishers');
 
     return User;
 }])
