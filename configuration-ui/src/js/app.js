@@ -58,9 +58,9 @@ var btApp = angular.module('btApp', [
         return null;
     }
 
-    User.getListBidders = $http.get('http://bin.bidtorrent.io/api/mybidders');
+    User.getListBidders = $http.get('/api/mybidders');
 
-    User.getListPublishers = $http.get('http://bin.bidtorrent.io/api/mypublishers');
+    User.getListPublishers = $http.get('/api/mypublishers');
 
     return User;
 }])
