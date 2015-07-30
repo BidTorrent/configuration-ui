@@ -65,7 +65,12 @@
                         <li ng-repeat="bidder in listBidders"><a ui-sref="bidder({ bidderId: bidder.id })">{{bidder.name}} ({{bidder.id}})</a></li>
                         <li role="separator" class="divider"></li>
                         <li class="dropdown-header">My publishers</li>
-                        <li ng-repeat="publisher in listPublishers"><a ui-sref="publisher({ publisherId: publisher.id })">{{publisher.name}} ({{publisher.id}})</a></li>
+                        <li ng-repeat="publisher in listPublishers">
+                            <div class="row-fluid dropdown-row">
+                                <a ui-sref="publisher({ publisherId: publisher.id })"><span class="name">{{publisher.name}}</span> ({{publisher.id}})</a>
+                                <a ui-sref="publisher-stats({ publisherId: publisher.id })" class="statsIcon"><i class="fa fa-area-chart"></i></a>
+                            </div>
+                        </li>
                       </ul>
                     </li>
                     <li role="presentation" id="navbar-login"></li>
