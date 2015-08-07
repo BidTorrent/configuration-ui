@@ -17,20 +17,11 @@ $app->config('debug', $config['debug']);
 $db = new RedMap\Drivers\MySQLiDriver('UTF8');
 $db->connect($config['db_user'], $config['db_password'], $config['db_name']);
 
-$gitkitClient = Gitkit_Client::createFromFile('config/gitkit-server-config.json');
-$gitkitUser = $gitkitClient->getUserInRequest();
-$userId = null;
-if ($gitkitUser)
-    $userId = $gitkitUser->getUserId();
 $users = new Users($db);
-$headers = getallheaders();    
-if ($userId == null && isset($headers['Authorization'])) {
-    $userId = $users->getUserIdFromApiKey($headers['Authorization']);
-}
-
 $bidders = new Bidders($db, $users);
-
+$publishers = new Publishers($db, $users);
 $stats = new Stats($db);
+$gitkitClient = Gitkit_Client::createFromFile('config/gitkit-server-config.json');
 
 $app->get('/bidders/', function () use ($app, $bidders) {
 	$uiFormat = $app->request()->get('format') === 'ui';
@@ -48,19 +39,19 @@ $app->get('/bidders/:id', function ($id) use ($app, $bidders) {
 
     displayResult($app, $bidders->get($app, $id, $uiFormat));
 });
-$app->delete('/bidders/:id', function ($id) use ($app, $bidders, $users, $userId) {
-    validateUserForBidder($app, $users, $userId, $id);
+$app->delete('/bidders/:id', function ($id) use ($app, $bidders, $users, $gitkitClient) {
+    $userId = validateUserForBidder($app, $users, $gitkitClient, $id);
     $bidders->delete($app, $userId, $id);
 });
-$app->put('/bidders/:id', function ($id) use ($app, $bidders, $users, $userId) {
-    validateUserForBidder($app, $users, $userId, $id);
+$app->put('/bidders/:id', function ($id) use ($app, $bidders, $users, $gitkitClient) {
+    validateUserForBidder($app, $users, $gitkitClient, $id);
     $bidders->put($app, $id);
 });
-$app->post('/bidders/', function () use ($app, $bidders, $userId) {
+$app->post('/bidders/', function () use ($app, $bidders, $users, $gitkitClient) {
+    $userId = getUserId($users, $gitkitClient);
     displayResult($app, $bidders->post($app, $userId));
 });
 
-$publishers = new Publishers($db, $users);
 $app->get('/publishers/', function () use ($app, $publishers) {
 	$uiFormat = $app->request()->get('format') === 'ui';
 
@@ -77,26 +68,33 @@ $app->get('/publishers/:id', function ($id) use ($app, $publishers) {
 
     displayResult($app, $publishers->get($app, $id, $uiFormat));
 });
-$app->delete('/publishers/:id', function ($id) use ($app, $publishers, $users, $userId) {
-    validateUserForPublisher($app, $users, $userId, $id);
+$app->delete('/publishers/:id', function ($id) use ($app, $publishers, $users, $gitkitClient) {
+    $userId = validateUserForPublisher($app, $users, $gitkitClient, $id);
     $publishers->delete($app, $userId, $id);
 });
-$app->put('/publishers/:id', function ($id) use ($app, $publishers, $users, $userId) {
-    validateUserForPublisher($app, $users, $userId, $id);
+$app->put('/publishers/:id', function ($id) use ($app, $publishers, $users, $gitkitClient) {
+    validateUserForPublisher($app, $users, $gitkitClient, $id);
     $publishers->put($app, $id);
 });
-$app->post('/publishers/', function () use ($app, $publishers, $userId) {
+$app->post('/publishers/', function () use ($app, $publishers, $users, $gitkitClient) {
+    $userId = getUserId($users, $gitkitClient);
     displayResult($app, $publishers->post($app, $userId));
 });
 
-$app->get('/mybidders/', function () use ($app, $bidders, $userId) { displayResult($app, $bidders->myBidders($userId)); });
-$app->get('/mypublishers/', function () use ($app, $publishers, $userId) { displayResult($app, $publishers->myPublishers($userId)); });
+$app->get('/mybidders/', function () use ($app, $bidders, $users, $gitkitClient) {
+    $userId = getUserId($users, $gitkitClient);
+    displayResult($app, $bidders->myBidders($userId));
+});
+$app->get('/mypublishers/', function () use ($app, $publishers, $users, $gitkitClient) {
+    $userId = getUserId($users, $gitkitClient);
+    displayResult($app, $publishers->myPublishers($userId));
+});
 
 // Hack to know user id
-$app->get('/myid/', function () use ($userId) { echo $userId; });
+$app->get('/myid/', function () use ($users, $gitkitClient) { echo getUserId($users, $gitkitClient); });
 
-$app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $users, $stats, $userId) { 
-    validateUserForPublisher($app, $users, $userId, $publisher);
+$app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $users, $stats) {
+    validateUserForPublisher($app, $users, $publisher);
     displayResult(
         $app,
         $stats->getByPublisher(
@@ -114,19 +112,40 @@ function displayResult($app, $result) {
     echo json_encode($result);
 }
 
-function validateUserForPublisher($app, $users, $userId, $publisherId) {
+function validateUserForPublisher($app, $users, $gitkitClient, $publisherId) {
+    $userId = getUserId($users, $gitkitClient);
+
     if ($userId === null)
         $app->halt(401);
 
     if (!$users->hasAccessOnPublisher($userId, $publisherId))
         $app->halt(403);
+
+    return $userId;
 }
 
-function validateUserForBidder($app, $users, $userId, $bidderId) {
+function validateUserForBidder($app, $users, $gitkitClient, $bidderId) {
+    $userId = getUserId($users, $gitkitClient);
+
     if ($userId === null)
         $app->halt(401);
 
     if (!$users->hasAccessOnBidder($userId, $bidderId))
         $app->halt(403);
+
+    return $userId;
+}
+
+function getUserId($users, $gitkitClient) {
+    $gitkitUser = $gitkitClient->getUserInRequest();
+    $userId = null;
+    if ($gitkitUser)
+        $userId = $gitkitUser->getUserId();
+    $headers = getallheaders();
+    if ($userId == null && isset($headers['Authorization'])) {
+        $userId = $users->getUserIdFromApiKey($headers['Authorization']);
+    }
+
+    return $userId;
 }
 ?>
