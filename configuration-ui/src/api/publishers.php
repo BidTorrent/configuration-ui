@@ -10,9 +10,9 @@ class Publishers
     public $slotSchema;
     public $users;
 
-    static $PUBLISHER_FIELDS = array('name', 'type');
-    static $FILTER_FIELDS = array('publisher', 'type');
-    static $SLOT_FIELDS = array('publisher', 'html_id');
+    static $PUBLISHER_FIELDS = array('name' => true, 'type' => true, 'country' => false, 'timeout' => false, 'secured' => false, 'hostConfig' => false, 'biddersUrl' => false, 'clientUrl' => false, 'impUrl' => false);
+    static $FILTER_FIELDS = array('publisher' => true, 'type' => true, 'mode' => false, 'value' => false);
+    static $SLOT_FIELDS = array('publisher' => true, 'html_id' => true, 'width' => false, 'height' => false, 'false' => false, 'passback' => false);
 
     function __construct($db, $users)
     {
@@ -337,11 +337,19 @@ class Publishers
         return $config;
     }
 
-    private function _validate($data, $fields)
+    private function _validate(&$data, $fields)
     {
-        $publisher = array();
-        foreach ($fields as $field) {
-            if (!isset($data[$field]))
+        // Remove unknown fields from input data
+        foreach ($data as $name => $value)
+        {
+            if (!isset($fields[$name]))
+                unset($data[$name]);
+        }
+
+        // Ensure mandatory fields are set
+        foreach ($fields as $name => $mandatory)
+        {
+            if ($mandatory && !isset($data[$name]))
                 return false;
         }
 
