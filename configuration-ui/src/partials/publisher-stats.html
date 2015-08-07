@@ -9,17 +9,17 @@
                 </div>
                 <div class="panel-body">
                     {{ models.headers.impressions | number }}
-                </div>        
+                </div>
             </div>
         </div>
         <div class="col-xs-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Revenue
+                    Revenue (USD)
                 </div>
                 <div class="panel-body">
                     {{ models.headers.revenue | number:2 }}
-                </div>        
+                </div>
             </div>
         </div>
     </div>
@@ -32,13 +32,13 @@
         <thead>
             <th>Date</th>
             <th>Impressions</th>
-            <th>Revenue</th>
+            <th>RPM</th>
         </thead>
         <tbody>
             <tr ng-repeat="row in models.rows">
                 <td class="col-xs-4">{{row.date}}</td>
                 <td class="col-xs-4">{{row.impressions | number}}</td>
-                <td class="col-xs-4">USD {{row.revenue | number:2 }}</td>
+                <td class="col-xs-4">{{row.revenue | number:2 }}</td>
             </tr>
         </tbody>
     </table>

@@ -43,6 +43,8 @@ angular.module('btApp.publisherStats', ['ui.router'])
                     revenue += response.data[i].revenue;
                 }
 
+                revenue = Math.round(revenue/10)/100;
+
                 $scope.models.headers.impressions = impressions;
                 $scope.models.headers.revenue = revenue;
                 $scope.models.rows = response.data;
