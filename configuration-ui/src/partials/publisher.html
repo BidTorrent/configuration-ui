@@ -1,26 +1,6 @@
 <div class="bidtorrentPage container">
     <h1>Publisher <b ng-if="publisherId">{{staticConfigForm.name}}</b></h1>
 
-    <h2>
-        <span ng-if="publisherId">My integration type</span>
-        <span ng-if="!publisherId">What type of integration do you need?</span>
-    </h2>
-
-    <div class="row chooseType">
-        <div class="col-xs-offset-2 col-xs-8">
-            <button class="btn btn-lg btn-primary choose-type-btn col-xs-5"
-                    ng-class="{active: staticConfigForm.isTypeWebsite}"
-                    ng-click="staticConfigForm.isTypeWebsite=true;scrollToConfig()">Website</button>
-            <div class="col-xs-2 iconContainer">
-                <i class="fa fa-file-code-o" ng-if="staticConfigForm.isTypeWebsite"></i>
-                <i class="fa fa-mobile" ng-if="!staticConfigForm.isTypeWebsite"></i>
-            </div>
-            <button class="btn btn-lg btn-primary choose-type-btn col-xs-5"
-                    ng-class="{active : !staticConfigForm.isTypeWebsite}"
-                    ng-click="staticConfigForm.isTypeWebsite=false;scrollToConfig()">In App</button>
-        </div>
-    </div>
-
     <h2 id="config">
         <span ng-if="publisherId">Configuration</span>
         <span ng-if="!publisherId">Setup your static configuration</span>
@@ -243,6 +223,18 @@
                 <button type="button" class="btn btn-default" ng-class="{'active' : staticConfigForm.hostConfig}" ng-click="staticConfigForm.hostConfig=true;saveHostConfig()" ng-disabled="!publisherId">
                     Use hosted config.json
                 </button>
+            </div>
+        </div>
+    </div>
+    <div class="row config">
+        <div class="form-group">
+            <div class="btn-group" data-toggle="buttons">
+                <button type="button" class="btn btn-default" ng-class="{'active' : staticConfigForm.isTypeWebsite}" ng-click="staticConfigForm.isTypeWebsite=true">Website</button>
+                <div class="col-xs-2 iconContainer">
+                    <i class="fa fa-file-code-o" ng-if="staticConfigForm.isTypeWebsite"></i>
+                    <i class="fa fa-mobile" ng-if="!staticConfigForm.isTypeWebsite"></i>
+                </div>
+                <button type="button" class="btn btn-default" ng-class="{'active' : !staticConfigForm.isTypeWebsite}" ng-click="staticConfigForm.isTypeWebsite=false">InApp</button>
             </div>
         </div>
     </div>
