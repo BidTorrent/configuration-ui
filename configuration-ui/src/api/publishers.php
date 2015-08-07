@@ -172,12 +172,18 @@ class Publishers
         }
 
         // Add new filters
-        foreach ($filters as $filter)
-            $this->_addFilter($app, $filter, $insertedPubId);
+        if ($filters !== null)
+        {
+            foreach ($filters as $filter)
+                $this->_addFilter($app, $filter, $insertedPubId);
+        }
 
         // Add new slots
-        foreach ($slots as $slot)
-            $this->_addSlot($app, $slot, $insertedPubId);
+        if ($slots !== null)
+        {
+            foreach ($slots as $slot)
+                $this->_addSlot($app, $slot, $insertedPubId);
+        }
 
         // Add bidder<->user relation
         if (!$this->users->addUserForPublisher($userId, $insertedPubId))
@@ -211,21 +217,25 @@ class Publishers
         if (!isset($pubUpdateResult))
             $app->halt(500);
 
-        // Delete publisher's filters
-        list ($query, $params) = $this->filterSchema->delete(array ('publisher' => $id));
-        $this->db->execute($query, $params);
+        // Replace filters if defined in request
+        if ($filters !== null)
+        {
+            list ($query, $params) = $this->filterSchema->delete(array ('publisher' => $id));
+            $this->db->execute($query, $params);
 
-        // Delete publisher's slots
-        list ($query, $params) = $this->slotSchema->delete(array ('publisher' => $id));
-        $this->db->execute($query, $params);
+            foreach ($filters as $filter)
+                $this->_addFilter($app, $filter, $id);
+        }
 
-        // Add new filters
-        foreach ($filters as $filter)
-            $this->_addFilter($app, $filter, $id);
+        // Replace slots if defined in request
+        if ($slots !== null)
+        {
+            list ($query, $params) = $this->slotSchema->delete(array ('publisher' => $id));
+            $this->db->execute($query, $params);
 
-        // Add new slots
-        foreach ($slots as $slot)
-            $this->_addSlot($app, $slot, $id);
+            foreach ($slots as $slot)
+                $this->_addSlot($app, $slot, $id);
+        }
 
         $this->db->execute('COMMIT');
     }
@@ -366,18 +376,21 @@ class Publishers
         $json = json_decode($body, true);
 
         // Split publisher, its filters & its slots
-        $filters = array();
         if (isset($json['filters']))
         {
             $filters = $json['filters'];
             unset($json['filters']);
         }
-        $slots = array();
+        else
+            $filters = null;
+
         if (isset($json['imp']))
         {
             $slots = $json['imp'];
             unset($json['imp']);
         }
+        else
+            $slots = null;
 
         return array($json, $filters, $slots);
     }
