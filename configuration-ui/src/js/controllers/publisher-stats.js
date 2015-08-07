@@ -38,16 +38,17 @@ angular.module('btApp.publisherStats', ['ui.router'])
                 var impressions = 0;
                 var revenue = 0;
 
-                for (var i = 0; i < response.data.length; i++) {
-                    impressions += response.data[i].impressions;
-                    revenue += response.data[i].revenue;
+                for (var i = 0; i < response.data.rows.length; i++) {
+                    impressions += response.data.rows[i].impressions;
+                    revenue += response.data.rows[i].revenue;
                 }
 
                 revenue = Math.round(revenue/10)/100;
 
                 $scope.models.headers.impressions = impressions;
                 $scope.models.headers.revenue = revenue;
-                $scope.models.rows = response.data;
+                $scope.models.headers.name = response.data.name;
+                $scope.models.rows = response.data.rows;
             });
     }
 }]);

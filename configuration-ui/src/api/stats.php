@@ -11,6 +11,8 @@ class Stats
 
 	function getByPublisher($publisher, $from, $to) {
 		$result = array();
+		$result['rows'] = array();
+
 		$rows = $this->db->get_rows('
 			SELECT
 				DATE(FROM_UNIXTIME(`date`)) AS `date`,
@@ -18,7 +20,7 @@ class Stats
 				SUM(price) AS revenue
 			FROM
 				log_impressions
-			WHERE 
+			WHERE
 				`date` >= ?
 				AND `date` < ?
 				AND publisherId = ?
@@ -28,12 +30,25 @@ class Stats
 			array($from, $to, $publisher)
 		);
 		foreach ($rows as $row) {
-			$result[] = array(
+			$result['rows'][] = array(
 				'date' => $row['date'],
 				'impressions' => (int) $row['impressions'],
 				'revenue' => (float) $row['revenue'],
 			);
 		}
+
+		$rows = $this->db->get_rows('
+			SELECT
+				name
+			FROM
+				publishers
+			WHERE
+				id = ?
+			',
+			array($publisher)
+		);
+
+		$result['name'] = $rows[0]['name'];
 
 		return $result;
 	}
