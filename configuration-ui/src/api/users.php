@@ -154,7 +154,7 @@ class Users {
         if ($result == null)
             return null;
 
-        return $result['id'];
+        return $result['userId'];
     }
 
     private function _isAdminUser($userId) {

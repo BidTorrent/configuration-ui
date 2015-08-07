@@ -23,8 +23,9 @@ $userId = null;
 if ($gitkitUser)
     $userId = $gitkitUser->getUserId();
 $users = new Users($db);
-if ($userId == null && isset($_SERVER['Authorization'])) {
-    $userId = $users->getUserIdFromApiKey($_SERVER['Authorization']);
+$headers = getallheaders();    
+if ($userId == null && isset($headers['Authorization'])) {
+    $userId = $users->getUserIdFromApiKey($headers['Authorization']);
 }
 
 $bidders = new Bidders($db, $users);
