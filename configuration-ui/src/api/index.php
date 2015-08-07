@@ -23,6 +23,9 @@ $userId = null;
 if ($gitkitUser)
     $userId = $gitkitUser->getUserId();
 $users = new Users($db);
+if ($userId == null && isset($_SERVER['Authorization'])) {
+    $userId = $users->getUserIdFromApiKey($_SERVER['Authorization']);
+}
 
 $bidders = new Bidders($db, $users);
 
@@ -91,7 +94,8 @@ $app->get('/mypublishers/', function () use ($app, $publishers, $userId) { displ
 // Hack to know user id
 $app->get('/myid/', function () use ($userId) { echo $userId; });
 
-$app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $stats) { 
+$app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $users, $stats, $userId) { 
+    validateUserForPublisher($app, $users, $userId, $publisher);
     displayResult(
         $app,
         $stats->getByPublisher(

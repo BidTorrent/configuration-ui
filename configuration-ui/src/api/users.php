@@ -17,7 +17,8 @@ class Users {
             array
             (
                 'userId' => array (RedMap\Schema::FIELD_PRIMARY),
-                'isAdmin' => null
+                'isAdmin' => null,
+                'apiKey' => null
             )
         );
         $this->publisherSchema = new RedMap\Schema
@@ -145,6 +146,15 @@ class Users {
             return false;
 
         return true;
+    }
+
+    function getUserIdFromApiKey($apiKey) {
+        list ($query, $params) = $this->userSchema->get(array ('apiKey' => $apiKey));
+        $result = $this->db->get_first($query, $params);
+        if ($result == null)
+            return null;
+
+        return $result['id'];
     }
 
     private function _isAdminUser($userId) {
