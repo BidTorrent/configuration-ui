@@ -15,7 +15,7 @@ function draw(rows) {
 
 	new Highcharts.Chart({
 		chart: {
-			type: 'spline',
+			type: 'line',
 			animation: false,
 			renderTo: 'container' },
 		title: {
@@ -29,10 +29,6 @@ function draw(rows) {
 			}
 		},
 		plotOptions: {
-			spline: {
-				marker: {enabled:false},
-				animation : false
-			}
 		},
 		yAxis: [{
 			title: {
