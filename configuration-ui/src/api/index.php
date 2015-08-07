@@ -93,8 +93,8 @@ $app->get('/mypublishers/', function () use ($app, $publishers, $users, $gitkitC
 // Hack to know user id
 $app->get('/myid/', function () use ($users, $gitkitClient) { echo getUserId($users, $gitkitClient); });
 
-$app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $users, $stats) {
-    validateUserForPublisher($app, $users, $publisher);
+$app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $users, $gitkitClient, $stats) {
+    validateUserForPublisher($app, $users, $gitkitClient, $publisher);
     displayResult(
         $app,
         $stats->getByPublisher(
