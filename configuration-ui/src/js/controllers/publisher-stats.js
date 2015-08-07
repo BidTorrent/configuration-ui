@@ -36,11 +36,14 @@ function draw(rows) {
 		},
 		yAxis: [{
 			title: {
-				text: 'Impressions' }
+				text: 'Impressions' },
+
+				min: 0
 		}, {
 			title: {
 				text: 'RPM' },
-				opposite: true
+				opposite: true,
+				min:0
 		}],
 		tooltip: {
 			formatter: function() {
