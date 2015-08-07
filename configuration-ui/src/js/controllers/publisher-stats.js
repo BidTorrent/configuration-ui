@@ -1,5 +1,71 @@
 'use strict';
 
+
+function draw(rows) {
+
+	var dataDisplays = [];
+	for (var i=0 ; i<rows.length ; i++) {
+	  dataDisplays.push([new Date(rows[i].date).getTime(), rows[i].impressions]);
+	}
+
+	var dataRpm = [];
+	for (var i=0 ; i<rows.length ; i++) {
+	  dataRpm.push([new Date(rows[i].date).getTime(), rows[i].revenue]);
+	}
+
+	new Highcharts.Chart({
+		chart: {
+			type: 'spline',
+			animation: false,
+			renderTo: 'container' },
+		title: {
+			text: 'Impressions and RPM'
+		},
+		xAxis: {
+			type: 'datetime',
+			dateTimeLabelFormats: { // don't display the dummy year
+				month: '%e. %b',
+				year: '%b'
+			}
+		},
+		plotOptions: {
+			spline: {
+				marker: {enabled:false},
+				animation : false
+			}
+		},
+		yAxis: [{
+			title: {
+				text: 'Impressions' }
+		}, {
+			title: {
+				text: 'RPM' },
+				opposite: true
+		}],
+		tooltip: {
+			formatter: function() {
+					return '<b>'+ this.series.name +'</b><br/>'+
+					Highcharts.dateFormat('%e. %b', this.x) +': '+ this.y +' m';
+			}
+		},
+
+		series: [
+		  {
+			name:'Impressions',
+			data:dataDisplays
+		  },
+		  {
+			name:'RPM',
+			yAxis: 1,
+			data:dataRpm
+		  }
+		]
+	});
+}
+
+
+
+
 angular.module('btApp.publisherStats', ['ui.router'])
 
 .config(['$stateProvider', function($stateProvider) {
@@ -49,6 +115,7 @@ angular.module('btApp.publisherStats', ['ui.router'])
                 $scope.models.headers.revenue = revenue;
                 $scope.models.headers.name = response.data.name;
                 $scope.models.rows = response.data.rows;
+                setTimeout(draw(response.data.rows), 10);
             });
     }
 }]);
