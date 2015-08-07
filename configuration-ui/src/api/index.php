@@ -2,6 +2,7 @@
 
 require 'vendor/autoload.php';
 require 'bidders.php';
+require 'cache.php';
 require 'publishers.php';
 require 'users.php';
 require 'stats.php';
@@ -13,6 +14,8 @@ include_once("config/config.php");
 
 $app = new \Slim\Slim();
 $app->config('debug', $config['debug']);
+
+$cache = new Cache("cache-files/", $app);
 
 $db = new RedMap\Drivers\MySQLiDriver('UTF8');
 $db->connect($config['db_user'], $config['db_password'], $config['db_name']);
@@ -32,13 +35,17 @@ $bidders = new Bidders($db, $users);
 
 $stats = new Stats($db);
 
-$app->get('/bidders/', function () use ($app, $bidders) {
+$app->get('/bidders/', function () use ($app, $bidders, $cache) {
 	$uiFormat = $app->request()->get('format') === 'ui';
 
-	if (!$uiFormat)
-		$app->expires('+3 hour');
-
-    displayResult($app, $bidders->getAll($app, $uiFormat));
+    $cache->runWithCache(
+        function() use ($app, $bidders, $uiFormat) {
+            displayResult($app, $bidders->getAll($app, $uiFormat));
+        },
+        'GET /bidders/',
+        10800,
+        $uiFormat
+    );
 });
 $app->get('/bidders/:id', function ($id) use ($app, $bidders) {
 	$uiFormat = $app->request()->get('format') === 'ui';
