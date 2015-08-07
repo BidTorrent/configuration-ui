@@ -28,23 +28,29 @@ var btApp = angular.module('btApp', [
     // remove prefix of localStorageService
     localStorageServiceProvider.setPrefix("");
 }])
-.controller('NavbarCtrl', ['$scope', 'UserService', function HeaderController($scope, UserService) {
-    $scope.listBidders = [];
-    // Get the list of bidders
-    UserService.getListBidders.then(function(listBidders) {
-        $scope.listBidders = listBidders.data;
-    }, function(error) {
-        ngNotify.set("Cannot load the list of bidders linked to your account", "error");
-    });
+.controller('NavbarCtrl', ['$scope', 'UserService', '$http', function ($scope, UserService, $http) {
+    var setBidders = function () {
+        $http.get('/api/mybidders').then(function(listBidders) {
+            $scope.listBidders = listBidders.data;
+        }, function(error) {
+            ngNotify.set("Cannot load the list of bidders linked to your account", "error");
+        });
+    };
 
-    $scope.publisherList = [];
-    //Get the list of publishers
-    UserService.getListPublishers.then(function(listPublishers) {
-        $scope.listPublishers = listPublishers.data;
-    }, function(error) {
-        ngNotify.set("Cannot load the list of publishers linked to your account", "error");
-    });
+    var setPublishers = function () {
+        $http.get('/api/mypublishers').then(function(listPublishers) {
+            $scope.listPublishers = listPublishers.data;
+        }, function(error) {
+            ngNotify.set("Cannot load the list of publishers linked to your account", "error");
+        });
+    };
 
+    $scope.loadAccounts = function () {
+        setBidders();
+        setPublishers();
+    };
+
+    $scope.loadAccounts();
     $scope.userConnected = UserService.isConnected;
 }])
 .factory('UserService', ['$rootScope', '$http', 'localStorageService', 'ngNotify', function($rootScope, $http, localStorageService, ngNotify) {
@@ -57,10 +63,6 @@ var btApp = angular.module('btApp', [
             return currentAccount.displayName;
         return null;
     }
-
-    User.getListBidders = $http.get('/api/mybidders');
-
-    User.getListPublishers = $http.get('/api/mypublishers');
 
     return User;
 }])

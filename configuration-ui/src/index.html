@@ -57,7 +57,7 @@
                     <li role="presentation" ui-sref-active="active" ui-sref="publisher"><a>Publisher</a></li>
                     <li role="presentation" ui-sref-active="active" ui-sref="bidder"><a>Bidder</a></li>
                     <li class="dropdown" ng-if="userConnected">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My accounts <span class="caret"></span></a>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" ng-click="loadAccounts()">My accounts <span class="caret"></span></a>
                       <ul class="dropdown-menu">
                         <li class="dropdown-header">My bidders</li>
                         <li ng-repeat="bidder in listBidders"><a ui-sref="bidder({ bidderId: bidder.id })">{{bidder.name}} ({{bidder.id}})</a></li>
