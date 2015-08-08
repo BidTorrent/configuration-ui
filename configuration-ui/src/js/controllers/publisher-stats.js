@@ -33,7 +33,6 @@ function draw(rows) {
 		yAxis: [{
 			title: {
 				text: 'Impressions' },
-
 				min: 0
 		}, {
 			title: {
@@ -41,11 +40,8 @@ function draw(rows) {
 				opposite: true,
 				min:0
 		}],
-		tooltip: {
-			formatter: function() {
-					return '<b>'+ this.series.name +'</b><br/>'+
-					Highcharts.dateFormat('%e. %b', this.x) +': '+ this.y +' m';
-			}
+		tooltip:  {
+            shared: true
 		},
 
 		series: [
