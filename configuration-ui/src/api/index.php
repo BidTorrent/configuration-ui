@@ -29,7 +29,7 @@ $app->get('/bidders/', function () use ($app, $bidders) {
 	if (!$uiFormat)
 		$app->expires('+3 hour');
 
-    displayResult($app, $bidders->getAll($app, $uiFormat));
+    displayResultJson($app, $bidders->getAll($app, $uiFormat));
 });
 $app->get('/bidders/:id', function ($id) use ($app, $bidders) {
 	$uiFormat = $app->request()->get('format') === 'ui';
@@ -37,7 +37,7 @@ $app->get('/bidders/:id', function ($id) use ($app, $bidders) {
 	if (!$uiFormat)
 		$app->expires('+3 hour');
 
-    displayResult($app, $bidders->get($app, $id, $uiFormat));
+    displayResultJson($app, $bidders->get($app, $id, $uiFormat));
 });
 $app->delete('/bidders/:id', function ($id) use ($app, $bidders, $users, $gitkitClient) {
     $userId = validateUserForBidder($app, $users, $gitkitClient, $id);
@@ -49,7 +49,7 @@ $app->put('/bidders/:id', function ($id) use ($app, $bidders, $users, $gitkitCli
 });
 $app->post('/bidders/', function () use ($app, $bidders, $users, $gitkitClient) {
     $userId = getUserId($users, $gitkitClient);
-    displayResult($app, $bidders->post($app, $userId));
+    displayResultJson($app, $bidders->post($app, $userId));
 });
 
 $app->get('/publishers/', function () use ($app, $publishers) {
@@ -58,7 +58,7 @@ $app->get('/publishers/', function () use ($app, $publishers) {
 	if (!$uiFormat)
 		$app->expires('+3 hour');
 
-    displayResult($app, $publishers->getAll($app, $uiFormat));
+    displayResultJson($app, $publishers->getAll($app, $uiFormat));
 });
 $app->get('/publishers/:id', function ($id) use ($app, $publishers) { 
 	$uiFormat = $app->request()->get('format') === 'ui';
@@ -66,7 +66,7 @@ $app->get('/publishers/:id', function ($id) use ($app, $publishers) {
 	if (!$uiFormat)
 		$app->expires('+3 hour');
 
-    displayResult($app, $publishers->get($app, $id, $uiFormat));
+    displayResultJson($app, $publishers->get($app, $id, $uiFormat));
 });
 $app->delete('/publishers/:id', function ($id) use ($app, $publishers, $users, $gitkitClient) {
     $userId = validateUserForPublisher($app, $users, $gitkitClient, $id);
@@ -78,16 +78,16 @@ $app->put('/publishers/:id', function ($id) use ($app, $publishers, $users, $git
 });
 $app->post('/publishers/', function () use ($app, $publishers, $users, $gitkitClient) {
     $userId = getUserId($users, $gitkitClient);
-    displayResult($app, $publishers->post($app, $userId));
+    displayResultJson($app, $publishers->post($app, $userId));
 });
 
 $app->get('/mybidders/', function () use ($app, $bidders, $users, $gitkitClient) {
     $userId = getUserId($users, $gitkitClient);
-    displayResult($app, $bidders->myBidders($userId));
+    displayResultJson($app, $bidders->myBidders($userId));
 });
 $app->get('/mypublishers/', function () use ($app, $publishers, $users, $gitkitClient) {
     $userId = getUserId($users, $gitkitClient);
-    displayResult($app, $publishers->myPublishers($userId));
+    displayResultJson($app, $publishers->myPublishers($userId));
 });
 
 // Hack to know user id
@@ -95,7 +95,7 @@ $app->get('/myid/', function () use ($users, $gitkitClient) { echo getUserId($us
 
 $app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $users, $gitkitClient, $stats) {
     validateUserForPublisher($app, $users, $gitkitClient, $publisher);
-    displayResult(
+    displayResultJson(
         $app,
         $stats->getByPublisher(
             $publisher,
@@ -107,7 +107,7 @@ $app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from,
 
 $app->run();
 
-function displayResult($app, $result) {
+function displayResultJson($app, $result) {
     $app->response->headers->set('Content-Type', 'application/json');
     echo json_encode($result);
 }
