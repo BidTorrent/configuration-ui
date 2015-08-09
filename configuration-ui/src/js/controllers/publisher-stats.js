@@ -110,6 +110,7 @@ angular.module('btApp.publisherStats', ['ui.router'])
                 $scope.models.headers.revenue = revenue;
                 $scope.models.headers.name = response.data.name;
                 $scope.models.rows = response.data.rows;
+                $scope.models.exportUrl = "api/stats/publishers-csv/"+ $stateParams['publisherId'] + "/" + (from.getTime() / 1000) + "/" + (to.getTime() / 1000);
                 setTimeout(draw(response.data.rows), 10);
             });
     }
