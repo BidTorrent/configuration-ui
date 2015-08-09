@@ -5,6 +5,7 @@ require 'bidders.php';
 require 'publishers.php';
 require 'users.php';
 require 'stats.php';
+require 'csv.php';
 
 if (!file_exists('config/config.php'))
     die('config/config.php is not found');
@@ -60,7 +61,7 @@ $app->get('/publishers/', function () use ($app, $publishers) {
 
     displayResultJson($app, $publishers->getAll($app, $uiFormat));
 });
-$app->get('/publishers/:id', function ($id) use ($app, $publishers) { 
+$app->get('/publishers/:id', function ($id) use ($app, $publishers) {
 	$uiFormat = $app->request()->get('format') === 'ui';
 
 	if (!$uiFormat)
@@ -102,7 +103,19 @@ $app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from,
             $from,
             $to
         )
-    ); 
+    );
+});
+
+$app->get('/stats/publishers-csv/:publisher/:from/:to', function ($publisher, $from, $to) use ($app, $users, $gitkitClient, $stats) {
+    validateUserForPublisher($app, $users, $gitkitClient, $publisher);
+    displayResultCsv(
+        $app,
+        $stats->getByPublisherCsv(
+            $publisher,
+            $from,
+            $to
+        )
+    );
 });
 
 $app->run();
@@ -110,6 +123,13 @@ $app->run();
 function displayResultJson($app, $result) {
     $app->response->headers->set('Content-Type', 'application/json');
     echo json_encode($result);
+}
+
+function displayResultCsv($app, $result) {
+    $app->response->headers->set('Content-Type', 'text/csv');
+    $app->response->headers->set('Content-Disposition', 'attachment; filename="bidtorrent-stats.csv"');
+
+    echo csv_encode($result);
 }
 
 function validateUserForPublisher($app, $users, $gitkitClient, $publisherId) {

@@ -52,6 +52,44 @@ class Stats
 
 		return $result;
 	}
+
+	function getByPublisherCsv($publisher, $from, $to) {
+		$result = array();
+		$head = array();
+		$head[] = "Date";
+		$head[] = "Impressions";
+		$head[] = "Revenue (USD)";
+		$result[] = $head;
+
+		$rows = $this->db->get_rows('
+			SELECT
+				DATE(FROM_UNIXTIME(`date`)) AS `date`,
+				count(id) AS impressions,
+				SUM(price) AS revenue
+			FROM
+				log_impressions
+			WHERE
+				`date` >= ?
+				AND `date` < ?
+				AND publisherId = ?
+			GROUP BY
+				DATE(FROM_UNIXTIME(`date`))
+			',
+			array($from, $to, $publisher)
+		);
+
+		$row = 0;
+		foreach ($rows as $row) {
+			$r = array();
+			$r[] = $row['date'];
+			$r[] = $row['impressions']*1;
+			$r[] = $row['revenue']/1000;
+
+			$result[] = $r;
+		}
+
+		return $result;
+	}
 }
 
 ?>
