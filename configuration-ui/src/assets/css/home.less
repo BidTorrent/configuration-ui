@@ -10,11 +10,20 @@
     .main-title {
         text-align: center;
         margin: 140px 0 0 0;
+
         h1 {
             color: white;
             font-size: 72px;
             font-weight: 100;
         }
+
+        @media (max-height: 700px) {
+            margin: 10px 0 0 0;
+			h1 {
+	            font-size: 45px;
+			}
+        }
+
         .lead {
             margin-top: 30px;
             font-size: 18px;
