@@ -85,6 +85,7 @@ var btApp = angular.module('btApp', [
 
     $rootScope.userId = null;
 
+    // initialise gitkit
     $rootScope.$on('$stateChangeSuccess',
     function(event, toState, toParams, fromState, fromParams) {
         // remove previous login button
@@ -101,5 +102,13 @@ var btApp = angular.module('btApp', [
             }
         );
     });
-    // initialise gitkit
+
+    // hide the menu when clicked on mobile
+	$(function(){
+		var navMain = $("#navbar-collapse");
+		navMain.on("click", "a", null, function () {
+			navMain.collapse('hide');
+		});
+	});
+
 }]);
