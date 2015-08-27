@@ -26,7 +26,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll) {
+.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', '$sce', 'smoothScroll', function($scope, $q, $resource, $stateParams, $state, ngNotify, $sce, smoothScroll) {
 
     //Resources
     var Publisher = $resource(
@@ -206,6 +206,88 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             );
         }
     }
+
+    $scope.displayScript = function() {
+        var bidTorrent = {};
+
+        if (!$scope.staticConfigForm.hostClient)
+            bidTorrent['clientUrl'] = $scope.staticConfigForm.clientUrl;
+
+        if (!$scope.staticConfigForm.hostBidders)
+            bidTorrent['biddersUrl'] = $scope.staticConfigForm.biddersUrl;
+
+        if (!$scope.staticConfigForm.hostImp)
+            bidTorrent['impUrl'] = $scope.staticConfigForm.impUrl;
+
+        if ($scope.staticConfigForm.hostConfig)
+            bidTorrent['configUrl'] = "http://www.bidtorrent.io/api/publishers/" + $scope.publisherId;
+        else {
+            var impressions;
+            if ($scope.impIsFilled($scope.staticConfigForm.imp)) {
+                impressions = [];
+                for (var i = 0; i < $scope.staticConfigForm.imp.length; i++) {
+                    var imp = $scope.staticConfigForm.imp[i];
+                    impressions[i] = {
+                        banner: {
+                            id: imp.html_id,
+                            w: imp.width,
+                            h: imp.height
+                        },
+                        bidfloor: imp.floor,
+                        secure: $scope.staticConfigForm.secured,
+                        passback: imp.passback
+                    };
+                };
+            }
+
+            var badv, wadv, bcat, wcat;
+            if ($scope.isFilled($scope.staticConfigForm.categoryFilter.value)) {
+                if ($scope.staticConfigForm.categoryFilter.mode)
+                    wcat = $scope.staticConfigForm.categoryFilter.value;
+                else
+                    bcat = $scope.staticConfigForm.categoryFilter.value;
+            }
+            if ($scope.isFilled($scope.staticConfigForm.domainFilter.value)) {
+                if ($scope.staticConfigForm.domainFilter.mode)
+                    wadv = $scope.staticConfigForm.domainFilter.value;
+                else
+                    badv = $scope.staticConfigForm.domainFilter.value;
+            }
+
+            var publisher;
+            if ($scope.staticConfigForm.country || $scope.staticConfigForm.name || $scope.publisherId) {
+                publisher = {
+                    id: $scope.publisherId ? $scope.publisherId : undefined,
+                    name: $scope.staticConfigForm.name,
+                    country: $scope.staticConfigForm.country
+                };
+            }
+
+            var site;
+            if (publisher || $scope.publisherId) {
+                site = {
+                    publisher: publisher,
+                    id: $scope.publisherId ? $scope.publisherId : undefined
+                };
+            }
+
+            bidTorrent['config'] = {
+                site: site,
+                imp: impressions,
+                badv: badv,
+                wadv: wadv,
+                bcat: bcat,
+                wcat: wcat,
+                tmax: $scope.staticConfigForm.timeout
+            };
+        }
+
+        var script = "&lt;script src=&quot;http://bidtorrent.io/loader.js&quot;&gt;&lt;/script&gt;<br/>&lt;script type=&quot;text/javascript&quot;&gt;<br/>bidTorrent(" +
+            JSON.stringify(bidTorrent, null, 2) +
+            ");<br/>&lt;/script&gt;";
+
+        return script;
+    };
 
     $scope.saveHostConfig = function() {
         if (!$scope.publisherId)

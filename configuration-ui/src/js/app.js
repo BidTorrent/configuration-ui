@@ -3,6 +3,7 @@
 var btApp = angular.module('btApp', [
     'ui.router',
     'ngNotify',
+    'ngSanitize',
     'LocalStorageModule',
     'smoothScroll',
     'btApp.bidder',
