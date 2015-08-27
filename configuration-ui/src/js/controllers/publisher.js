@@ -26,7 +26,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', '$sce', 'smoothScroll', function($scope, $q, $resource, $stateParams, $state, ngNotify, $sce, smoothScroll) {
+.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', '$sce', 'smoothScroll', 'localStorageService', function($scope, $q, $resource, $stateParams, $state, ngNotify, $sce, smoothScroll, localStorageService) {
 
     //Resources
     var Publisher = $resource(
@@ -73,7 +73,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     };
 
     //Functions
-    $scope.loadConfig = function() {
+    $scope.getPublisher = function() {
         var deferred = $q.defer();
 
         if (!$scope.publisherId) {
@@ -83,27 +83,8 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
         Publisher.get({ publisherId: $scope.publisherId , format: "ui" }).$promise.then(
             function(response) {
-                var domainFilter = getFilter(response.filters, angular.copy($scope.defaultDomainFilter));
-                var categoryFilter = getFilter(response.filters, angular.copy($scope.defaultCategoryFilter));
-
-                $scope.staticConfigForm = {
-                    isTypeWebsite: response.type == "website",
-                    name: response.name,
-                    country: response.country,
-                    timeout: response.timeout,
-                    secured: response.secured,
-                    domainFilter: domainFilter,
-                    categoryFilter: categoryFilter,
-                    imp: response.imp,
-                    hostConfig: response.hostConfig,
-                    hostBidders: response.biddersUrl === null,
-                    biddersUrl: response.biddersUrl || '',
-                    hostClient: response.clientUrl === null,
-                    clientUrl: response.clientUrl || '',
-					hostImp: response.impUrl === null,
-					impUrl: response.impUrl || ''
-                };
-                $scope.publisherId = response.id;
+                loadConfig(response);
+                deferred.resolve(response);
             },
             function(response) {
                 if(response.status === 404) {
@@ -116,55 +97,14 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         return deferred.promise;
     };
 
-    $scope.saveConfig = function() {
+    $scope.submit = function() {
         // hide modal
         //$('#loginModal').modal('hide');
 
-        if (!$scope.staticConfigForm.name) {
-            ngNotify.set("Enter a name", "error");
-            $scope.scrollToGlobalInfo();
+        var publisher = buildConfig();
+
+        if (!publisher)
             return;
-        }
-
-        if ($scope.staticConfigForm.timeout && !$scope.isStrictPositiveInt($scope.staticConfigForm.timeout)) {
-            ngNotify.set("Timeout should be positive", "error");
-            $scope.scrollToGlobalInfo();
-            return;
-        }
-
-        var filters = new Array();
-        validateAndAddFilter(filters, $scope.staticConfigForm.domainFilter);
-        validateAndAddFilter(filters, $scope.staticConfigForm.categoryFilter);
-
-        var imp = angular.copy($scope.staticConfigForm.imp);
-        for (var i = 0; i < imp.length; ++i)
-            objectClean(imp[i], ["", null, undefined]);
-
-        if (!$scope.impIsFilled(imp)) {
-            ngNotify.set("You need to set up at leat one impression", "error");
-            $scope.scrollToImp();
-            return;
-        }
-
-        if (!$scope.impAreValid(imp)) {
-            ngNotify.set("One of your impressions is not valid", "error");
-            $scope.scrollToImp();
-            return;
-        }
-
-        var publisher = {
-            name: $scope.staticConfigForm.name,
-            type: $scope.staticConfigForm.isTypeWebsite ? "website" : "inapp",
-            country: $scope.staticConfigForm.country ? $scope.staticConfigForm.country : undefined,
-            timeout: $scope.staticConfigForm.timeout ? $scope.staticConfigForm.timeout : undefined,
-            secured: $scope.staticConfigForm.secured,
-            filters: filters,
-            imp: imp,
-            hostConfig: $scope.staticConfigForm.hostConfig,
-            biddersUrl: $scope.staticConfigForm.hostBidders ? null : $scope.staticConfigForm.biddersUrl,
-            clientUrl: $scope.staticConfigForm.hostClient ? null : $scope.staticConfigForm.clientUrl,
-			impUrl: $scope.staticConfigForm.hostImp ? null : $scope.staticConfigForm.impUrl
-        };
 
         // save the configuration
         if ($scope.publisherId) {
@@ -196,6 +136,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                     if (response.status === 409) {
                         ngNotify.set("This publisher " + $scope.staticConfigForm.name + " is already registered", "error");
                     } else if (response.status === 401) {
+                        saveConfig();
                         ngNotify.set("You have to login in order to perform this action", "error");
                     } else if (response.status === 403) {
                         ngNotify.set("You are not allowed to perform this action", "error");
@@ -298,7 +239,86 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         };
 
         Publisher.update({ publisherId: $scope.publisherId , format: "ui" }, publisher);
-    }
+    };
+
+    var loadConfig = function(config) {
+        var domainFilter = getFilter(config.filters, angular.copy($scope.defaultDomainFilter));
+        var categoryFilter = getFilter(config.filters, angular.copy($scope.defaultCategoryFilter));
+
+        $scope.staticConfigForm = {
+            isTypeWebsite: config.type == "website",
+            name: config.name,
+            country: config.country,
+            timeout: config.timeout,
+            secured: config.secured,
+            domainFilter: domainFilter,
+            categoryFilter: categoryFilter,
+            imp: config.imp,
+            hostConfig: config.hostConfig,
+            hostBidders: config.biddersUrl === null,
+            biddersUrl: config.biddersUrl || '',
+            hostClient: config.clientUrl === null,
+            clientUrl: config.clientUrl || '',
+            hostImp: config.impUrl === null,
+            impUrl: config.impUrl || ''
+        };
+        $scope.publisherId = config.id;
+    };
+
+    var saveConfig = function() {
+        var publisher = buildConfig();
+        localStorageService.set('publisherConfig', publisher);
+    };
+
+    var buildConfig = function() {
+        if (!$scope.staticConfigForm.name) {
+            ngNotify.set("Enter a name", "error");
+            $scope.scrollToGlobalInfo();
+            return;
+        }
+
+        if ($scope.staticConfigForm.timeout && !$scope.isStrictPositiveInt($scope.staticConfigForm.timeout)) {
+            ngNotify.set("Timeout should be positive", "error");
+            $scope.scrollToGlobalInfo();
+            return;
+        }
+
+        var filters = new Array();
+        validateAndAddFilter(filters, $scope.staticConfigForm.domainFilter);
+        validateAndAddFilter(filters, $scope.staticConfigForm.categoryFilter);
+
+        var imp = angular.copy($scope.staticConfigForm.imp);
+        for (var i = 0; i < imp.length; ++i)
+            objectClean(imp[i], ["", null, undefined]);
+
+        if (!$scope.impIsFilled(imp)) {
+            ngNotify.set("You need to set up at leat one impression", "error");
+            $scope.scrollToImp();
+            return;
+        }
+
+        if (!$scope.impAreValid(imp)) {
+            ngNotify.set("One of your impressions is not valid", "error");
+            $scope.scrollToImp();
+            return;
+        }
+
+        var publisher = {
+            name: $scope.staticConfigForm.name,
+            type: $scope.staticConfigForm.isTypeWebsite ? "website" : "inapp",
+            country: $scope.staticConfigForm.country ? $scope.staticConfigForm.country : undefined,
+            timeout: $scope.staticConfigForm.timeout ? $scope.staticConfigForm.timeout : undefined,
+            secured: $scope.staticConfigForm.secured,
+            filters: filters,
+            imp: imp,
+            hostConfig: $scope.staticConfigForm.hostConfig,
+            biddersUrl: $scope.staticConfigForm.hostBidders ? null : $scope.staticConfigForm.biddersUrl,
+            clientUrl: $scope.staticConfigForm.hostClient ? null : $scope.staticConfigForm.clientUrl,
+            impUrl: $scope.staticConfigForm.hostImp ? null : $scope.staticConfigForm.impUrl
+        };
+
+        return publisher;
+    };
 
     var validateAndAddFilter = function(filters, filter) {
         // Remove empty values
@@ -431,8 +451,17 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         }
 	};
 
-    $scope.loadConfig().finally(
-    function(response) {
-        return; // TODO: end loader if there is a loader
-    });
+    // Load from local storage or call backend
+    var inProgressConfig = localStorageService.get('publisherConfig');
+
+    if (inProgressConfig) {
+        loadConfig(inProgressConfig);
+        localStorageService.clearAll('publisherConfig');
+    }
+    else {
+        $scope.getPublisher().finally(
+        function(response) {
+            return; // TODO: end loader if there is a loader
+        });
+    }
 }]);
