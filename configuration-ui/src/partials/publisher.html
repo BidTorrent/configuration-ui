@@ -1,5 +1,5 @@
 <div class="bidtorrentPage container">
-    <h1>Publisher <b ng-if="publisherId">{{staticConfigForm.name}}</b></h1>
+    <h1><span ng-if="publisherId">Publisher <b>{{staticConfigForm.name}}</b></span><span ng-if="!publisherId">New publisher</span></h1>
 
     <h2 id="config">
         <span ng-if="publisherId">Configuration</span>

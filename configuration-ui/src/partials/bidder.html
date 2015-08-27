@@ -1,5 +1,5 @@
 <div class="bidtorrentPage container">
-    <h1>Bidder<b ng-if="bidderId"> {{configForm.name}}</b></h1>
+    <h1><span ng-if="bidderId">Bidder <b>{{configForm.name}}</b></span><span ng-if="!bidderId">New bidder</span></h1>
 
     <h2>
         <span class="title" ng-if="bidderId">Configuration</span></span>
