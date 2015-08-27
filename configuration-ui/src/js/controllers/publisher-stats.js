@@ -2,13 +2,15 @@
 
 angular.module('btApp.publisherStats', ['ui.router'])
 
-.config(['$stateProvider', function($stateProvider) {
+.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('publisher-stats', {
             url: '/publisher/:publisherId/stats',
-            templateUrl: 'partials/publisher-stats.html',
+            templateUrl: '/partials/publisher-stats.html',
             controller: 'PublisherStatCtrl'
         });
+
+    $urlRouterProvider.when('/publisher-stats', '/publisher-stats/');
 }])
 
 .controller('PublisherStatCtrl', ['$scope', '$q', '$http', '$stateParams', function($scope, $q, $http, $stateParams) {
@@ -93,7 +95,7 @@ angular.module('btApp.publisherStats', ['ui.router'])
     
     if($stateParams['publisherId']) {
         $http
-            .get("api/stats/publishers/"+ $stateParams['publisherId'] + "/" + (from.getTime() / 1000) + "/" + (to.getTime() / 1000))
+            .get("/api/stats/publishers/"+ $stateParams['publisherId'] + "/" + (from.getTime() / 1000) + "/" + (to.getTime() / 1000))
             .then(function(response) {
                 var impressions = 0;
                 var revenue = 0;
@@ -109,7 +111,7 @@ angular.module('btApp.publisherStats', ['ui.router'])
                 $scope.models.headers.revenue = revenue;
                 $scope.models.headers.name = response.data.name;
                 $scope.models.rows = response.data.rows;
-                $scope.models.exportUrl = "api/stats/publishers-csv/"+ $stateParams['publisherId'] + "/" + (from.getTime() / 1000) + "/" + (to.getTime() / 1000);
+                $scope.models.exportUrl = "/api/stats/publishers-csv/"+ $stateParams['publisherId'] + "/" + (from.getTime() / 1000) + "/" + (to.getTime() / 1000);
                 setTimeout(draw(response.data.rows), 10);
             });
     }

@@ -2,13 +2,15 @@
 
 angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
-.config(['$stateProvider', function($stateProvider) {
+.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('publisher', {
             url: '/publisher/:publisherId',
-            templateUrl: 'partials/publisher.html',
+            templateUrl: '/partials/publisher.html',
             controller: 'PublisherCtrl'
         })
+
+    $urlRouterProvider.when('/publisher', '/publisher/');
 }])
 
 .run(['$rootScope', '$stateParams', '$state', function($rootScope, $stateParams, $state) {

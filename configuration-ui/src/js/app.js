@@ -10,11 +10,11 @@ var btApp = angular.module('btApp', [
     'btApp.publisherStats'
 ])
 .config(['$stateProvider', '$urlRouterProvider', '$locationProvider', 'localStorageServiceProvider', function($stateProvider, $urlRouterProvider, $locationProvider, localStorageServiceProvider) {
-/*    $locationProvider.html5Mode({
+    $locationProvider.html5Mode({
         enabled: true,
         requireBase: false
     });
-*/
+
     // For any unmatched url, redirect to /state1
     $urlRouterProvider.otherwise('/');
 
@@ -22,13 +22,13 @@ var btApp = angular.module('btApp', [
     $stateProvider
         .state('home', {
             url: '/',
-            templateUrl: 'partials/home.html'
+            templateUrl: '/partials/home.html'
         })
 
     // remove prefix of localStorageService
     localStorageServiceProvider.setPrefix("");
 }])
-.controller('NavbarCtrl', ['$scope', 'UserService', '$http', function ($scope, UserService, $http) {
+.controller('NavbarCtrl', ['$scope', '$http', 'ngNotify', 'UserService', function ($scope, $http, ngNotify, UserService) {
     var setBidders = function () {
         $http.get('/api/mybidders').then(function(listBidders) {
             $scope.listBidders = listBidders.data;
@@ -66,7 +66,7 @@ var btApp = angular.module('btApp', [
 
     return User;
 }])
-.run(['$rootScope', 'ngNotify', function($rootScope, ngNotify) {
+.run(['$rootScope', '$state', 'ngNotify', function($rootScope, $state, ngNotify) {
     // Navbar configuration
     $(".navbar-fixed-top").autoHidingNavbar({
         // see specifications here : https://github.com/istvan-ujjmeszaros/bootstrap-autohidingnavbar
@@ -83,4 +83,22 @@ var btApp = angular.module('btApp', [
     });
 
     $rootScope.userId = null;
+
+    $rootScope.$on('$stateChangeSuccess',
+    function(event, toState, toParams, fromState, fromParams) {
+        // remove previous login button
+        var div = document.getElementById("navbar-login");
+        div.innerHTML = "";
+
+        // add new login button with correct url
+        window.google.identitytoolkit.signInButton(
+            '#navbar-login', // accepts any CSS selector
+            {
+              widgetUrl: "/api/gitkit.php?signInSuccessUrl=" + ($state.href(toState.name, toParams) || "/"),
+              signOutUrl: "/",
+              popupMode: true
+            }
+        );
+    });
+    // initialise gitkit
 }]);

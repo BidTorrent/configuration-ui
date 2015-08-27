@@ -2,7 +2,7 @@
     <h1>Statistics for <b>{{ models.headers.name }}</b></h1>
 
     <div class="row text-center">
-        <div class="col-xs-4">
+        <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Impressions
@@ -12,7 +12,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-4">
+        <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Revenue (USD)
@@ -22,13 +22,13 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-4">
+        <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Download report
                 </div>
                 <div class="panel-body">
-                    <a href="{{ models.exportUrl }}">in CSV</a>
+                    <a ng-href="{{ models.exportUrl }}" target="_blank">in CSV</a>
                 </div>
             </div>
         </div>

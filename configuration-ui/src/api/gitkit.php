@@ -5,7 +5,7 @@
     <script type="text/javascript">
       var config = {
           apiKey: 'AIzaSyA1deE1SBJN46W03TyX8uHwyQXWWRRhVoU',
-          signInSuccessUrl: '/',
+          signInSuccessUrl: '../publisher',
           idps: ["google", "yahoo", "facebook"],
           oobActionUrl: '/',
           siteName: 'this site'

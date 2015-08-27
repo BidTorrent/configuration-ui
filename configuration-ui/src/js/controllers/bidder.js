@@ -2,13 +2,15 @@
 
 angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 
-.config(['$stateProvider', function($stateProvider) {
+.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('bidder', {
             url: '/bidder/:bidderId',
-            templateUrl: 'partials/bidder.html',
+            templateUrl: '/partials/bidder.html',
             controller: 'BidderCtrl'
         })
+
+    $urlRouterProvider.when('/bidder', '/bidder/');
 }])
 
 .run(['$rootScope', '$stateParams', '$state', function($rootScope, $stateParams, $state) {

@@ -1,0 +1,9 @@
+DirectoryIndex index.html
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	#RewriteCond %{REQUEST_URI} !^/(api/.*)$
+	RewriteRule !\.(js|ico|gif|jpg|png|css|html|swf|flv|xml|otf|eot|svg|ttf|woff|woff2|csv)$ index.html [QSA,L]
+</IfModule>
+<IfModule mod_php5.c>
+	php_flag display_errors Off
+</IfModule>
