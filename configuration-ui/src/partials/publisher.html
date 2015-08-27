@@ -216,7 +216,7 @@
     <h2 id="generatedScript">Include the bidding script <i class="fa fa-code"></i></h2>
 
     <!-- CONFIG.JSON -->
-    <div class="row config">
+    <div class="config">
         <div class="form-group">
             <div class="btn-group" data-toggle="buttons">
                 <button type="button" class="btn btn-default" ng-class="{'active' : !staticConfigForm.hostConfig}" ng-click="staticConfigForm.hostConfig=false;saveHostConfig()"> Use a static configuration</button>
@@ -226,7 +226,7 @@
             </div>
         </div>
     </div>
-    <div class="row config">
+    <div class="config">
         <div class="form-group">
             <div class="btn-group" data-toggle="buttons">
                 <button type="button" class="btn btn-default" ng-class="{'active' : staticConfigForm.isTypeWebsite}" ng-click="staticConfigForm.isTypeWebsite=true">Website</button>
@@ -239,7 +239,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div>
         <h3>Include the BidTorrent client script and its dynamic configuration to your webpage</h3>
         <code class="col-xs-12 col-md-8 col-md-offset-2" ng-bind-html="displayScript()"></code>
         <h4 class="col-xs-12 info">For more information see our <a href="https://github.com/BidTorrent/client-js">Github repository</a></h4>
