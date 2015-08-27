@@ -36,22 +36,22 @@
                     <span ng-if="filter.link">(<a href="{{filter.link.href}}" target="_blank">{{filter.link.title}}</a>)</span>
                 </label>
                 <div class="form-group row" ng-repeat="value in filter.value track by $index">
-                    <div class="col-xs-10">
+                    <div class="col-xs-9 col-sm-10">
                         <input type="text" class="form-control"
                                placeholder="ex: {{filter.placeholder}}"
                                ng-model="filter.value[$index]">
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-3 col-sm-2">
                         <button type="submit" class="form-control btn btn-md btn-danger"
                                 ng-click="filter.value.splice($index, 1)"><i class="fa fa-minus"></i></button>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-4">
+                    <div class="col-xs-5 col-sm-4">
                         <button type="submit" class="form-control btn btn-md btn-success"
                                 ng-click="filter.value.push('')"><i class="fa fa-plus"></i> Add filter</button>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-xs-7 col-sm-6">
                         <button type="submit" class="form-control btn btn-md"
                                 ng-class="filter.mode ? 'btn-primary' : 'btn-default'"
                                 ng-click="filter.mode = !filter.mode">
@@ -79,7 +79,7 @@
 
         <div ng-repeat="imp in staticConfigForm.imp track by $index">
 			<form class="row">
-				<div class="form-group col-xs-3" ng-class="{'has-error' : !imp.html_id}">
+				<div class="form-group col-xs-6 col-sm-3" ng-class="{'has-error' : !imp.html_id}">
 					<label class="control-label">Element DOM id</label>
 					<input type="text" class="form-control" placeholder="ex: desktop_ad_top" ng-model="imp.html_id">
 				</div>
@@ -91,14 +91,14 @@
 					<label class="control-label">Height</label>
 					<input type="text" class="form-control" placeholder="ex: 600" ng-model="imp.height">
 				</div>
-				<div class="form-group col-xs-2" ng-class="{'has-error' : imp.floor && !isStrictPositiveFloat(imp.floor)}">
+				<div class="form-group col-xs-4 col-sm-2" ng-class="{'has-error' : imp.floor && !isStrictPositiveFloat(imp.floor)}">
 					<label class="control-label">Floor</label>
 					<div class="input-group">
 						<span class="input-group-addon">$</span>
 						<input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder="ex: 1.2" ng-model="imp.floor">
 					</div>
 				</div>
-				<div class="form-group col-xs-1">
+				<div class="form-group col-xs-3 col-sm-1">
 					<label class="control-label">Del</label>
 					<button type="submit" class="form-control btn btn-md btn-danger col-md-4" ng-click="staticConfigForm.imp.splice($index, 1)"><i class="fa fa-minus"></i></button>
 				</div>
@@ -112,7 +112,7 @@
         </div>
         <form class="row">
             <div class="form-group col-md-12">
-               <button type="submit" class="btn btn-md btn-success col-md-2"
+               <button type="submit" class="btn btn-md btn-success col-sm-2 col-xs-4"
                 ng-click="staticConfigForm.imp.push({ html_id: null, width: null, height: null, floor: null, passback: null })"><i class="fa fa-plus"></i> Add imp</button>
             </div>
         </form>
