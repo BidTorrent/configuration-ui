@@ -57,15 +57,15 @@ var btApp = angular.module('btApp', [
 .factory('UserService', ['$rootScope', '$http', 'localStorageService', 'ngNotify', function($rootScope, $http, localStorageService, ngNotify) {
     var currentAccount = localStorageService.get('gitkit::currentAccount');
 
-    var User = {};
-    User.isConnected = !!currentAccount;
-    User.getName = function() {
+    var UserService = {};
+    UserService.isConnected = !!currentAccount;
+    UserService.getName = function() {
         if(currentAccount)
             return currentAccount.displayName;
         return null;
     }
 
-    return User;
+    return UserService;
 }])
 .run(['$rootScope', '$state', 'ngNotify', function($rootScope, $state, ngNotify) {
     // Navbar configuration
