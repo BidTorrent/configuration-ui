@@ -30,7 +30,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
     //Resources
     var Publisher = $resource(
-        'api/publishers/:publisherId',
+        '/api/publishers/:publisherId',
         { publisherId:'@id' },
         {
             'get': { method:'GET' },
