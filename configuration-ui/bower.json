@@ -24,7 +24,8 @@
     "bootstrap-autohidingnavbar": "~1.0.0",
     "ng-notify": "~0.6.2",
     "ngSmoothScroll": "git@github.com:d-oliveros/ngSmoothScroll.git#2542dd41d920774669f2be78c0dc786376447d3f",
-    "angular-local-storage": "~0.2.2"
+    "angular-local-storage": "~0.2.2",
+    "highcharts": "~4.1.8"
   },
   "resolutions": {
     "angular": "~1.4.1"
