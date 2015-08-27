@@ -101,14 +101,10 @@ var btApp = angular.module('btApp', [
               popupMode: true
             }
         );
+
+		// hide the menu
+		$("#navbar-collapse").collapse('hide');
     });
 
-    // hide the menu when clicked on mobile
-	$(function(){
-		var navMain = $("#navbar-collapse");
-		navMain.on("click", "a", null, function () {
-			navMain.collapse('hide');
-		});
-	});
 
 }]);
