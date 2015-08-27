@@ -167,7 +167,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         }
         else {
             Bidder.save({ format: "ui" }, bidder).$promise
-            .then(function() {
+            .then(function(response) {
                     $state.go('bidder', { bidderId: response.id});
                     ngNotify.set("Successfully registered " + $scope.configForm.name, "success");
                 },
