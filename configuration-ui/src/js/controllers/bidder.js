@@ -26,7 +26,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll) {
+.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', 'localStorageService', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll, localStorageService) {
     //Resources
     var Bidder = $resource(
         '/api/bidders/:bidderId',
@@ -79,7 +79,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     };
 
     //Functions
-    $scope.loadConfig = function() {
+    $scope.getBidder = function() {
         var deferred = $q.defer();
 
         if (!$scope.bidderId) {
@@ -88,18 +88,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         }
         Bidder.get({ bidderId: $scope.bidderId , format: "ui" }).$promise.then(
             function(response) {
-                var userCountryFilter = getFilter(response.filters, angular.copy($scope.defaultUserCountryFilter));
-                var pubCountryFilter = getFilter(response.filters, angular.copy($scope.defaultPubCountryFilter));
-                var categoryFilter = getFilter(response.filters, angular.copy($scope.defaultCategoryFilter));
-
-                $scope.configForm = {
-                    name: response.name,
-                    bidRequestUrl: response.bidUrl,
-                    pubKey: response.rsaPubKey,
-                    userCountryFilter: userCountryFilter,
-                    pubCountryFilter: pubCountryFilter,
-                    categoryFilter : categoryFilter
-                };
+                loadConfig(response);
                 deferred.resolve(response);
             },
             function(response) {
@@ -116,6 +105,72 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     };
 
     $scope.submit = function() {
+        var bidder = buildConfig();
+
+        if (!bidder)
+            return;
+
+        if ($scope.bidderId) {
+            Bidder.update({ bidderId: $scope.bidderId , format: "ui" }, bidder).$promise
+            .then(function() {
+                    ngNotify.set("Successfully updated " + $scope.configForm.name, "success");
+                },
+                function(response) {
+                    if (response.status === 404) {
+                        ngNotify.set("Bidder " + $scope.configForm.name + " was not found", "error");
+                    } else if (response.status === 401) {
+                        ngNotify.set("You have to login in order to perform this action", "error");
+                    } else if (response.status === 403) {
+                        ngNotify.set("You are not allowed to perform this action", "error");
+                    } else {
+                        ngNotify.set("Oops! something went wrong, try again later", "error");
+                    }
+                }
+            );
+        }
+        else {
+            Bidder.save({ format: "ui" }, bidder).$promise
+            .then(function(response) {
+                    $state.go('bidder', { bidderId: response.id});
+                    ngNotify.set("Successfully registered " + $scope.configForm.name, "success");
+                },
+                function(response) {
+                    if (response.status === 409) {
+                        ngNotify.set("This bidder " + $scope.configForm.name + " is already registered", "error");
+                    } else if (response.status === 401) {
+                        saveConfig();
+                        ngNotify.set("You have to login in order to perform this action", "error");
+                    } else if (response.status === 403) {
+                        ngNotify.set("You are not allowed to perform this action", "error");
+                    } else {
+                        ngNotify.set("Oops! something went wrong, try again later", "error");
+                    }
+                }
+            );
+        }
+    };
+
+    var loadConfig = function(config) {
+        var userCountryFilter = getFilter(config.filters, angular.copy($scope.defaultUserCountryFilter));
+        var pubCountryFilter = getFilter(config.filters, angular.copy($scope.defaultPubCountryFilter));
+        var categoryFilter = getFilter(config.filters, angular.copy($scope.defaultCategoryFilter));
+
+        $scope.configForm = {
+            name: config.name,
+            bidRequestUrl: config.bidUrl,
+            pubKey: config.rsaPubKey,
+            userCountryFilter: userCountryFilter,
+            pubCountryFilter: pubCountryFilter,
+            categoryFilter : categoryFilter
+        };
+    };
+
+    var saveConfig = function() {
+        var bidder = buildConfig();
+        localStorageService.set('bidderConfig', bidder);
+    };
+
+    var buildConfig = function() {
         if (!$scope.configForm.name) {
             ngNotify.set("Enter a name", "error");
             $scope.scrollToGlobalInfo();
@@ -147,43 +202,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             filters: filters
         };
 
-        if ($scope.bidderId) {
-            Bidder.update({ bidderId: $scope.bidderId , format: "ui" }, bidder).$promise
-            .then(function() {
-                    ngNotify.set("Successfully updated " + $scope.configForm.name, "success");
-                },
-                function(response) {
-                    if (response.status === 404) {
-                        ngNotify.set("Bidder " + $scope.configForm.name + " was not found", "error");
-                    } else if (response.status === 401) {
-                        ngNotify.set("You have to login in order to perform this action", "error");
-                    } else if (response.status === 403) {
-                        ngNotify.set("You are not allowed to perform this action", "error");
-                    } else {
-                        ngNotify.set("Oops! something went wrong, try again later", "error");
-                    }
-                }
-            );
-        }
-        else {
-            Bidder.save({ format: "ui" }, bidder).$promise
-            .then(function(response) {
-                    $state.go('bidder', { bidderId: response.id});
-                    ngNotify.set("Successfully registered " + $scope.configForm.name, "success");
-                },
-                function(response) {
-                    if (response.status === 409) {
-                        ngNotify.set("This bidder " + $scope.configForm.name + " is already registered", "error");
-                    } else if (response.status === 401) {
-                        ngNotify.set("You have to login in order to perform this action", "error");
-                    } else if (response.status === 403) {
-                        ngNotify.set("You are not allowed to perform this action", "error");
-                    } else {
-                        ngNotify.set("Oops! something went wrong, try again later", "error");
-                    }
-                }
-            );
-        }
+        return bidder;
     };
 
     var validateAndAddFilter = function(filters, filter) {
@@ -232,11 +251,6 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
         }
     };
 
-    $scope.loadConfig().finally(
-    function(response) {
-        return; // TODO: end loader if there is a loader
-    });
-
     // Validation
     $scope.validUrl = function(url) {
         if (!url)
@@ -252,5 +266,19 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     $scope.scrollToGlobalInfo = function() {
         var element = document.getElementById('globalInfo');
         smoothScroll(element);
+    }
+
+    // Load from local storage or call backend
+    var inProgressConfig = localStorageService.get('bidderConfig');
+
+    if (inProgressConfig) {
+        loadConfig(inProgressConfig);
+        localStorageService.clearAll('bidderConfig');
+    }
+    else {
+        $scope.getBidder().finally(
+        function(response) {
+            return; // TODO: end loader if there is a loader
+        });
     }
 }]);
