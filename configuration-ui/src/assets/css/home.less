@@ -1,6 +1,9 @@
 //Home.less
 
 .home {
+    @horizontalbreakpoint: 768px;
+    @verticalbreakpoint: 700px;
+
     position: absolute;
     top: 0;
     width: 100%;
@@ -17,7 +20,7 @@
             font-weight: 100;
         }
 
-        @media (max-height: 700px) {
+        @media (max-height: @verticalbreakpoint) {
             margin: 10px 0 0 0;
 			h1 {
 	            font-size: 45px;
@@ -61,7 +64,7 @@
                 font-weight: 100;
             }
 
-            @media (max-width: 768px) {
+            @media (max-width: @horizontalbreakpoint) {
 				h2 {
 					font-size: 40px;
 				}
@@ -99,7 +102,26 @@
         height: @mainsectionheight;
         position: fixed;
         z-index: -1;
+        text-shadow: #000 2px 2px 3px; // Otherwise the text is unreadable on the clouds
     }
+
+	@media (max-height: @verticalbreakpoint) {
+        position: static;
+        .mainsection.section {
+        	padding-bottom: 120px;
+        }
+		.fixed-bottom {
+			width: 100%;
+			position: static;
+			margin-top: -100px;
+		}
+		.mainsection {
+			position: static;
+		}
+		#section1 {
+			display: none;
+		}
+	}
 
     .transparency {
         background-color: rgb(242, 242, 248);
