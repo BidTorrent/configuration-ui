@@ -26,7 +26,8 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', 'localStorageService', 'IABCaterogiesService', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll, localStorageService, IABCaterogiesService) {
+.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', 'localStorageService', 'IABCaterogiesService', 'AppLoadingService', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll, localStorageService, IABCaterogiesService, AppLoadingService) {
+
     //Resources
     var Bidder = $resource(
         '/api/bidders/:bidderId',
@@ -86,6 +87,8 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             deferred.reject("Enter an id to load the configuration", "error");
             return deferred.promise;
         }
+
+        AppLoadingService.start();
         Bidder.get({ bidderId: $scope.bidderId , format: "ui" }).$promise.then(
             function(response) {
                 loadConfig(response);
@@ -100,7 +103,11 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
                     ngNotify.set("Oops! something went wrong, try again later", "error");
                 }
             }
-        );
+        )
+        .finally(function() {
+            AppLoadingService.stop();
+        });
+
         return deferred.promise;
     };
 
@@ -111,6 +118,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             return;
 
         if ($scope.bidderId) {
+            AppLoadingService.start();
             Bidder.update({ bidderId: $scope.bidderId , format: "ui" }, bidder).$promise
             .then(function() {
                     ngNotify.set("Successfully updated " + $scope.configForm.name, "success");
@@ -126,9 +134,12 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }
                 }
-            );
-        }
-        else {
+            )
+            .finally(function() {
+                AppLoadingService.stop();
+            });
+        } else {
+            AppLoadingService.start();
             Bidder.save({ format: "ui" }, bidder).$promise
             .then(function(response) {
                     $state.go('bidder', { bidderId: response.id});
@@ -146,7 +157,10 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }
                 }
-            );
+            )
+            .finally(function() {
+                AppLoadingService.stop();
+            });
         }
     };
 

@@ -26,7 +26,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', '$sce', 'smoothScroll', 'localStorageService', 'IABCaterogiesService', function($scope, $q, $resource, $stateParams, $state, ngNotify, $sce, smoothScroll, localStorageService, IABCaterogiesService) {
+.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', '$sce', 'smoothScroll', 'localStorageService', 'IABCaterogiesService', 'AppLoadingService', function($scope, $q, $resource, $stateParams, $state, ngNotify, $sce, smoothScroll, localStorageService, IABCaterogiesService, AppLoadingService) {
 
     //Resources
     var Publisher = $resource(
@@ -81,6 +81,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             return deferred.promise;
         }
 
+        AppLoadingService.start();
         Publisher.get({ publisherId: $scope.publisherId , format: "ui" }).$promise.then(
             function(response) {
                 loadConfig(response);
@@ -93,7 +94,10 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                     ngNotify.set("Oops! something went wrong, try again later", "error");
                 }
             }
-        );
+        )
+        .finally(function() {
+            AppLoadingService.stop();
+        });
         return deferred.promise;
     };
 
@@ -107,6 +111,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             return;
 
         // save the configuration
+        AppLoadingService.start();
         if ($scope.publisherId) {
             Publisher.update({ publisherId: $scope.publisherId , format: "ui" }, publisher).$promise
             .then(function() {
@@ -124,9 +129,11 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }
                 }
-            );
-        }
-        else {
+            )
+            .finally(function() {
+                AppLoadingService.stop();
+            });
+        } else {
             Publisher.save({ format: "ui" }, publisher).$promise
             .then(function(response) {
                     $state.go('publisher', { publisherId: response.id});
@@ -144,7 +151,10 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                         ngNotify.set("Oops! something went wrong, try again later", "error");
                     }
                 }
-            );
+            )
+            .finally(function() {
+                AppLoadingService.stop();
+            });
         }
     }
 
@@ -461,9 +471,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         localStorageService.clearAll('publisherConfig');
     }
     else {
-        $scope.getPublisher().finally(
-        function(response) {
-            return; // TODO: end loader if there is a loader
-        });
+        $scope.getPublisher();
     }
 }]);

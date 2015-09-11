@@ -1,0 +1,11 @@
+<div class="ph-loader" ng-class="{'ph-loading': enabled}">
+    <div class="ph-loader-overlay" ng-if="overlay && enabled"></div>
+    <div class="ph-loader-spinner" ng-if="enabled">
+        <div class="ph-la-ball-scale-multiple la-criteo la-2x">
+           <div></div>
+           <div></div>
+           <div></div>
+        </div>
+    </div>
+    <div class="transclude-container" ng-transclude></div>
+</div>

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('btApp.publisherStats', ['ui.router'])
+angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
 
 .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $stateProvider
@@ -13,7 +13,7 @@ angular.module('btApp.publisherStats', ['ui.router'])
     $urlRouterProvider.when('/publisher-stats', '/publisher-stats/');
 }])
 
-.controller('PublisherStatCtrl', ['$scope', '$q', '$http', '$stateParams', function($scope, $q, $http, $stateParams) {
+.controller('PublisherStatCtrl', ['$scope', '$q', '$http', '$stateParams', 'AppLoadingService', function($scope, $q, $http, $stateParams, AppLoadingService) {
 
     function draw(rows) {
         var dataDisplays = [];
@@ -94,6 +94,7 @@ angular.module('btApp.publisherStats', ['ui.router'])
     };
 
     if($stateParams['publisherId']) {
+        AppLoadingService.start();
         $http
             .get("/api/stats/publishers/"+ $stateParams['publisherId'] + "/" + (from.getTime() / 1000) + "/" + (to.getTime() / 1000))
             .then(function(response) {
@@ -113,6 +114,9 @@ angular.module('btApp.publisherStats', ['ui.router'])
                 $scope.models.rows = response.data.rows;
                 $scope.models.exportUrl = "/api/stats/publishers-csv/"+ $stateParams['publisherId'] + "/" + (from.getTime() / 1000) + "/" + (to.getTime() / 1000);
                 setTimeout(draw(response.data.rows), 10);
+            })
+            .finally(function() {
+                AppLoadingService.stop();
             });
     }
 }]);
