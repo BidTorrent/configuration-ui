@@ -102,7 +102,18 @@ $app->get('/stats/publishers/:publisher/:from/:to', function ($publisher, $from,
     validateUserForPublisher($app, $users, $gitkitClient, $publisher);
     displayResultJson(
         $app,
-        $stats->getByPublisher(
+        $stats->getByPublisherDaily(
+            $publisher,
+            $from,
+            $to
+        )
+    );
+});
+$app->get('/stats/publishers/:publisher/:from/:to/hourly', function ($publisher, $from, $to) use ($app, $users, $gitkitClient, $stats) {
+    validateUserForPublisher($app, $users, $gitkitClient, $publisher);
+    displayResultJson(
+        $app,
+        $stats->getByPublisherHourly(
             $publisher,
             $from,
             $to
