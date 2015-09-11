@@ -39,7 +39,7 @@
                     <div class="col-xs-9 col-sm-10">
 
                         <span ng-if="filter.type == 'iab_category'">
-                        	  <select class="form-control">
+                        	  <select class="form-control" ng-model="filter.value[$index]">
 								<option style="{{cat.style}}" ng-repeat="cat in iabcategories" name="{{cat.id}}">{{cat.name}}</option>
 							  </select>
 
