@@ -1,5 +1,4 @@
 <?php
-
 require 'vendor/autoload.php';
 require 'bidders.php';
 require 'publishers.php';
@@ -9,7 +8,6 @@ require 'csv.php';
 
 define("USER_ID_CACHE_DURATION", 450);
 
-session_start();
 
 if (!file_exists('config/config.php'))
     die('config/config.php is not found');
@@ -189,6 +187,7 @@ function getUserId($users, $gitkitClient) {
 }
 
 function getUserIdFromCache() {
+	session_start();
 	if (isset($_SESSION["userId"])) {
 		list($userId, $time) = $_SESSION["userId"];
 
