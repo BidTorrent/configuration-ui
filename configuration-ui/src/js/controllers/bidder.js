@@ -26,7 +26,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', 'localStorageService', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll, localStorageService) {
+.controller('BidderCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', 'smoothScroll', 'localStorageService', 'IABCaterogiesService', function($scope, $q, $resource, $stateParams, $state, ngNotify, smoothScroll, localStorageService, IABCaterogiesService) {
     //Resources
     var Bidder = $resource(
         '/api/bidders/:bidderId',
@@ -281,4 +281,6 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             return; // TODO: end loader if there is a loader
         });
     }
+	$scope.iabcategories = IABCaterogiesService.getCategories();
+
 }]);

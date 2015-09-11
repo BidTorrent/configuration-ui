@@ -55,9 +55,16 @@ FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/
                 </label>
                 <div class="form-group row" ng-repeat="(key, value) in filter.value track by key">
                     <div class="col-xs-9 col-sm-10">
-                        <input type="text" class="form-control" id="bidderBlacklistedCategories"
-                               placeholder="ex: {{filter.placeholder}}"
-                               ng-model="filter.value[key]">
+                        <span ng-if="filter.type == 'iab_category'">
+                        	  <select class="form-control" ng-model="filter.value[$index]">
+								<option style="{{cat.style}}" ng-repeat="cat in iabcategories" name="{{cat.id}}">{{cat.name}}</option>
+							  </select>
+                        </span>
+                        <span ng-if="filter.type != 'iab_category'">
+							<input type="text" class="form-control" id="bidderBlacklistedCategories"
+								   placeholder="ex: {{filter.placeholder}}"
+								   ng-model="filter.value[$index]">
+                        </span>
                     </div>
                     <div class="col-xs-3 col-sm-2">
                         <button type="submit" class="form-control btn btn-md btn-danger btn-icon"
