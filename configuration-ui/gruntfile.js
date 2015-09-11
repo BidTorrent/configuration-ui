@@ -88,9 +88,9 @@ module.exports = function(grunt) {
                     'bin/js/bidtorrent.min.js': [
                         'src/partials/templates.js',
                         'src/js/app.js',
-                        'src/js/controllers/*.js',
-                        'src/js/services/*.js',
-                        'src/js/widgets/*.js'
+                        'src/js/controllers/**/*.js',
+                        'src/js/services/**/*.js',
+                        'src/js/widgets/**/*.js'
                     ]
                 }
             }
