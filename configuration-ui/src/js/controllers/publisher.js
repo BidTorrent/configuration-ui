@@ -26,7 +26,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     });
 }])
 
-.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', '$sce', 'smoothScroll', 'localStorageService', function($scope, $q, $resource, $stateParams, $state, ngNotify, $sce, smoothScroll, localStorageService) {
+.controller('PublisherCtrl', ['$scope', '$q', '$resource', '$stateParams', '$state', 'ngNotify', '$sce', 'smoothScroll', 'localStorageService', 'IABCaterogiesService', function($scope, $q, $resource, $stateParams, $state, ngNotify, $sce, smoothScroll, localStorageService, IABCaterogiesService) {
 
     //Resources
     var Publisher = $resource(
@@ -450,6 +450,8 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             }
         }
 	};
+
+	$scope.iabcategories = IABCaterogiesService.getCategories();
 
     // Load from local storage or call backend
     var inProgressConfig = localStorageService.get('publisherConfig');
