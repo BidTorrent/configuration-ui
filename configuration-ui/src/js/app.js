@@ -30,29 +30,39 @@ var btApp = angular.module('btApp', [
     localStorageServiceProvider.setPrefix("");
 }])
 .controller('NavbarCtrl', ['$scope', '$http', 'ngNotify', 'UserService', function ($scope, $http, ngNotify, UserService) {
-    var setBidders = function () {
-        $http.get('/api/mybidders').then(function(listBidders) {
+    $scope.userConnected = UserService.isConnected;
+    $scope.myBiddersLoading = true;
+    $scope.myPublishersLoading = true;
+
+    var loadBidders = function () {
+        return $http.get('/api/mybidders').then(function(listBidders) {
             $scope.listBidders = listBidders.data;
         }, function(error) {
             ngNotify.set("Cannot load the list of bidders linked to your account", "error");
         });
     };
 
-    var setPublishers = function () {
-        $http.get('/api/mypublishers').then(function(listPublishers) {
+    var loadPublishers = function () {
+        return $http.get('/api/mypublishers').then(function(listPublishers) {
             $scope.listPublishers = listPublishers.data;
         }, function(error) {
             ngNotify.set("Cannot load the list of publishers linked to your account", "error");
         });
     };
 
-    $scope.loadAccounts = function () {
-        setBidders();
-        setPublishers();
+    var loadAccounts = function () {
+        loadBidders().finally(function() {
+            $scope.myBiddersLoading = false;
+        });
+        loadPublishers().finally(function() {
+            $scope.myPublishersLoading = false;
+        });
     };
 
-    $scope.loadAccounts();
-    $scope.userConnected = UserService.isConnected;
+    // if the user is connected load his accounts
+    if (UserService.isConnected) {
+        loadAccounts();
+    }
 }])
 .factory('UserService', ['$rootScope', '$http', 'localStorageService', 'ngNotify', function($rootScope, $http, localStorageService, ngNotify) {
     var currentAccount = localStorageService.get('gitkit::currentAccount');
