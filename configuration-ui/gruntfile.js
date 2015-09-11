@@ -89,7 +89,8 @@ module.exports = function(grunt) {
                         'src/partials/templates.js',
                         'src/js/app.js',
                         'src/js/controllers/*.js',
-                        'src/js/services/*.js'
+                        'src/js/services/*.js',
+                        'src/js/widgets/*.js'
                     ]
                 }
             }
