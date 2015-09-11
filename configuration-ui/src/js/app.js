@@ -1,6 +1,7 @@
 'use strict';
 
 var btApp = angular.module('btApp', [
+    'templates-release',
     'ui.router',
     'ngNotify',
     'ngSanitize',
@@ -23,7 +24,7 @@ var btApp = angular.module('btApp', [
     $stateProvider
         .state('home', {
             url: '/',
-            templateUrl: '/partials/home.html'
+            templateUrl: 'partials/home.html'
         })
 
     // remove prefix of localStorageService

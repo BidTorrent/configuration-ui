@@ -6,7 +6,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
     $stateProvider
         .state('bidder', {
             url: '/bidder/:bidderId',
-            templateUrl: '/partials/bidder.html',
+            templateUrl: 'partials/bidder.html',
             controller: 'BidderCtrl'
         })
 
@@ -228,7 +228,7 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
 
         if (filters.length == 0)
             return defaultFilter;
-        
+
         var filter = filters[0];
         filter.placeholder = defaultFilter.placeholder;
         filter.title = defaultFilter.title;

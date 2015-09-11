@@ -26,11 +26,17 @@
     <script type="text/javascript" src="/assets/vendors/highcharts/highcharts.js"></script>
     <script type="text/javascript" src="/assets/vendors/angular-sanitize/angular-sanitize.js"></script>
     <script type="text/javascript" src="/assets/vendors/angular-sanitize/angular-sanitize.min.js"></script>
-    <script type="text/javascript" src="/js/app.js"></script>
-    <script type="text/javascript" src="/js/controllers/bidder.js"></script>
-    <script type="text/javascript" src="/js/controllers/publisher.js"></script>
-    <script type="text/javascript" src="/js/controllers/publisher-stats.js"></script>
-    <script type="text/javascript" src="/js/services/iABCateroriesService.js"></script>
+    <% if (build !== 'release') { %>
+        <script type="text/javascript" src="/partials/templates.js"></script>
+        <script type="text/javascript" src="/js/app.js"></script>
+        <script type="text/javascript" src="/js/controllers/bidder.js"></script>
+        <script type="text/javascript" src="/js/controllers/publisher.js"></script>
+        <script type="text/javascript" src="/js/controllers/publisher-stats.js"></script>
+        <script type="text/javascript" src="/js/services/iABCateroriesService.js"></script>
+    <% } else { %>
+        <script type="text/javascript" src="/js/bidtorrent.min.js?bust=<%= bust %>"></script>
+    <% } %>
+
 </head>
 <body>
     <div class="navbar navbar-default navbar-fixed-top" ng-controller="NavbarCtrl">
@@ -74,7 +80,7 @@
     <div ui-view class="full-height"></div>
 
     <footer class="container footer">
-        <span class="text-muted">bidTorrent website: v0.0.1 - <a href="https://github.com/BidTorrent/client-js">Github repository</a></p></span>
+        <span class="text-muted">bidTorrent website: v<%= version %> - released : <%= today %> - <a href="https://github.com/BidTorrent/client-js">Github repository</a></p></span>
     </footer>
 </body>
 </html>

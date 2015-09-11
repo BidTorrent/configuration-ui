@@ -6,7 +6,7 @@ angular.module('btApp.publisherStats', ['ui.router'])
     $stateProvider
         .state('publisher-stats', {
             url: '/publisher/:publisherId/stats',
-            templateUrl: '/partials/publisher-stats.html',
+            templateUrl: 'partials/publisher-stats.html',
             controller: 'PublisherStatCtrl'
         });
 
@@ -92,7 +92,7 @@ angular.module('btApp.publisherStats', ['ui.router'])
         },
         rows: [],
     };
-    
+
     if($stateParams['publisherId']) {
         $http
             .get("/api/stats/publishers/"+ $stateParams['publisherId'] + "/" + (from.getTime() / 1000) + "/" + (to.getTime() / 1000))

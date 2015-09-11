@@ -6,7 +6,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     $stateProvider
         .state('publisher', {
             url: '/publisher/:publisherId',
-            templateUrl: '/partials/publisher.html',
+            templateUrl: 'partials/publisher.html',
             controller: 'PublisherCtrl'
         })
 
