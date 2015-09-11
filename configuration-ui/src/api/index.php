@@ -7,6 +7,10 @@ require 'users.php';
 require 'stats.php';
 require 'csv.php';
 
+define("USER_ID_CACHE_DURATION", 450);
+
+session_start();
+
 if (!file_exists('config/config.php'))
     die('config/config.php is not found');
 $config = array();
@@ -157,15 +161,35 @@ function validateUserForBidder($app, $users, $gitkitClient, $bidderId) {
 }
 
 function getUserId($users, $gitkitClient) {
-    $gitkitUser = $gitkitClient->getUserInRequest();
-    $userId = null;
-    if ($gitkitUser)
-        $userId = $gitkitUser->getUserId();
-    $headers = getallheaders();
-    if ($userId == null && isset($headers['Authorization'])) {
-        $userId = $users->getUserIdFromApiKey($headers['Authorization']);
+    $userId = getUserIdFromCache();
+	if ($userId === null) {
+
+		$gitkitUser = $gitkitClient->getUserInRequest();
+		if ($gitkitUser)
+			$userId = $gitkitUser->getUserId();
+		$headers = getallheaders();
+		if ($userId == null && isset($headers['Authorization'])) {
+			$userId = $users->getUserIdFromApiKey($headers['Authorization']);
+		}
+		setUserIdInCache($userId);
     }
 
     return $userId;
 }
+
+function getUserIdFromCache() {
+	if (isset($_SESSION["userId"])) {
+		list($userId, $time) = $_SESSION["userId"];
+
+		if (time() - $time < USER_ID_CACHE_DURATION)
+			return $userId;
+	}
+	return null;
+}
+
+function setUserIdInCache($userId) {
+	$_SESSION["userId"] = array($userId, time());
+}
+
+
 ?>
