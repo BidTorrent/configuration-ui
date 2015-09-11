@@ -41,6 +41,8 @@ class Stats
 				`date` >= FROM_UNIXTIME(?)
 				AND `date` < FROM_UNIXTIME(?)
 				AND publisherId = ?
+
+			ORDER BY `date` DESC
 			',
 			array($from, $to, $publisher, $from, $to, $publisher)
 		);
@@ -86,6 +88,7 @@ class Stats
 				AND publisherId = ?
 			GROUP BY
 				DATE_FORMAT(FROM_UNIXTIME(`date`), "%Y-%m-%d %H:00:00")
+			ORDER BY `date` DESC
 			',
 			array($from, $to, $publisher)
 		);
