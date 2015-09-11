@@ -1,5 +1,6 @@
 <div class="bidtorrentPage container">
-    <h1>Statistics for <b>{{ models.headers.name }}</b></h1>
+    <h1 ng-if="models.headers.name">Statistics for <b>{{ models.headers.name }}</b></h1>
+    <h1 ng-if="!models.headers.name">Loading...</h1>
 
     <div class="row text-center">
         <div class="col-md-4">
