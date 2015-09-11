@@ -6,11 +6,16 @@
     "bidTorrent.io"
   ],
   "keywords": [
-    "rtb"
+    "rtb",
+    "plugnbid",
+    "plugandbid",
+    "header-bidding",
+    "headerbidding"
   ],
   "ignore": [
     "**/.*",
     "node_modules",
+    "assets/vendors",
     "bower_components",
     "test",
     "tests"

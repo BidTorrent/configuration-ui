@@ -1,4 +1,5 @@
-node_modules/
-src/vendors/
-src/assets/css/*.css
-bin/
+/bin/
+/node_modules/
+/src/assets/vendors
+/src/assets/css/*.css
+/src/partials/templates.js
