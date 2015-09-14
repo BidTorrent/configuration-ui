@@ -123,7 +123,19 @@ $app->get('/stats/publishers-csv/:publisher/:from/:to', function ($publisher, $f
     validateUserForPublisher($app, $users, $gitkitClient, $publisher);
     displayResultCsv(
         $app,
-        $stats->getByPublisherCsv(
+        $stats->getByPublisherCsvDaily(
+            $publisher,
+            $from,
+            $to
+        )
+    );
+});
+
+$app->get('/stats/publishers-csv/:publisher/:from/:to/hourly', function ($publisher, $from, $to) use ($app, $users, $gitkitClient, $stats) {
+    validateUserForPublisher($app, $users, $gitkitClient, $publisher);
+    displayResultCsv(
+        $app,
+        $stats->getByPublisherCsvHourly(
             $publisher,
             $from,
             $to

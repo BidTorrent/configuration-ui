@@ -116,7 +116,7 @@ class Stats
 		return $result;
 	}
 
-	function getByPublisherCsv($publisher, $from, $to) {
+	function getByPublisherCsvDaily($publisher, $from, $to) {
 		$result = array();
 		$head = array();
 		$head[] = "Date";
@@ -150,6 +150,47 @@ class Stats
 				`date` >= FROM_UNIXTIME(?)
 				AND `date` < FROM_UNIXTIME(?)
 				AND publisherId = ?
+
+			ORDER BY `date` DESC
+			',
+			array($from, $to, $publisher, $from, $to, $publisher)
+		);
+
+		$row = 0;
+		foreach ($rows as $row) {
+			$r = array();
+			$r[] = $row['date'];
+			$r[] = $row['impressions']*1;
+			$r[] = $row['revenue']/1000;
+
+			$result[] = $r;
+		}
+
+		return $result;
+	}
+
+	function getByPublisherCsvHourly($publisher, $from, $to) {
+		$result = array();
+		$head = array();
+		$head[] = "Date";
+		$head[] = "Impressions";
+		$head[] = "Revenue (USD)";
+		$result[] = $head;
+
+		$rows = $this->db->get_rows('
+			SELECT
+				DATE_FORMAT(FROM_UNIXTIME(`date`), "%Y-%m-%d %H:00:00") AS `date`,
+				count(id) AS impressions,
+				SUM(price) AS revenue
+			FROM
+				log_impressions
+			WHERE
+				`date` >= ?
+				AND `date` < ?
+				AND publisherId = ?
+			GROUP BY
+				DATE_FORMAT(FROM_UNIXTIME(`date`), "%Y-%m-%d %H:00:00")
+			ORDER BY `date` DESC
 			',
 			array($from, $to, $publisher)
 		);
