@@ -9,8 +9,6 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
             templateUrl: 'partials/publisher-stats.html',
             controller: 'PublisherStatCtrl'
         });
-
-    $urlRouterProvider.when('/publisher-stats', '/publisher-stats/');
 }])
 
 .controller('PublisherStatCtrl', ['$scope', '$q', '$http', '$state', '$stateParams', 'AppLoadingService',

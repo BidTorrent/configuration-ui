@@ -9,8 +9,6 @@ angular.module('btApp.bidder', ['ui.router', 'ngResource'])
             templateUrl: 'partials/bidder.html',
             controller: 'BidderCtrl'
         })
-
-    $urlRouterProvider.when('/bidder', '/bidder/');
 }])
 
 .run(['$rootScope', '$stateParams', '$state', function($rootScope, $stateParams, $state) {

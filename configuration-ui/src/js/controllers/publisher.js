@@ -9,8 +9,6 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             templateUrl: 'partials/publisher.html',
             controller: 'PublisherCtrl'
         })
-
-    $urlRouterProvider.when('/publisher', '/publisher/');
 }])
 
 .run(['$rootScope', '$stateParams', '$state', function($rootScope, $stateParams, $state) {
