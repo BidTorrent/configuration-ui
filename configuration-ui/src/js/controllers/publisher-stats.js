@@ -5,7 +5,7 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
 .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('publisher-stats', {
-            url: '/publisher/:publisherId/stats',
+            url: '/publisher/:publisherId/stats/:day',
             templateUrl: 'partials/publisher-stats.html',
             controller: 'PublisherStatCtrl'
         });
@@ -13,8 +13,8 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
     $urlRouterProvider.when('/publisher-stats', '/publisher-stats/');
 }])
 
-.controller('PublisherStatCtrl', ['$scope', '$q', '$http', '$stateParams', 'AppLoadingService',
-            function($scope, $q, $http, $stateParams, AppLoadingService) {
+.controller('PublisherStatCtrl', ['$scope', '$q', '$http', '$state', '$stateParams', 'AppLoadingService',
+            function($scope, $q, $http, $state, $stateParams, AppLoadingService) {
 
     /// function called when user click on a day in the graph
     var clickDay;
@@ -34,7 +34,12 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
     ///draw @rows using the @hcConfig on highchart
     var draw
 
+    $scope.publisherId = $stateParams['publisherId'];
+    $scope.day = $stateParams['day'];
+
     initConfig = function() {
+        var titleChart = 'Impressions and RPM for the ' + ($stateParams['day'] || "current week");
+
         highChartConfig =
         {
             chart: {
@@ -44,7 +49,7 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
                 height: 500
             },
             title: {
-                text: 'Impressions and RPM'
+                text: titleChart
             },
             xAxis: {
                 type: 'datetime',
@@ -100,21 +105,10 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
     };
 
     clickDay = function() {
-        var selectedTime = new Date(this.x);
+        var selectedDay = new Date(this.x);
+        var stringSelectedDay = [selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate()].join('-');
 
-        var from = new Date(
-            selectedTime.getFullYear(),
-            selectedTime.getMonth(),
-            selectedTime.getDate()
-        );
-
-        var to = new Date(
-            selectedTime.getFullYear(),
-            selectedTime.getMonth(),
-            selectedTime.getDate() + 1
-        );
-
-        loadImpressionStats(from, to, true);
+        $state.go("publisher-stats", { publisherId: $stateParams['publisherId'], day: stringSelectedDay})
     }
 
     loadImpressionStats = function(from, to, hourly) {
@@ -146,7 +140,8 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
                 else
                     config = highChartConfig
 
-                setTimeout(draw(response.data.rows, config), 10);
+                var rows = angular.copy(response.data.rows);
+                setTimeout(draw(rows.reverse(), config), 10);
             })
             .finally(function() {
                 AppLoadingService.stop();
@@ -173,19 +168,6 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
     // initilise the highchart configs
     initConfig();
 
-    var now = new Date();
-
-    var to = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
-    );
-
-    var from = new Date();
-
-    from.setDate(to.getDate()-30);
-    to.setDate(to.getDate()+1);
-
     //Models
     $scope.models = {
         headers: {
@@ -195,7 +177,40 @@ angular.module('btApp.publisherStats', ['ui.router', 'btApp.widgets.phloader'])
         rows: [],
     };
 
-    if($stateParams['publisherId']) {
-        loadImpressionStats(from, to, false);
+    // If we have a publisherId we want to display a graph
+    if ($stateParams['publisherId']) {
+        var dayString = $stateParams['day'];
+        if (dayString) {
+            var tabDate = dayString.split("-");
+            if (tabDate.length !== 3)
+                return; //TODO
+
+            var to = new Date(
+                parseInt(tabDate[0]),
+                parseInt(tabDate[1]),
+                parseInt(tabDate[2])+1
+            );
+
+            var from = new Date(
+                parseInt(tabDate[0]),
+                parseInt(tabDate[1]),
+                parseInt(tabDate[2])
+            );
+            loadImpressionStats(from, to, true);
+        } else {
+            var now = new Date();
+
+            var to = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate()
+            );
+
+            var from = new Date();
+
+            from.setDate(to.getDate()-30);
+            to.setDate(to.getDate()+1);
+            loadImpressionStats(from, to, false);
+        }
     }
 }]);

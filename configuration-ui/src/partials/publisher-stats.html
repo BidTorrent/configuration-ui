@@ -37,6 +37,12 @@
 
     <div id="highchart-container"></div>
 
+    <button class="btn btn-primary col-md-2 col-md-offset-5 col-xs-8 col-xs-offset-2"
+            ng-if="day"
+            ui-sref="publisher-stats({publisherId: publisherId, day: null})">
+        <i class="fa fa-arrow-left"></i>&nbsp;&nbsp;Back to monthly report
+    </button>
+
     <h2>
         Details
     </h2>
