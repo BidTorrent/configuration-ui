@@ -372,7 +372,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     // Validation methods
     $scope.impAreValid = function(imp) {
         for (var i = 0; i < imp.length; i++) {
-            if (!impIsValid(imp[i]))
+            if (!$scope.impIsValid(imp[i]))
                 return false;
         }
         return true;
