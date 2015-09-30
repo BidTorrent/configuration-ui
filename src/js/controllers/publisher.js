@@ -194,13 +194,13 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
 
             var badv, wadv, bcat, wcat;
             if ($scope.isFilled($scope.staticConfigForm.categoryFilter.value)) {
-                if ($scope.staticConfigForm.categoryFilter.mode)
+                if ($scope.staticConfigForm.categoryFilter.modeBool)
                     wcat = $scope.staticConfigForm.categoryFilter.value;
                 else
                     bcat = $scope.staticConfigForm.categoryFilter.value;
             }
             if ($scope.isFilled($scope.staticConfigForm.domainFilter.value)) {
-                if ($scope.staticConfigForm.domainFilter.mode)
+                if ($scope.staticConfigForm.domainFilter.modeBool)
                     wadv = $scope.staticConfigForm.domainFilter.value;
                 else
                     badv = $scope.staticConfigForm.domainFilter.value;
@@ -341,12 +341,12 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
         // Remove empty values
         arrayClean(filter.value, ["", null, undefined]);
 
-        if (!filter.mode && filter.value.length == 0)
+        if (!filter.modeBool && filter.value.length == 0)
             return;
 
         var newFilter = {
             type: filter.type,
-            mode: filter.mode ? "inclusive" : "exclusive",
+            mode: filter.modeBool ? "inclusive" : "exclusive",
             value: filter.value
         };
 
