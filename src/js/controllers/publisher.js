@@ -176,16 +176,19 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                 impressions = [];
                 for (var i = 0; i < $scope.staticConfigForm.imp.length; i++) {
                     var imp = $scope.staticConfigForm.imp[i];
-                    impressions[i] = {
-                        banner: {
-                            id: imp.html_id,
-                            w: imp.width,
-                            h: imp.height
-                        },
-                        bidfloor: imp.floor,
-                        secure: $scope.staticConfigForm.secured,
-                        passback: imp.passback
-                    };
+                    if ($scope.impIsValid(imp))
+                    {
+                        impressions.push({
+                            banner: {
+                                id: imp.html_id,
+                                w: parseInt(imp.width, 10),
+                                h: parseInt(imp.height, 10)
+                            },
+                            bidfloor: parseFloat(imp.floor),
+                            secure: $scope.staticConfigForm.secured,
+                            passback: imp.passback
+                        });
+                    }
                 };
             }
 
@@ -220,6 +223,12 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                 };
             }
 
+            var timeout;
+            if ($scope.isStrictPositiveInt($scope.staticConfigForm.timeout))
+                timeout = parseInt($scope.staticConfigForm.timeout, 10);
+            else
+                timeout = 400;
+
             bidTorrent['config'] = {
                 site: site,
                 imp: impressions,
@@ -227,7 +236,7 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                 wadv: wadv,
                 bcat: bcat,
                 wcat: wcat,
-                tmax: $scope.staticConfigForm.timeout
+                tmax: timeout
             };
         }
 
@@ -363,15 +372,22 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
     // Validation methods
     $scope.impAreValid = function(imp) {
         for (var i = 0; i < imp.length; i++) {
-            if (!imp[i].html_id)
-                return false;
-            if (imp[i].width && !$scope.isStrictPositiveInt(imp[i].width))
-                return false;
-            if (imp[i].height && !$scope.isStrictPositiveInt(imp[i].height))
-                return false;
-            if (imp[i].floor && !$scope.isStrictPositiveFloat(imp[i].floor))
+            if (!impIsValid(imp[i]))
                 return false;
         }
+        return true;
+    }
+
+    $scope.impIsValid = function(imp) {
+        if (!imp.html_id)
+            return false;
+        if (imp.width && !$scope.isStrictPositiveInt(imp.width))
+            return false;
+        if (imp.height && !$scope.isStrictPositiveInt(imp.height))
+            return false;
+        if (imp.floor && !$scope.isPositiveFloat(imp.floor))
+            return false;
+
         return true;
     }
 
@@ -382,11 +398,11 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
                value > 0;
     }
 
-    $scope.isStrictPositiveFloat = function(value) {
+    $scope.isPositiveFloat = function(value) {
         return !isNaN(value) &&
                parseFloat(value) == value &&
                !isNaN(parseFloat(value)) &&
-               value > 0;
+               value >= 0;
     }
 
     var hashCode = function(str) {

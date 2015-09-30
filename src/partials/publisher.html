@@ -102,7 +102,7 @@
 					<label class="control-label">Height</label>
 					<input type="text" class="form-control" placeholder="ex: 600" ng-model="imp.height">
 				</div>
-				<div class="form-group col-xs-4 col-sm-2" ng-class="{'has-error' : imp.floor && !isStrictPositiveFloat(imp.floor)}">
+				<div class="form-group col-xs-4 col-sm-2" ng-class="{'has-error' : imp.floor && !isPositiveFloat(imp.floor)}">
 					<label class="control-label">Floor</label>
 					<div class="input-group">
 						<span class="input-group-addon">$</span>
