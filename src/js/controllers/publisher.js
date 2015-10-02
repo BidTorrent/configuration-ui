@@ -240,9 +240,9 @@ angular.module('btApp.publisher', ['ui.router', 'ngResource'])
             };
         }
 
-        var script = "&lt;script src=&quot;http://bidtorrent.io/loader.js&quot;&gt;&lt;/script&gt;<br/>&lt;script type=&quot;text/javascript&quot;&gt;<br/>bidTorrent(" +
+        var script = "<script src='http://bidtorrent.io/loader.js'></script>\n<script type='text/javascript'>\nbidTorrent(" +
             JSON.stringify(bidTorrent, null, 2) +
-            ");<br/>&lt;/script&gt;";
+            ");\n</script>";
 
         return script;
     };
